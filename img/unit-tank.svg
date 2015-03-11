@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="unit-tank.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient6655">
+      <stop
+         style="stop-color:#b3b3b3;stop-opacity:1;"
+         offset="0"
+         id="stop6657" />
+      <stop
+         style="stop-color:#b3b3b3;stop-opacity:0;"
+         offset="1"
+         id="stop6659" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="8.08"
+     inkscape:cx="20.98067"
+     inkscape:cy="54.176546"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect6093"
+       width="48.019802"
+       height="55.569309"
+       x="35.643566"
+       y="-1028.3523"
+       transform="scale(1,-1)"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 45.29703,1028.476 0,-55.44553"
+       id="path6603"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 73.762376,1028.5998 0,-55.81683"
+       id="path6605"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-linejoin:miter;stroke-opacity:1"
+       id="path6607"
+       sodipodi:cx="61.076733"
+       sodipodi:cy="1002.1147"
+       sodipodi:rx="9.8391085"
+       sodipodi:ry="10.39604"
+       d="m 70.915841,1002.1147 a 9.8391085,10.39604 0 1 1 -19.678217,0 9.8391085,10.39604 0 1 1 19.678217,0 z"
+       transform="matrix(1,0,0,-1,-1.2376238,2001.5065)"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 58.044554,1009.9117 0,12.1287 3.465347,0.1237 0,-12.3762"
+       id="path6611"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect6615"
+       width="5.8168316"
+       height="2.8465347"
+       x="56.806931"
+       y="-1025.0107"
+       transform="scale(1,-1)"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#cccccc;fill-opacity:1;stroke:none"
+       d="m 36.252947,1000.6229 0,27.2277 4.269802,0 4.269802,0 0,-27.2277 0,-27.22773 -4.269802,0 -4.269802,0 0,27.22773 z"
+       id="path6621"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       d="m 74.371759,1000.6229 0,27.2277 4.393564,0 4.393565,0 0,-27.2277 0,-27.22773 -4.393565,0 -4.393564,0 0,27.22773 z"
+       id="path6623"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       d="m 57.673391,989.85437 c -3.237352,0.8754 -5.748886,3.4007 -6.716587,6.7532 -0.237761,0.8237 -0.283686,1.2741 -0.283265,2.7777 5.93e-4,2.11513 0.162358,2.85953 0.981644,4.51733 1.272519,2.5748 3.524041,4.4264 6.162756,5.0681 1.051057,0.2556 2.907131,0.2622 3.97686,0.014 4.23443,-0.982 7.264283,-4.9511 7.27033,-9.52413 0.0029,-2.1798 -0.516866,-3.9278 -1.703046,-5.7279 -1.144641,-1.737 -2.693901,-2.9544 -4.665388,-3.6661 -0.867284,-0.3131 -1.229941,-0.3716 -2.557609,-0.4128 -1.268399,-0.039 -1.712488,0 -2.465695,0.2005 l 0,0 z"
+       id="path6625"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#cccccc;fill-opacity:1;stroke:none"
+       d="m 74.371759,1000.6229 0,27.2277 4.393564,0 4.393565,0 0,-27.2277 0,-27.22773 -4.393565,0 -4.393564,0 0,27.22773 z"
+       id="path6651"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#666666;fill-opacity:1;stroke:none"
+       d="m 58.158888,989.80977 c -1.823324,0.3494 -3.91201,1.6263 -5.196218,3.1767 -0.8016,0.9677 -1.784843,2.962 -2.054768,4.1675 -0.263496,1.1767 -0.186205,4.03243 0.137431,5.07763 0.536984,1.7342 1.852902,3.7221 3.190007,4.819 0.976395,0.801 2.384267,1.5291 3.47753,1.7985 1.071407,0.2639 3.073684,0.275 4.158889,0.023 4.445235,-1.0324 7.541525,-5.6115 7.050094,-10.42636 -0.172577,-1.6909 -0.507381,-2.7643 -1.26763,-4.0643 -1.186304,-2.0286 -2.705218,-3.3361 -4.848938,-4.1743 -0.915814,-0.3581 -1.129004,-0.3919 -2.666199,-0.4229 -0.918936,-0.019 -1.810025,-0.01 -1.980198,0.025 l 0,0 z"
+       id="path6653"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       d="m 45.906413,1000.6229 0,27.2277 13.675742,0 13.675743,0 0,-27.2277 0,-27.22773 -13.675743,0 -13.675742,0 0,27.22773 z m 16.089108,-11.93753 c 3.033307,0.7073 5.621976,2.7574 7.025322,5.5637 1.37293,2.7455 1.569378,6.19203 0.516888,9.06823 -1.12005,3.0609 -3.64468,5.5806 -6.495552,6.4827 l -0.918453,0.2907 -0.0022,5.7859 -0.0022,5.7859 0.556931,0 0.55693,0 0,1.9802 0,1.9802 -3.465346,0 -3.465347,0 0,-1.9802 0,-1.9802 0.618812,0 0.618812,0 0,-5.7894 0,-5.7894 -0.939811,-0.2979 c -3.049135,-0.9668 -5.655653,-3.742 -6.68787,-7.1208 -0.312266,-1.0222 -0.340886,-1.2871 -0.347636,-3.21783 -0.0064,-1.8349 0.02885,-2.2306 0.275681,-3.0941 0.622683,-2.1782 2.006803,-4.3101 3.680406,-5.6687 0.949661,-0.7709 2.970642,-1.7555 4.081111,-1.9884 1.155608,-0.2423 3.376891,-0.2476 4.393564,-0.011 l 0,0 z"
+       id="path6663"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#666666;fill-opacity:1;stroke:none"
+       d="m 58.653937,1015.9188 0,5.6199 1.175743,0 1.175742,0 0,-5.6199 0,-5.62 -1.175742,0 -1.175743,0 0,5.62 z"
+       id="path6667"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#666666;fill-opacity:1;stroke:none"
+       d="m 57.416314,1023.6427 0,0.8663 2.351485,0 2.351485,0 0,-0.8663 0,-0.8664 -2.351485,0 -2.351485,0 0,0.8664 z"
+       id="path6669"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-tank.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>

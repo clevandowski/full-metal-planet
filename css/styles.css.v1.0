@@ -1,0 +1,123 @@
+div#sprite {
+	width: 20px;
+	height: 20px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #000000;
+	/*z-index: 1;*/
+	position: fixed;
+	top: 500px;
+	left: 500px;
+	background-color: #CCCCCC;
+}
+
+/*.hex {
+    float: left;
+    margin-right: -26px;
+    margin-bottom: -50px;
+}
+.hex .left {
+    float: left;
+    width: 0;
+    border-right: 30px solid #6C6;
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+}
+.hex .middle {
+    float: left;
+    width: 60px;w
+    height: 104px;
+    background: #6C6;
+}
+.hex .right {
+    float: left;
+    width: 0;
+    border-left: 30px solid #6C6;
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+}
+*/
+
+.hex {
+    float: left;
+    margin-right: 17px;
+    margin-left: 17px;
+    margin-bottom: -49px;
+    width: 60px;
+    height: 104px;
+    /*background: brown;*/
+    background: transparent;
+    /*background-position:center center;*/
+}
+
+.mer {
+    background: #27F;
+}
+.plaine {
+    background: #7B6;
+}
+.montagne {
+    background: brown;
+}
+.marecage-sec {
+    background: #496;
+}
+.marecage-inonde {
+    background: #47F;
+}
+.recif-sec {
+    background: #5B8;
+}
+.recif-inonde {
+    background: #49F;
+}
+
+.hex:before {
+    float: left;
+    content: " ";
+    width: 0;
+    height: 0;
+    margin-left: -30px;
+    margin-bottom: -50px;
+    border-right: 30px solid #6C6; /* #6C6 */
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+    /*background-image: url(../img/case-mer.jpg);*/
+}
+.hex:after {
+    float: left;
+    clear: left;
+    content: " ";
+    width: 0; 
+    height: 0;
+    margin-left: 60px;
+    margin-top: -54px;
+    border-left: 30px solid #6C6; /* #6C6 */
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+    /*background-image: url(../img/case-mer.jpg);*/
+}
+.hex-row {
+    clear: left;
+    
+/*    overflow-x: scroll;
+    overflow-y: scroll;
+*/}
+.hex:nth-child(even) {
+    margin-top: 53px;
+}
+
+.plateau { 
+    /*overflow-x: scroll;*/
+    width: 4000px;
+}
+
+.container {
+    overflow-y: auto;
+    padding:20px;
+    border:dotted 1px;
+    white-space:nowrap;
+    overflow-x:auto;
+    height: 870px;
+    /*height: auto;*/
+}

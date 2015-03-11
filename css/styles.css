@@ -1,0 +1,251 @@
+.hexagon-case {
+    float: left;
+    margin-right: -15px;
+    margin-left: -15px;
+    margin-bottom: -53px;
+    width: 120px;
+    height: 104px;
+    text-align: center;
+    background-image: url('../img/hexagon-case.png');
+}
+
+.hexagon-case:hover {
+    -webkit-filter: brightness(1.5);
+/*
+    -webkit-filter: grayscale(20%);
+    -moz-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    filter: grayscale(100%);
+*/}
+
+.selectedPiece {
+    -webkit-filter: brightness(1.5);;
+}
+
+.hexagon-row {
+    clear: left;
+}
+
+.soute {
+    clear: left;
+     border-color: black;
+     border-style: solid;
+     border-width: 5px;
+     box-shadow: 8px, 8px, 0px, #aaa;
+     width: 480px;
+     height: 104px;
+     background-color: brown;
+}
+
+.soute-container {
+    /*clear: left;*/
+    float: left;
+}
+
+.orientation-nord {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+/*    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    -ms-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;*/
+}
+
+.orientation-nord-est {
+    -webkit-transform: rotate(240deg);
+    -moz-transform: rotate(240deg);
+    -o-transform: rotate(240deg);
+    -ms-transform: rotate(240deg);
+    transform: rotate(240deg);
+/*    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    -ms-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;*/
+}
+
+.orientation-sud-est {
+    -webkit-transform: rotate(300deg);
+    -moz-transform: rotate(300deg);
+    -o-transform: rotate(300deg);
+    -ms-transform: rotate(300deg);
+    transform: rotate(300deg);
+/*    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    -ms-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;*/
+}
+
+.orientation-sud {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+/*    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    -ms-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;*/
+}
+
+.orientation-sud-ouest {
+    -webkit-transform: rotate(60deg);
+    -moz-transform: rotate(60deg);
+    -o-transform: rotate(60deg);
+    -ms-transform: rotate(60deg);
+    transform: rotate(60deg);
+/*    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    -ms-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;*/
+}
+
+.orientation-nord-ouest {
+    -webkit-transform: rotate(120deg);
+    -moz-transform: rotate(120deg);
+    -o-transform: rotate(120deg);
+    -ms-transform: rotate(120deg);
+    transform: rotate(120deg);
+/*    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    -ms-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;*/
+}
+
+.explosion {
+    width: 120px;
+    height: 104px;
+    background-image: url('../img/explosion.png');
+    z-index: 3;
+    opacity: 0;
+    -webkit-transition: opacity 4s ease-out;
+    -moz-transition: opacity 4s ease-out;
+    -o-transition: opacity 4s ease-out;
+    -ms-transition: opacity 4s ease-out;
+    transition: opacity 4s ease-out;
+}
+
+.explosion:active {
+    opacity: 100;
+    -webkit-transition: opacity 0s ease-out;
+    -moz-transition: opacity 0s ease-out;
+    -o-transition: opacity 0s ease-out;
+    -ms-transition: opacity 0s ease-out;
+    transition: opacity 0s ease-out;
+}
+/*.explosion:hover {
+    opacity: 0;
+*//*    -webkit-transform: rotate(360deg) scale(5) scale(0.2);
+    -moz-transform: rotate(360deg) scale(5) scale(0.2);
+    -o-transform: rotate(360deg) scale(5) scale(0.2);
+    -ms-transform: rotate(360deg) scale(5) scale(0.2);
+    transform: rotate(360deg) scale(5) scale(0.2);
+*/  
+/*}*/
+
+.piece {
+    width: 120px;
+    height: 104px;
+    text-align: center;
+    position: relative;
+}
+
+/*.piece:hover {
+    -webkit-transform: rotate(360deg) scale(5) scale(0.2);
+    -moz-transform: rotate(360deg) scale(5) scale(0.2);
+    -o-transform: rotate(360deg) scale(5) scale(0.2);
+    -ms-transform: rotate(360deg) scale(5) scale(0.2);
+    transform: rotate(360deg) scale(5) scale(0.2);
+    -webkit-transition: 2s ease-in-out;
+    -moz-transition: 2s ease-in-out;
+    -o-transition: 2s ease-in-out;
+    -ms-transition: 2s ease-in-out;
+    transition: 2s ease-in-out;
+}
+*/
+.piece.tank {
+    background-image: url('../img/unit-tank.png');
+    z-index: 2;
+}
+
+.piece.barge {
+    background-image: url('../img/unit-barge.png');
+    width: 120;
+    height: 204;
+    z-index: 1;
+    padding-bottom: 102px;
+    transform-origin: 60px 51px;
+}
+
+.mer {
+   background-image: url('../img/hexagon-case-mer.png');
+}
+.plaine {
+    background-image: url('../img/hexagon-case-plaine.png');
+}
+.montagne {
+    background-image: url('../img/hexagon-case-montagne.png');
+}
+.marecage-sec {
+    -webkit-transition: background-image 2s ease-in-out;
+    -moz-transition: background-image 2s ease-in-out;
+    -o-transition: background-image 2s ease-in-out;
+    -ms-transition: background-image 2s ease-in-out;
+    transition: background-image 2s ease-in-out;
+    background-image: url('../img/hexagon-case-marecage-sec.png');
+}
+.marecage-inonde {
+    -webkit-transition: background-image 2s ease-in-out;
+    -moz-transition: background-image 2s ease-in-out;
+    -o-transition: background-image 2s ease-in-out;
+    -ms-transition: background-image 2s ease-in-out;
+    transition: background-image 2s ease-in-out;
+    background-image: url('../img/hexagon-case-marecage-inonde.png');
+}
+.recif-sec {
+    -webkit-transition: background-image 2s ease-in-out;
+    -moz-transition: background-image 2s ease-in-out;
+    -o-transition: background-image 2s ease-in-out;
+    -ms-transition: background-image 2s ease-in-out;
+    transition: background-image 2s ease-in-out;
+    background-image: url('../img/hexagon-case-recif-sec.png');
+}
+.recif-inonde {
+    -webkit-transition: background-image 2s ease-in-out;
+    -moz-transition: background-image 2s ease-in-out;
+    -o-transition: background-image 2s ease-in-out;
+    -ms-transition: background-image 2s ease-in-out;
+    transition: background-image 2s ease-in-out;
+    background-image: url('../img/hexagon-case-recif-inonde.png');
+}
+
+.hexagon-case:nth-child(even) {
+    margin-top: 51px;
+}
+
+.plateau { 
+    width: 3350px;
+    height: 2000px;
+    position: relative;
+}
+
+.container {
+    overflow-y: auto;
+    padding-left:15px;
+    border:dotted 1px;
+    white-space:nowrap;
+    overflow-x:auto;
+    width: 1600px;
+    height: 700px;
+    background-color: transparent;
+    background: scroll 500 500;
+}

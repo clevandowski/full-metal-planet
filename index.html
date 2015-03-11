@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script> -->
+<script src="scripts/angular.js"></script>
+</head>
+
+<body>
+<div ng-app="myApp" ng-controller="personController">
+ 	<p>Name: <input type="text" ng-model="name"></p>
+ 	<p ng-bind="name">coincoin</p>
+
+ 	<p>Nombre 1: <input type="text" ng-model="nombre1"></p>
+ 	<p>Nombre 2: <input type="text" ng-model="nombre2"></p>
+  <p>Hardcoded expression: {{ 5 + 5 }}</p>
+	<p>My first expression: {{ nombre1 * nombre2 }}</p>
+  <p></p>
+  <p>first name: <input type="text" ng-model="firstName"></p>
+  <p>last name: <input type="text" ng-model="lastName"></p>
+  <p>User name : {{ firstName + " " + lastName }}</p>
+</div>
+<script>
+
+// Retrocompatibilité
+var app = angular.module("myApp",[]).config(['$controllerProvider', function($controllerProvider) {
+     $controllerProvider.allowGlobals();
+}]);
+
+function personController($scope) {
+  $scope.firstName = "Cyrille";
+  $scope.lastName = "Levandowski";
+}
+</script>
+
+
+</body>
+</html>
+

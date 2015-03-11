@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="css/styles.css?v=1.0">
+		<script type="text/javascript" src="scripts/jquery-2.1.3.js"></script>
+		<script type="text/javascript" src="scripts/angular.js"></script>
+		<script type="text/javascript" src="scripts/plateau.js"></script>
+	</head>
+	<body>
+		<div ng-app="myApp" ng-controller="myCtrl">
+
+			<!-- Voir la directive hexagonalCase associée -->
+			<label>Marée: <select 
+				ng-model="currentMaree" 
+				ng-options="maree.value as maree.name for maree in marees">
+			</select></label>
+
+			<hr>
+			<div class="container">
+				<div class="plateau">
+					<div class="hex-row" ng-repeat="ligne in plateau">
+						<div class="hex {{hexagonaleCase.css(currentMaree)}}" ng-repeat="hexagonaleCase in ligne">
+							{{hexagonaleCase.caseType.name}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+
+			// Récupération de l'application myApp (ne pas oublier de la déclarer 
+			// dans le html)
+			var app = angular.module('myApp', []);
+
+			// Définition du controller myCtrl (ne pas oublier de la déclarer dans le html)
+			app.controller('myCtrl', function($scope) {
+				$scope.plateau = PLATEAU;
+				$scope.marees = MAREES;
+				$scope.currentMaree = $scope.marees[1].value;
+			});
+
+			// Utilisation d'une directive
+			// ==> Permet d'utiliser maintenant une balise 
+			// <hexagonal-case></hexagonal-case>
+			// dans le code html à l'intérieur de l'application myApp
+			app.directive('testCase', function() {
+
+				// Je sais pas à quoi ça sert
+    			var linkFn;
+
+    			linkFn = function(scope, element, attrs) {
+ 					console.log('testCase start');
+   				// Ca c'est uniquement pour jouer un peu avec le selecteur $() 
+    				// de jquery qui permet de manipuler le dom dans le tag hexagonal-case
+    				var children=$(element).children()[0];
+    				// On peut lire les propriétés CSS
+    				var bgcolor = $(children).css('background-color');
+    				console.log('element background-color: ' + bgcolor);
+    				// Mais aussi les modifier
+    				$(children).css('background-color', '#FFAA00');
+    				// On peut injecter des balises dans le DOM comme des gros porcs
+    				$(children).append( "<p>Test</p>" );
+    			}
+
+			    return {
+			    	// Restreint la directive à être utilisée à un élément html
+			    	// (et pas à un attribut html ou une classe css)
+			        restrict: 'E',
+			        link: linkFn
+			    };
+    		});
+
+    		app.directive('hexagone-ligne', function() {
+    			var linkFn;
+
+    			linkFn = function(scope, element, attr) {
+    			}
+
+    			return {
+    				restrict: 'E',
+    				link: linkFn
+    			}
+    		});
+
+    		app.directive('hexagone-case', function() {
+    			var linkFn;
+
+    			linkFn = function(scope, element, attr) {
+					console.log('hexagone start');
+					element.attr('class', 'hex ');
+    			}
+
+    			return {
+    				restrict: 'E',
+    				link: linkFn
+    			}
+    		});
+		</script>
+	</body>
+</html>
