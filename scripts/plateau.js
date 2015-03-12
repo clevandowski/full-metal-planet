@@ -121,6 +121,7 @@ var FMPCase = function(caseType, x, y) {
 	this.caseType = caseType;
 	this.x = x;
 	this.y = y;
+	this.explose = false;
 
 	this.getCaseTypeMaree = function(maree) {
 		return CASE_TYPE_MAREE.filter(function(caseTypeMaree) {
@@ -166,6 +167,8 @@ var Partie = function(plateau) {
 	this.pieces = [ 
 		new Piece(this.players[0], PIECE_TYPE.TANK, 5, 9), 
 		new Piece(this.players[0], PIECE_TYPE.TANK, 6, 9), 
+		new Piece(this.players[1], PIECE_TYPE.TANK, 2, 9), 
+		new Piece(this.players[1], PIECE_TYPE.TANK, 3, 9), 
 		new Piece(this.players[0], PIECE_TYPE.TANK, 7, 8),
 		new Piece(this.players[1], PIECE_TYPE.TANK, 33, 11),
 		new Piece(this.players[1], PIECE_TYPE.TANK, 34, 12), 
@@ -643,13 +646,12 @@ var Engine = function(partie) {
 	}
 	this.onClick = function(targetCase, maree) {
 		if (this.partie.tourPoints <= 0) {
-			throw 'Plus aucun points d\'action restants pour le joueur ' + this.partie.getPlayer().name;
+			throw 'Plus aucun point d\'action restants pour le joueur ' + this.partie.getPlayer().name;
 		}
 
 		var piece = this.getPieceIfAvailable(targetCase);
 
 		if (piece != null) {
-			// piece.explose = true;
 			// Click sur une unite, selection ou action
 			console.log('onClick: ' + targetCase.getCaseTypeMaree(maree).cssName + '(' + piece.pieceType.name + ', x:' + targetCase.x + ', y: ' + targetCase.y + ')');			
 			if (piece.player != this.partie.getPlayer()) {
@@ -658,6 +660,13 @@ var Engine = function(partie) {
 					// TODO Validation :
 					// - Nombre de munitions
 					// - Si plus de 2 destroyers, comment faire interagir le joueur
+					targetCase.explose = true;
+					// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
+					// l'explosion qui disparait en CSS
+					setTimeout(function() {
+						console.log('Piece: ' + piece.pieceType.name);
+					    targetCase.explose = false;
+					}, 4000);
 					var index = this.partie.pieces.indexOf(piece);
 					this.partie.pieces.splice(index, 1);
 					this.partie.tourPoints -=2;

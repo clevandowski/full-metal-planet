@@ -28,8 +28,8 @@
 					<div class="hexagon-row" ng-repeat="ligne in plateau">
 						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="engine.onClick(hexagonalCase, currentMaree)">
 							<!-- {{hexagonalCase.x}}, {{hexagonalCase.y}} -->
+							<div class="explosion" ng-show="hexagonalCase.explose"></div>
 							<div ng-show="engine.getPieceIfAvailable(hexagonalCase)" class="piece {{engine.getPieceIfAvailable(hexagonalCase).pieceType.cssName}} {{engine.getPieceIfAvailable(hexagonalCase).orientation.cssName}}" right-click="hexagonalCase" coord-x="{{hexagonalCase.x}}" coord-y="{{hexagonalCase.y}}">
-								<!-- <div class="explosion"></div> -->
 							</div>
 						</div>
 					</div>
@@ -49,6 +49,8 @@
 				$scope.plateau = initPlateau(PLATEAU);
 				$scope.partie = new Partie($scope.plateau);
 				$scope.engine = new Engine($scope.partie);
+
+				$scope.explosionTimer = function() { setTimeout(f)}
 			});
 			// app.directive('rightClick',function() {
 			//     document.oncontextmenu = function (e) {

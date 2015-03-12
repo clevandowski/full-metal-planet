@@ -127,14 +127,23 @@
     background-image: url('../img/explosion.png');
     z-index: 3;
     opacity: 0;
-    -webkit-transition: opacity 4s ease-out;
-    -moz-transition: opacity 4s ease-out;
-    -o-transition: opacity 4s ease-out;
-    -ms-transition: opacity 4s ease-out;
-    transition: opacity 4s ease-out;
+    position: absolute;
+    -webkit-animation: explosion 4s ease-out; /* Chrome, Safari, Opera */
+    animation: explosion 4s ease-out;
 }
 
-.explosion:active {
+/* Chrome, Safari, Opera */
+@-webkit-keyframes explosion {
+    from {opacity: 100;}
+    to {opacity: 0;}
+}
+
+/* Standard syntax */
+@keyframes explosion {
+    from {opacity: 100;}
+    to {opacity: 0;}
+}
+.explosion.end {
     opacity: 100;
     -webkit-transition: opacity 0s ease-out;
     -moz-transition: opacity 0s ease-out;
@@ -156,7 +165,7 @@
     width: 120px;
     height: 104px;
     text-align: center;
-    position: relative;
+    position: absolute;
 }
 
 /*.piece:hover {
