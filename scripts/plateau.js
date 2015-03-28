@@ -15,9 +15,9 @@ var PLATEAU_HEIGHT = 23;
  * enums & static arrays
  */
 var MAREES = [
-	{ value: 'B', name: 'basse'},
-	{ value: 'N', name: 'normale'},
-	{ value: 'H', name: 'haute'} 
+	{ value: 'B', name: 'BASSE'},
+	{ value: 'N', name: 'NORMALE'},
+	{ value: 'H', name: 'HAUTE'} 
 ];
 
 var CASE_TYPE = {
@@ -41,6 +41,7 @@ var CASE_TYPE_MAREE = [
 
 // encombrement = nb de place prise sur un crabe ou une barge
 var PIECE_TYPE = {
+	MUNITION: {name: 'munition', cssName: 'munition', mobile: false, modeDeplacement: 'none', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: false, attackRange: -1},
 	TANK: { name: 'tank', cssName: 'tank', mobile: true, modeDeplacement: 'terrestre', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: true, attackRange: 2 },
 	BARGE: { name: 'barge', cssName: 'barge', mobile: true, modeDeplacement: 'maritime', encombrement: 4, transporter: true, transportCapacite: 4, destroyer: false, attackRange: -1 }
 }
@@ -127,7 +128,7 @@ var FMPCase = function(caseType, x, y) {
 		return CASE_TYPE_MAREE.filter(function(caseTypeMaree) {
 				return caseTypeMaree.caseType == caseType;
 			}).filter(function(caseTypeMaree) {
-				return caseTypeMaree.marees.indexOf(maree) > -1;
+				return caseTypeMaree.marees.indexOf(maree.value) > -1;
 			})[0];
 	}
 }
@@ -137,11 +138,22 @@ var Piece = function(player, pieceType, x, y, orientation) {
 	this.pieceType = pieceType;
 	this.x = x;
 	this.y = y;
+	this.contenu = [];
 
 	if (orientation == null) {
 		this.orientation = ORIENTATION.S;
 	} else {
 		this.orientation = orientation;
+	}
+	this.addContenu = function(piece) {
+		if (piece == null) {
+			throw 'Piece vide !';
+		} else {
+			this.contenu.push(piece);
+		}
+	}
+	this.getContenu = function() {
+		return this.contenu;
 	}
 }
 
@@ -154,6 +166,11 @@ var Player = function(name) {
 
 var Partie = function(plateau) {
 	this.plateau = plateau;
+	this.tour = 0;
+	var randomMaree = Math.floor((Math.random() * 3));
+	this.currentMaree = MAREES[randomMaree];
+	randomMaree = Math.floor((Math.random() * 3));
+	this.nextMaree = MAREES[randomMaree];
 	this.players = [
 		new Player('Damien'),
 		new Player('Noémie')
@@ -162,13 +179,12 @@ var Partie = function(plateau) {
 	this.getPlayer = function() {
 		return this.players[this.tourPlayer];
 	}
-	this.tourPoints = this.getPlayer().pointEconomise + 15;
-
 	this.pieces = [ 
-		new Piece(this.players[0], PIECE_TYPE.TANK, 5, 9), 
-		new Piece(this.players[0], PIECE_TYPE.TANK, 6, 9), 
 		new Piece(this.players[1], PIECE_TYPE.TANK, 2, 9), 
 		new Piece(this.players[1], PIECE_TYPE.TANK, 3, 9), 
+		new Piece(this.players[1], PIECE_TYPE.TANK, 2, 8), 
+		new Piece(this.players[0], PIECE_TYPE.TANK, 5, 9), 
+		new Piece(this.players[0], PIECE_TYPE.TANK, 6, 9), 
 		new Piece(this.players[0], PIECE_TYPE.TANK, 7, 8),
 		new Piece(this.players[1], PIECE_TYPE.TANK, 33, 11),
 		new Piece(this.players[1], PIECE_TYPE.TANK, 34, 12), 
@@ -177,10 +193,56 @@ var Partie = function(plateau) {
 		new Piece(this.players[1], PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
 	];
 
-	this.setTourToNextPlayer = function () {
-		this.tourPlayer = (this.tourPlayer + 1) % this.players.length;
+	this.setTourToNextPlayer = function(init) {
+		if (init != true) { 
+			this.tourPlayer = (this.tourPlayer + 1) % this.players.length;
+			if (this.tourPlayer == 0) {
+				this.tour ++;
+				var randomMaree = Math.floor((Math.random() * 3));
+				this.currentMaree = this.nextMaree;
+				this.nextMaree = MAREES[randomMaree];
+			}
+		}
+		// Nouveau tour ?
+		if (this.tourPlayer == 0) {
+			this.reloadMunitionOnDestroyers();
+			// TODO
+			// this.nextMaree();
+		}
+
 		this.tourPoints = this.getPlayer().pointEconomise + 15;
 	}
+
+	this.reloadMunitionOnDestroyers = function() {
+		this.pieces.filter(function(piece) {
+			return piece.pieceType.destroyer;
+		})
+		.forEach(function(destroyer) {
+			destroyer.contenu = [
+				new Piece(destroyer.player, PIECE_TYPE.MUNITION, -1, -1),
+				new Piece(destroyer.player, PIECE_TYPE.MUNITION, -1, -1)
+			]
+		});
+		
+		// Destroyer contenues dans des transporteurs
+		this.pieces.filter(function(piece) {
+			return piece.pieceType.transporter
+		})
+		.forEach(function(transporter) {
+			transporter.contenu.filter(function(piece) {
+				return piece.pieceType.destroyer;
+			})
+			.forEach(function(destroyer) {
+				destroyer.contenu = [
+					new Piece(destroyer.player, PIECE_TYPE.MUNITION, -1, -1),
+					new Piece(destroyer.player, PIECE_TYPE.MUNITION, -1, -1)
+				]
+			});
+		});
+	}
+
+	this.tourPoints = this.getPlayer().pointEconomise + 15;
+	this.reloadMunitionOnDestroyers();	
 }
 
 /* 
@@ -227,6 +289,15 @@ var Engine = function(partie) {
 	 		// }	
 	 	}
 	}
+
+	this.cssSelectedPieceSoute = function(targetCase) {
+	 	if (this.getSelectedPieceSoute() != null) {
+	 		if ((targetCase.x == this.getSelectedPieceSoute().x)
+	 			&& (targetCase.y == this.getSelectedPieceSoute().y)) {
+	 			return 'selectedPiece';
+	 		}
+	 	}
+	 }
 
 	/*
 	 * Fonctions Lecture Ecriture Cases / Pieces
@@ -390,6 +461,49 @@ var Engine = function(partie) {
 				}
 			}
 		}
+	}
+
+	this.getEnemiesThatCanAttackInRange = function(x, y, player) {
+		var enemiesInRange = [];
+		var parite = x & 1;
+
+		for (var i = 0; i < ZONE_VERIFICATION_MENACE_TIR.length; i++) {
+			var relativeCase = ZONE_VERIFICATION_MENACE_TIR[i];
+			var currentX = x + relativeCase.x;;
+
+			if (currentX >= 0
+				&& currentX < PLATEAU_WIDTH) {
+				var currentY;
+				if (parite == 0) {
+					currentY = y + relativeCase.y;
+				} else {
+					currentY = y - relativeCase.y;						
+				}
+				if (currentY >= 0
+					&& currentY < PLATEAU_HEIGHT) {
+					var caseToCheck = this.getCase(currentX, currentY);
+					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
+					
+					if (pieceToCheck != null 
+						&& pieceToCheck.player != player
+						&& pieceToCheck.pieceType.destroyer) {
+
+						var portee = pieceToCheck.pieceType.attackRange;
+						if (caseToCheck.caseType == CASE_TYPE.MONTAGNE
+							&& pieceToCheck.pieceType == PIECE_TYPE.TANK) {
+							portee++;
+						}
+
+						if (portee >= relativeCase.distance) {
+							// console.log('destructeur ennemi detecte en x: ' + pieceToCheck.x + ', y: ' + pieceToCheck.y);
+							enemiesInRange.push(pieceToCheck);
+						}
+					}
+				}
+				// Sinon la case à checker est hors de la map on passe à la suite
+			}
+		}
+		return enemiesInRange;
 	}
 
 	this.countEnemiesThatCanAttackInRange = function(x, y, player) {
@@ -567,11 +681,11 @@ var Engine = function(partie) {
 	this.getTransportCapaciteRestante = function(pieceTransporter) {
 		var capaciteRestante = pieceTransporter.pieceType.transportCapacite;
 
-		if (pieceTransporter.contenu != null 
-			&& pieceTransporter.contenu.length > 0) {
+		if (pieceTransporter.getContenu() != null 
+			&& pieceTransporter.getContenu().length > 0) {
 
-			for (var piece in pieceTransporter.contenu) {
-				capaciteRestante -= pieceTransporter.contenu[piece].pieceType.encombrement;
+			for (var piece in pieceTransporter.getContenu()) {
+				capaciteRestante -= pieceTransporter.getContenu()[piece].pieceType.encombrement;
 			}
 		}
 		return capaciteRestante;
@@ -607,7 +721,8 @@ var Engine = function(partie) {
 		return false;
 	}
 	this.validateChargement = function(pieceTransporter, pieceACharger, maree) {
-		return this.canTransporterChargePiece(pieceTransporter, pieceACharger)
+		return pieceTransporter != pieceACharger
+			&& this.canTransporterChargePiece(pieceTransporter, pieceACharger)
 			&& this.isPieceChargeableByMaree(pieceACharger, maree)
 			&& this.areTransporterAndPieceAdjacent(pieceTransporter, pieceACharger)
 			&& this.isFreeFromEnemyFire(pieceTransporter) 
@@ -621,29 +736,72 @@ var Engine = function(partie) {
 	}
 	this.chargePiece = function(pieceTransporter, pieceACharger) {
 		console.log('Chargement de ' + pieceACharger.pieceType.name + ' dans ' + pieceTransporter.pieceType.name);
-		if (pieceTransporter.contenu == null) {
-			pieceTransporter.contenu = [];
-		}
+		// if (pieceTransporter.getContenu() == null) {
+		// 	pieceTransporter.getContenu() = [];
+		// }
 
 		// On déplace le tank du plateau de la partie au contenu du transporteur
-		pieceTransporter.contenu.push(pieceACharger);
+		pieceTransporter.addContenu(pieceACharger);
 		var indexInPieces = this.partie.pieces.indexOf(pieceACharger);
 		this.partie.pieces.splice(indexInPieces, 1);
 	}
 	this.dechargePiece = function(pieceTransporter, pieceADecharger, targetCase) {
-		if (pieceTransporter.contenu == null) {
+		if (pieceTransporter.getContenu() == null) {
 			console.log('Impossible de décharger car le ' + pieceTransporter.pieceType.name + ' est vide.');
 			return;
 		}
-		var index = pieceTransporter.contenu.indexOf(pieceADecharger);
+		var index = pieceTransporter.getContenu().indexOf(pieceADecharger);
 		if (index == -1) {
 			console.log('Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas");
 		} else {
 			this.partie.pieces.push(pieceADecharger);
-			pieceTransporter.contenu.splice(index, 1);
+			pieceTransporter.getContenu().splice(index, 1);
 			this.setPieceToCase(pieceADecharger, targetCase);
 		}
 	}
+
+	this.attack = function(piece) {
+		// TODO Validation :
+		// - Si plus de 2 destroyers, comment faire interagir le joueur
+		var targetCase = this.getCasePiece(piece);
+		var piecesAttacking = this.getEnemiesThatCanAttackInRange(targetCase.x, targetCase.y, piece.player);
+		if (piecesAttacking.length > 2) {
+			console.log('TODO: Pouvoir choisir les attaquants');
+		}
+		// Vue la condition "this.isFreeFromEnemyFire(piece)" plus
+		// haut, on sait qu'il y a au moins 2 attaquants
+
+		// Est ce qu'il reste au moins 1 munition a chaque attaquant ?
+		for (var i = 0; i < piecesAttacking.length; i++) {
+			if (piecesAttacking[i].contenu == null
+				|| piecesAttacking[i].contenu.length == 0) {
+				throw 'La piece attaquant ' + piecesAttacking[i].pieceType.name + ' ne dispose plus de munition pour ce tour.';
+			}
+		}
+
+		// Attaque !
+		if (! window.confirm('Attaquer l\'unité ?')) {
+			throw 'Le joueur a annulé l\'attaque';
+		}
+
+		// Deduction d'une munition
+		piecesAttacking.forEach(function(pieceAttacking) {
+			pieceAttacking.getContenu().splice(0,1);
+		});
+
+		targetCase.explose = true;
+		// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
+		// l'explosion qui disparait en CSS
+		setTimeout(function() {
+			console.log('Piece: ' + piece.pieceType.name);
+		    targetCase.explose = false;
+		}, 4000);
+		var index = this.partie.pieces.indexOf(piece);
+		this.partie.pieces.splice(index, 1);
+		this.partie.tourPoints -=2;
+		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + piece.player.name + ' par ' + this.partie.getPlayer().name);
+	}
+
 	this.onClick = function(targetCase, maree) {
 		if (this.partie.tourPoints <= 0) {
 			throw 'Plus aucun point d\'action restants pour le joueur ' + this.partie.getPlayer().name;
@@ -655,36 +813,23 @@ var Engine = function(partie) {
 			// Click sur une unite, selection ou action
 			console.log('onClick: ' + targetCase.getCaseTypeMaree(maree).cssName + '(' + piece.pieceType.name + ', x:' + targetCase.x + ', y: ' + targetCase.y + ')');			
 			if (piece.player != this.partie.getPlayer()) {
-				if (! this.isFreeFromEnemyFire(piece) && this.partie.tourPoints >= 2) {
-					// Attaque !
-					// TODO Validation :
-					// - Nombre de munitions
-					// - Si plus de 2 destroyers, comment faire interagir le joueur
-					targetCase.explose = true;
-					// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
-					// l'explosion qui disparait en CSS
-					setTimeout(function() {
-						console.log('Piece: ' + piece.pieceType.name);
-					    targetCase.explose = false;
-					}, 4000);
-					var index = this.partie.pieces.indexOf(piece);
-					this.partie.pieces.splice(index, 1);
-					this.partie.tourPoints -=2;
-					console.log('Destruction de la piece ' + piece.pieceType.name + ' par le joueur ' + this.partie.getPlayer().name);
+				if (! this.isFreeFromEnemyFire(piece) 
+					&& this.partie.tourPoints >= 2) {
+					this.attack(piece);
+					return;
 				} else {
 					throw 'La piece n\'appartient pas au joueur ' + this.partie.getPlayer().name;
 				}
 			}
-
 			// Si on a déjà une piece selectionnée, action
 			// - Est ce qu'on la charge dans une barge ou un crabe ?
 			if (this.getSelectedPiece() != null) {
 
-				if (this.getSelectedPiece() == piece) {
-					console.log('Deselection de la piece ' + piece.pieceType.name);
-					this.setSelectedPiece(null);
-					return;
-				}
+				// if (this.getSelectedPiece() == piece) {
+				// 	console.log('Deselection de la piece ' + piece.pieceType.name);
+				// 	this.setSelectedPiece(null);
+				// 	return;
+				// }
 
 				// Chargement ?
 				if (this.validateChargement(piece, this.getSelectedPiece(), maree)) {

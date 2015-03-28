@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="munition.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3794">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3796" />
+      <stop
+         id="stop3806"
+         offset="0.5"
+         style="stop-color:#00a0a7;stop-opacity:1" />
+      <stop
+         style="stop-color:#00ffff;stop-opacity:1"
+         offset="1"
+         id="stop3798" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5431">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop5433" />
+      <stop
+         style="stop-color:#00a0a7;stop-opacity:1;"
+         offset="1"
+         id="stop5435" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5423"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#00a0a7;stop-opacity:1;"
+         offset="0"
+         id="stop5425" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3859">
+      <stop
+         id="stop3871"
+         offset="0"
+         style="stop-color:#e3dbdb;stop-opacity:0.49803922;" />
+      <stop
+         style="stop-color:#ccdbdb;stop-opacity:1;"
+         offset="1"
+         id="stop3863" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5431"
+       id="linearGradient5437"
+       x1="37.509216"
+       y1="1001.3437"
+       x2="77.083557"
+       y2="1001.3437"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5431"
+       id="radialGradient3790"
+       cx="57.296387"
+       cy="1001.3437"
+       fx="57.296387"
+       fy="1001.3437"
+       r="19.78717"
+       gradientTransform="matrix(1.3534457,0,0,1.2051106,-21.956947,-207.16235)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3794"
+       id="linearGradient3804"
+       x1="82.262489"
+       y1="1017.162"
+       x2="81.982658"
+       y2="985.31744"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5431"
+       id="linearGradient3892"
+       gradientUnits="userSpaceOnUse"
+       x1="37.509216"
+       y1="1001.3437"
+       x2="77.083557"
+       y2="1001.3437"
+       gradientTransform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5431"
+       id="linearGradient3894"
+       gradientUnits="userSpaceOnUse"
+       x1="37.509216"
+       y1="1001.3437"
+       x2="77.083557"
+       y2="1001.3437"
+       gradientTransform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5431"
+       id="linearGradient3896"
+       gradientUnits="userSpaceOnUse"
+       x1="37.509216"
+       y1="1001.3437"
+       x2="77.083557"
+       y2="1001.3437"
+       gradientTransform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5431"
+       id="linearGradient3898"
+       gradientUnits="userSpaceOnUse"
+       x1="37.509216"
+       y1="1001.3437"
+       x2="77.083557"
+       y2="1001.3437"
+       gradientTransform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5431"
+       id="linearGradient3900"
+       gradientUnits="userSpaceOnUse"
+       x1="37.509216"
+       y1="1001.3437"
+       x2="77.083557"
+       y2="1001.3437"
+       gradientTransform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.0617474"
+     inkscape:cx="54.659654"
+     inkscape:cy="-9.3880907"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1309"
+     inkscape:window-height="918"
+     inkscape:window-x="364"
+     inkscape:window-y="134"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:0.73821676;stroke-opacity:1"
+       id="path3897"
+       sodipodi:cx="55.115585"
+       sodipodi:cy="1001.3292"
+       sodipodi:rx="17.881945"
+       sodipodi:ry="17.881945"
+       d="M 70.318335,1010.7441 A 17.881945,17.881945 0 1 1 70.183263,991.69963"
+       sodipodi:start="0.55448225"
+       sodipodi:end="5.7145185"
+       sodipodi:open="true"
+       transform="matrix(1.3534457,0,0,1.3557868,-21.956947,-358.04104)"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 72.641772,1012.5003 9.725102,9.7419"
+       id="path3915"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 82.587898,1022.2422 0,-45.83136"
+       id="path3919"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 72.420746,986.15277 9.61459,-9.63122"
+       id="path3923"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 82.145848,976.63225 13.040478,0 0,44.94575 -12.598428,0.2214"
+       id="path3927"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:0.73821676;stroke-linejoin:miter;stroke-opacity:1"
+       id="path3931"
+       sodipodi:cx="57.32021"
+       sodipodi:cy="1000.676"
+       sodipodi:rx="7.5120502"
+       sodipodi:ry="7.5937028"
+       d="m 52.445356,1006.4536 a 7.5120502,7.5937028 0 1 1 9.492572,0.212"
+       sodipodi:start="2.2769838"
+       sodipodi:end="7.1919657"
+       sodipodi:open="true"
+       transform="matrix(1.3534457,0,0,1.3557868,-24.613848,-357.72792)"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 46.777241,1006.6139 -1.547177,4.6497"
+       id="path3933"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 45.125106,1010.7425 15.250729,0"
+       id="path3939"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 58.933618,1007.0568 1.098253,4.1058"
+       id="path3941"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 46.790648,1006.8353 12.156377,0"
+       id="path3945"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 50.976716,1006.3925 -0.663075,3.9853"
+       id="path3947"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 54.513117,1006.6139 0.44205,3.5425"
+       id="path3949"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.73821676;stroke-linejoin:miter;stroke-opacity:1"
+       id="path3951"
+       sodipodi:cx="54.952278"
+       sodipodi:cy="998.9613"
+       sodipodi:rx="1.5514016"
+       sodipodi:ry="1.469749"
+       d="m 56.50368,998.9613 a 1.5514016,1.469749 0 1 1 -3.102803,0 1.5514016,1.469749 0 1 1 3.102803,0 z"
+       transform="matrix(1.3534457,0,0,1.3557868,-24.613848,-357.8062)"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       transform="matrix(1.3534457,0,0,1.3557868,-17.481861,-357.79277)"
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.73821676;stroke-linejoin:miter;stroke-opacity:1"
+       id="path3951-0"
+       sodipodi:cx="54.952278"
+       sodipodi:cy="998.9613"
+       sodipodi:rx="1.5514016"
+       sodipodi:ry="1.469749"
+       d="m 56.50368,998.9613 a 1.5514016,1.469749 0 1 1 -3.102803,0 1.5514016,1.469749 0 1 1 3.102803,0 z"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.69999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 53.070802,999.87463 -1.905778,3.81137 3.663237,0.024 z"
+       id="path3971"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:url(#linearGradient5437);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 50.843653,1022.8695 c -2.36763,-0.1821 -2.988864,-0.303 -5.282968,-1.0277 -7.101934,-2.2437 -12.820108,-7.9251 -15.122766,-15.0256 -2.085487,-6.4309 -1.32701,-13.27817 2.12544,-19.18782 4.329878,-7.41156 12.385538,-11.77965 21.043107,-11.41039 7.033726,0.30001 13.435054,3.6256 17.568421,9.12705 0.990732,1.31865 1.320934,1.6198 1.602833,1.46176 0.195274,-0.10941 2.326768,-2.17814 4.736656,-4.59706 l 4.381611,-4.398 8.85e-4,21.36369 8.84e-4,21.36377 -4.254733,-4.2308 c -2.340102,-2.3268 -4.427537,-4.2899 -4.638745,-4.3626 -0.288816,-0.099 -0.677439,0.264 -1.567674,1.4652 -4.839599,6.5304 -12.560112,10.0765 -20.592867,9.4585 l -8.4e-5,0 z m 9.731841,-11.7571 c 0.08087,-0.2553 -0.02883,-1.1433 -0.243782,-1.9736 l -0.390825,-1.5094 1.039129,-1.1579 c 3.042624,-3.3899 3.716103,-8.38937 1.689027,-12.53827 -1.870011,-3.8273 -6.315806,-6.36844 -10.463109,-5.98048 -4.820188,0.45089 -8.816566,3.84443 -9.858364,8.37128 -0.289467,1.2578 -0.286611,4.01857 0.0054,5.28897 0.33079,1.4387 1.46126,3.6253 2.464834,4.7674 l 0.86834,0.9883 -0.591591,1.7794 c -0.4731,1.4231 -0.537754,1.8444 -0.3228,2.1039 0.226679,0.2736 1.474225,0.3245 7.962712,0.3245 7.617356,0 7.69538,0 7.840958,-0.4641 z"
+       id="path3977"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5439"
+       d="m 50.843653,1022.8695 c -2.36763,-0.1821 -2.988864,-0.303 -5.282968,-1.0277 -7.101934,-2.2437 -12.820108,-7.9251 -15.122766,-15.0256 -2.085487,-6.4309 -1.32701,-13.27817 2.12544,-19.18782 4.329878,-7.41156 12.385538,-11.77965 21.043107,-11.41039 7.033726,0.30001 13.435054,3.6256 17.568421,9.12705 0.990732,1.31865 1.320934,1.6198 1.602833,1.46176 0.195274,-0.10941 2.326768,-2.17814 4.736656,-4.59706 l 4.381611,-4.398 8.85e-4,21.36369 8.84e-4,21.36377 -4.254733,-4.2308 c -2.340102,-2.3268 -4.427537,-4.2899 -4.638745,-4.3626 -0.288816,-0.099 -0.677439,0.264 -1.567674,1.4652 -4.839599,6.5304 -12.560112,10.0765 -20.592867,9.4585 l -8.4e-5,0 z m 9.731841,-11.7571 c 0.08087,-0.2553 -0.02883,-1.1433 -0.243782,-1.9736 l -0.390825,-1.5094 1.039129,-1.1579 c 3.042624,-3.3899 3.716103,-8.38937 1.689027,-12.53827 -1.870011,-3.8273 -6.315806,-6.36844 -10.463109,-5.98048 -4.820188,0.45089 -8.816566,3.84443 -9.858364,8.37128 -0.289467,1.2578 -0.286611,4.01857 0.0054,5.28897 0.33079,1.4387 1.46126,3.6253 2.464834,4.7674 l 0.86834,0.9883 -0.591591,1.7794 c -0.4731,1.4231 -0.537754,1.8444 -0.3228,2.1039 0.226679,0.2736 1.474225,0.3245 7.962712,0.3245 7.617356,0 7.69538,0 7.840958,-0.4641 z"
+       style="fill:url(#linearGradient3900);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:url(#linearGradient3898);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 50.843653,1022.8695 c -2.36763,-0.1821 -2.988864,-0.303 -5.282968,-1.0277 -7.101934,-2.2437 -12.820108,-7.9251 -15.122766,-15.0256 -2.085487,-6.4309 -1.32701,-13.27817 2.12544,-19.18782 4.329878,-7.41156 12.385538,-11.77965 21.043107,-11.41039 7.033726,0.30001 13.435054,3.6256 17.568421,9.12705 0.990732,1.31865 1.320934,1.6198 1.602833,1.46176 0.195274,-0.10941 2.326768,-2.17814 4.736656,-4.59706 l 4.381611,-4.398 8.85e-4,21.36369 8.84e-4,21.36377 -4.254733,-4.2308 c -2.340102,-2.3268 -4.427537,-4.2899 -4.638745,-4.3626 -0.288816,-0.099 -0.677439,0.264 -1.567674,1.4652 -4.839599,6.5304 -12.560112,10.0765 -20.592867,9.4585 l -8.4e-5,0 z m 9.731841,-11.7571 c 0.08087,-0.2553 -0.02883,-1.1433 -0.243782,-1.9736 l -0.390825,-1.5094 1.039129,-1.1579 c 3.042624,-3.3899 3.716103,-8.38937 1.689027,-12.53827 -1.870011,-3.8273 -6.315806,-6.36844 -10.463109,-5.98048 -4.820188,0.45089 -8.816566,3.84443 -9.858364,8.37128 -0.289467,1.2578 -0.286611,4.01857 0.0054,5.28897 0.33079,1.4387 1.46126,3.6253 2.464834,4.7674 l 0.86834,0.9883 -0.591591,1.7794 c -0.4731,1.4231 -0.537754,1.8444 -0.3228,2.1039 0.226679,0.2736 1.474225,0.3245 7.962712,0.3245 7.617356,0 7.69538,0 7.840958,-0.4641 z"
+       id="path5441"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5443"
+       d="m 50.843653,1022.8695 c -2.36763,-0.1821 -2.988864,-0.303 -5.282968,-1.0277 -7.101934,-2.2437 -12.820108,-7.9251 -15.122766,-15.0256 -2.085487,-6.4309 -1.32701,-13.27817 2.12544,-19.18782 4.329878,-7.41156 12.385538,-11.77965 21.043107,-11.41039 7.033726,0.30001 13.435054,3.6256 17.568421,9.12705 0.990732,1.31865 1.320934,1.6198 1.602833,1.46176 0.195274,-0.10941 2.326768,-2.17814 4.736656,-4.59706 l 4.381611,-4.398 8.85e-4,21.36369 8.84e-4,21.36377 -4.254733,-4.2308 c -2.340102,-2.3268 -4.427537,-4.2899 -4.638745,-4.3626 -0.288816,-0.099 -0.677439,0.264 -1.567674,1.4652 -4.839599,6.5304 -12.560112,10.0765 -20.592867,9.4585 l -8.4e-5,0 z m 9.731841,-11.7571 c 0.08087,-0.2553 -0.02883,-1.1433 -0.243782,-1.9736 l -0.390825,-1.5094 1.039129,-1.1579 c 3.042624,-3.3899 3.716103,-8.38937 1.689027,-12.53827 -1.870011,-3.8273 -6.315806,-6.36844 -10.463109,-5.98048 -4.820188,0.45089 -8.816566,3.84443 -9.858364,8.37128 -0.289467,1.2578 -0.286611,4.01857 0.0054,5.28897 0.33079,1.4387 1.46126,3.6253 2.464834,4.7674 l 0.86834,0.9883 -0.591591,1.7794 c -0.4731,1.4231 -0.537754,1.8444 -0.3228,2.1039 0.226679,0.2736 1.474225,0.3245 7.962712,0.3245 7.617356,0 7.69538,0 7.840958,-0.4641 z"
+       style="fill:url(#linearGradient3896);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:url(#linearGradient3894);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 50.843653,1022.8695 c -2.36763,-0.1821 -2.988864,-0.303 -5.282968,-1.0277 -7.101934,-2.2437 -12.820108,-7.9251 -15.122766,-15.0256 -2.085487,-6.4309 -1.32701,-13.27817 2.12544,-19.18782 4.329878,-7.41156 12.385538,-11.77965 21.043107,-11.41039 7.033726,0.30001 13.435054,3.6256 17.568421,9.12705 0.990732,1.31865 1.320934,1.6198 1.602833,1.46176 0.195274,-0.10941 2.326768,-2.17814 4.736656,-4.59706 l 4.381611,-4.398 8.85e-4,21.36369 8.84e-4,21.36377 -4.254733,-4.2308 c -2.340102,-2.3268 -4.427537,-4.2899 -4.638745,-4.3626 -0.288816,-0.099 -0.677439,0.264 -1.567674,1.4652 -4.839599,6.5304 -12.560112,10.0765 -20.592867,9.4585 l -8.4e-5,0 z m 9.731841,-11.7571 c 0.08087,-0.2553 -0.02883,-1.1433 -0.243782,-1.9736 l -0.390825,-1.5094 1.039129,-1.1579 c 3.042624,-3.3899 3.716103,-8.38937 1.689027,-12.53827 -1.870011,-3.8273 -6.315806,-6.36844 -10.463109,-5.98048 -4.820188,0.45089 -8.816566,3.84443 -9.858364,8.37128 -0.289467,1.2578 -0.286611,4.01857 0.0054,5.28897 0.33079,1.4387 1.46126,3.6253 2.464834,4.7674 l 0.86834,0.9883 -0.591591,1.7794 c -0.4731,1.4231 -0.537754,1.8444 -0.3228,2.1039 0.226679,0.2736 1.474225,0.3245 7.962712,0.3245 7.617356,0 7.69538,0 7.840958,-0.4641 z"
+       id="path5445"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5447"
+       d="m 50.843653,1022.8695 c -2.36763,-0.1821 -2.988864,-0.303 -5.282968,-1.0277 -7.101934,-2.2437 -12.820108,-7.9251 -15.122766,-15.0256 -2.085487,-6.4309 -1.32701,-13.27817 2.12544,-19.18782 4.329878,-7.41156 12.385538,-11.77965 21.043107,-11.41039 7.033726,0.30001 13.435054,3.6256 17.568421,9.12705 0.990732,1.31865 1.320934,1.6198 1.602833,1.46176 0.195274,-0.10941 2.326768,-2.17814 4.736656,-4.59706 l 4.381611,-4.398 8.85e-4,21.36369 8.84e-4,21.36377 -4.254733,-4.2308 c -2.340102,-2.3268 -4.427537,-4.2899 -4.638745,-4.3626 -0.288816,-0.099 -0.677439,0.264 -1.567674,1.4652 -4.839599,6.5304 -12.560112,10.0765 -20.592867,9.4585 l -8.4e-5,0 z m 9.731841,-11.7571 c 0.08087,-0.2553 -0.02883,-1.1433 -0.243782,-1.9736 l -0.390825,-1.5094 1.039129,-1.1579 c 3.042624,-3.3899 3.716103,-8.38937 1.689027,-12.53827 -1.870011,-3.8273 -6.315806,-6.36844 -10.463109,-5.98048 -4.820188,0.45089 -8.816566,3.84443 -9.858364,8.37128 -0.289467,1.2578 -0.286611,4.01857 0.0054,5.28897 0.33079,1.4387 1.46126,3.6253 2.464834,4.7674 l 0.86834,0.9883 -0.591591,1.7794 c -0.4731,1.4231 -0.537754,1.8444 -0.3228,2.1039 0.226679,0.2736 1.474225,0.3245 7.962712,0.3245 7.617356,0 7.69538,0 7.840958,-0.4641 z"
+       style="fill:url(#linearGradient3892);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:url(#radialGradient3790);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 50.843653,1022.8695 c -2.36763,-0.1821 -2.988864,-0.303 -5.282968,-1.0277 -7.101934,-2.2437 -12.820108,-7.9251 -15.122766,-15.0256 -2.085487,-6.4309 -1.32701,-13.27817 2.12544,-19.18782 4.329878,-7.41156 12.385538,-11.77965 21.043107,-11.41039 7.033726,0.30001 13.435054,3.6256 17.568421,9.12705 0.990732,1.31865 1.320934,1.6198 1.602833,1.46176 0.195274,-0.10941 2.326768,-2.17814 4.736656,-4.59706 l 4.381611,-4.398 8.85e-4,21.36369 8.84e-4,21.36377 -4.254733,-4.2308 c -2.340102,-2.3268 -4.427537,-4.2899 -4.638745,-4.3626 -0.288816,-0.099 -0.677439,0.264 -1.567674,1.4652 -4.839599,6.5304 -12.560112,10.0765 -20.592867,9.4585 l -8.4e-5,0 z m 9.731841,-11.7571 c 0.08087,-0.2553 -0.02883,-1.1433 -0.243782,-1.9736 l -0.390825,-1.5094 1.039129,-1.1579 c 3.042624,-3.3899 3.716103,-8.38937 1.689027,-12.53827 -1.870011,-3.8273 -6.315806,-6.36844 -10.463109,-5.98048 -4.820188,0.45089 -8.816566,3.84443 -9.858364,8.37128 -0.289467,1.2578 -0.286611,4.01857 0.0054,5.28897 0.33079,1.4387 1.46126,3.6253 2.464834,4.7674 l 0.86834,0.9883 -0.591591,1.7794 c -0.4731,1.4231 -0.537754,1.8444 -0.3228,2.1039 0.226679,0.2736 1.474225,0.3245 7.962712,0.3245 7.617356,0 7.69538,0 7.840958,-0.4641 z"
+       id="path5449"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:url(#linearGradient3804);fill-opacity:1;stroke:#000000;stroke-width:0.69999993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 83.444847,999.31593 0,-21.83631 5.525626,0 5.525623,0 0,21.69801 0,21.69797 -4.834919,0 c -2.659208,0 -5.145739,0.062 -5.525626,0.1384 l -0.690704,0.1383 0,-21.83637 z"
+       id="path3792"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:none"
+       d="m 45.910218,1005.0375 c -4.761737,-5.41917 -1.540521,-14.14144 5.692244,-15.41345 3.519195,-0.6189 7.452922,1.30812 9.416231,4.61278 1.451506,2.4432 1.605527,6.13277 0.364047,8.72067 -0.375451,0.7827 -0.992952,1.7968 -1.372223,2.2534 l -0.689583,0.8303 -6.264338,0 -6.264338,0 -0.88204,-1.0037 z m 9.685473,-0.9614 c 0,-0.2879 -2.395282,-5.34147 -2.531745,-5.34147 -0.114772,0 -2.772857,5.19667 -2.772857,5.42107 0,0.062 1.193536,0.1139 2.652302,0.1139 1.458764,0 2.6523,-0.087 2.6523,-0.1937 z m -4.701255,-5.01837 c 0.458324,-0.1876 1.023951,-0.602 1.256948,-0.9209 0.486925,-0.6662 0.563487,-2.1313 0.151662,-2.9021 -0.643725,-1.2049 -2.655676,-1.7359 -3.979335,-1.0502 -0.887784,0.4599 -1.347997,1.2868 -1.347997,2.422 0,1.1827 0.760864,2.2359 1.841783,2.5495 0.997909,0.2893 1.14742,0.2823 2.076939,-0.098 l 0,0 z m 7.822048,-0.3419 c 1.417684,-1.0112 1.294185,-3.3196 -0.232746,-4.3504 -2.516525,-1.6988 -5.553492,1.0901 -3.987994,3.6622 0.840139,1.3804 2.801905,1.7003 4.22074,0.6882 z"
+       id="path3876"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 46.604765,1009.7175 c 0.06511,-0.17 0.240692,-0.718 0.39017,-1.2177 l 0.271776,-0.9087 1.291164,0 c 1.42191,0 1.415616,-0.014 1.1493,1.6051 l -0.137,0.8303 -1.541902,0 c -1.228676,0 -1.517852,-0.062 -1.423508,-0.309 z"
+       id="path3878"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 51.294987,1009.1962 c 0.271058,-1.6094 0.267264,-1.6051 1.414645,-1.6051 1.013295,0 1.069012,0.033 1.200743,0.6919 0.335806,1.682 0.289543,1.7435 -1.308537,1.7435 l -1.446679,0 0.139828,-0.8303 0,0 z"
+       id="path3880"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 55.717464,1009.7498 c -0.04695,-0.1523 -0.133828,-0.7003 -0.193056,-1.2178 l -0.10768,-0.9409 1.407111,0 1.407111,0 0.241786,0.8994 c 0.132976,0.4948 0.296648,1.0428 0.363703,1.2178 0.09901,0.2584 -0.174705,0.3182 -1.45584,0.3182 -1.069322,0 -1.605273,-0.089 -1.663137,-0.2767 z"
+       id="path3882"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 55.717464,1009.7498 c -0.04695,-0.1523 -0.133828,-0.7003 -0.193056,-1.2178 l -0.10768,-0.9409 1.407067,0 1.407068,0 0.340101,1.1471 c 0.187054,0.631 0.340099,1.179 0.340099,1.2178 0,0.039 -0.69935,0.07 -1.554112,0.07 -1.050405,0 -1.581784,-0.089 -1.639489,-0.2767 z"
+       id="path3888"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 45.910218,1005.0375 c -4.761737,-5.41917 -1.540521,-14.14144 5.692244,-15.41345 3.519195,-0.6189 7.452922,1.30812 9.416231,4.61278 1.451506,2.4432 1.605527,6.13277 0.364047,8.72067 -0.375451,0.7827 -0.992952,1.7968 -1.372223,2.2534 l -0.689583,0.8303 -6.264338,0 -6.264338,0 -0.88204,-1.0037 z m 9.685473,-0.9614 c 0,-0.2879 -2.395282,-5.34147 -2.531745,-5.34147 -0.114772,0 -2.772857,5.19667 -2.772857,5.42107 0,0.062 1.193536,0.1139 2.652302,0.1139 1.458764,0 2.6523,-0.087 2.6523,-0.1937 z m -4.701255,-5.01837 c 0.458324,-0.1876 1.023951,-0.602 1.256948,-0.9209 0.486925,-0.6662 0.563487,-2.1313 0.151662,-2.9021 -0.643725,-1.2049 -2.655676,-1.7359 -3.979335,-1.0502 -0.887784,0.4599 -1.347997,1.2868 -1.347997,2.422 0,1.1827 0.760864,2.2359 1.841783,2.5495 0.997909,0.2893 1.14742,0.2823 2.076939,-0.098 l 0,0 z m 7.822048,-0.3419 c 1.417684,-1.0112 1.294185,-3.3196 -0.232746,-4.3504 -2.516525,-1.6988 -5.553492,1.0901 -3.987994,3.6622 0.840139,1.3804 2.801905,1.7003 4.22074,0.6882 z"
+       id="path3890"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/munition.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>

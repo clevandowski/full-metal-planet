@@ -6,19 +6,22 @@
 		<script type="text/javascript" src="scripts/angular.js"></script>
 		<script type="text/javascript" src="scripts/plateau.js"></script>
 	</head>
-	<body>
+	<body style="overflow: hidden">
 		<div ng-app="myApp" ng-controller="myCtrl">
 
 			<!-- Voir la directive hexagonalCase associée -->
-			<label>Marée: <select 
+<!-- 			<label>Marée: <select 
 				ng-model="currentMaree" 
 				ng-options="maree.value as maree.name for maree in marees">
-			</select></label>
-			<span>Joueur: {{partie.getPlayer().name}}</span>
-			<span>Points: {{partie.tourPoints}}</span>
-			<button ng-show="partie.tourPoints <= 0" ng-click="partie.setTourToNextPlayer(); engine.centerPlateau()">Fin du tour</button>
+			</select></label> -->
+			<div id="info-partie">
+				<span class="info">JOUEUR: {{partie.getPlayer().name}}</span><br/>
+				<span class="info">POINTS: {{partie.tourPoints}}<button ng-show="partie.tourPoints <= 0" ng-click="partie.setTourToNextPlayer(); engine.centerPlateau()">Fin du tour</button></span><br/>
+				<span class="info">MAR&Eacute;E: {{partie.currentMaree.name}}</span><br/>
+				<span class="info">SUIVANTE: {{partie.nextMaree.name}}</span><br/>
+			</div>
 			<div id="soute" class="soute">
-				<div class="soute-container piece {{piece.pieceType.cssName}}" 
+				<div class="soute-container piece {{piece.pieceType.cssName}} {{engine.cssSelectedPieceSoute(piece)}}" 
 					ng-repeat="piece in engine.getSelectedPiece().contenu" ng-click="engine.onClickSoute(piece)">
 				</div>
 			</div>
@@ -26,7 +29,7 @@
 			<div class="container" id="container">
 				<div class="plateau" id="plateau">
 					<div class="hexagon-row" ng-repeat="ligne in plateau">
-						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="engine.onClick(hexagonalCase, currentMaree)">
+						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(partie.currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="engine.onClick(hexagonalCase, partie.currentMaree)">
 							<!-- {{hexagonalCase.x}}, {{hexagonalCase.y}} -->
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
 							<div ng-show="engine.getPieceIfAvailable(hexagonalCase)" class="piece {{engine.getPieceIfAvailable(hexagonalCase).pieceType.cssName}} {{engine.getPieceIfAvailable(hexagonalCase).orientation.cssName}}" right-click="hexagonalCase" coord-x="{{hexagonalCase.x}}" coord-y="{{hexagonalCase.y}}">
@@ -44,7 +47,7 @@
 			// Définition du controller myCtrl (ne pas oublier de la déclarer dans le html)
 			app.controller('myCtrl', function($scope) {
 				$scope.marees = MAREES;
-				$scope.currentMaree = $scope.marees[1].value;
+				// $scope.currentMaree = $scope.marees[1].value;
 
 				$scope.plateau = initPlateau(PLATEAU);
 				$scope.partie = new Partie($scope.plateau);
