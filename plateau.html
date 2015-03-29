@@ -4,7 +4,13 @@
 		<link rel="stylesheet" href="css/styles.css?v=1.0">
 		<script type="text/javascript" src="scripts/jquery-2.1.3.js"></script>
 		<script type="text/javascript" src="scripts/angular.js"></script>
+		<script type="text/javascript" src="scripts/constants.js"></script>
+		<script type="text/javascript" src="scripts/case.js"></script>
 		<script type="text/javascript" src="scripts/plateau.js"></script>
+		<script type="text/javascript" src="scripts/piece.js"></script>
+		<script type="text/javascript" src="scripts/player.js"></script>
+		<script type="text/javascript" src="scripts/partie.js"></script>
+		<script type="text/javascript" src="scripts/engine.js"></script>
 	</head>
 	<body style="overflow: hidden">
 		<div ng-app="myApp" ng-controller="myCtrl">
@@ -32,7 +38,7 @@
 			<div class="container" id="container">
 				<div class="plateau" id="plateau">
 					<div class="hexagon-row" ng-repeat="ligne in plateau">
-						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(partie.currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="GameEventListener.hi(); engine.onClick(hexagonalCase, partie.currentMaree)">
+						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(partie.currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="GameEventListener.onClickCase(hexagonalCase); engine.onClick(hexagonalCase)">
 							<!-- {{hexagonalCase.x}}, {{hexagonalCase.y}} -->
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
 							<div ng-show="engine.getPieceIfAvailable(hexagonalCase)" class="piece {{engine.getPieceIfAvailable(hexagonalCase).pieceType.cssName}} {{engine.getPieceIfAvailable(hexagonalCase).orientation.cssName}}" right-click="hexagonalCase" coord-x="{{hexagonalCase.x}}" coord-y="{{hexagonalCase.y}}">
@@ -51,12 +57,16 @@
 				return {
 					hi: function() {
       					$window.alert('Hello');
+    				},
+    				onClickCase: function(targetCase) {
+    					console.log('CoinCoinCoin: ' + targetCase.caseType.name);
+    					// console.log('CoinCoinCoin: ' + engine.partie.getPlayer().name);
     				}
 				}
 			}]);
 			// Définition du controller myCtrl (ne pas oublier de la déclarer dans le html)
 			app.controller('myCtrl', ['$scope', 'GameEventListener', function($scope, GameEventListener) {
-				$scope.marees = MAREES;
+				// $scope.marees = MAREES;
 				// $scope.currentMaree = $scope.marees[1].value;
 
 				$scope.plateau = initPlateau(PLATEAU);
