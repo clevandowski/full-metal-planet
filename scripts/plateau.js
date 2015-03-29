@@ -209,13 +209,14 @@ var Partie = function(plateau) {
 			this.tourPlayer = (this.tourPlayer + 1) % this.players.length;
 			if (this.tourPlayer == 0) {
 				this.tour ++;
+				// Changement de marée et détermination de la marée suivante
 				var randomMaree = Math.floor((Math.random() * 3));
 				this.currentMaree = this.nextMaree;
 				this.nextMaree = MAREES[randomMaree];
-				this.reloadMunitionOnDestroyers();
+				// Chargement des munitions de toutes les pieces de tupe destroyer
 			}
 		}
-
+		this.reloadMunitionOnDestroyers();
 		this.tourPoints = 15 + this.getPlayer().pointsEconomise;
 	}
 
@@ -248,8 +249,6 @@ var Partie = function(plateau) {
 	}
 
 	this.setTourToNextPlayer(true);
-	// this.tourPoints = this.getPlayer().pointEconomise + 15;
-	// this.reloadMunitionOnDestroyers();	
 }
 
 /* 

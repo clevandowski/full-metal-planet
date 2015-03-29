@@ -26,13 +26,13 @@
 				</div>
 			</div>
 			<div id="fin-tour" ng-click="partie.setTourToNextPlayer(false); engine.centerPlateau()">
-				<span>FIN DU TOUR</span><br/><br/>
+				<span>FIN DU TOUR</span><br/>
 				<span ng-show="partie.tourPoints <= 0">CLIC ! CLIC !</span>
 			</div>
 			<div class="container" id="container">
 				<div class="plateau" id="plateau">
 					<div class="hexagon-row" ng-repeat="ligne in plateau">
-						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(partie.currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="engine.onClick(hexagonalCase, partie.currentMaree)">
+						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(partie.currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="GameEventListener.hi(); engine.onClick(hexagonalCase, partie.currentMaree)">
 							<!-- {{hexagonalCase.x}}, {{hexagonalCase.y}} -->
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
 							<div ng-show="engine.getPieceIfAvailable(hexagonalCase)" class="piece {{engine.getPieceIfAvailable(hexagonalCase).pieceType.cssName}} {{engine.getPieceIfAvailable(hexagonalCase).orientation.cssName}}" right-click="hexagonalCase" coord-x="{{hexagonalCase.x}}" coord-y="{{hexagonalCase.y}}">
@@ -47,17 +47,25 @@
 			// dans le html)
 			var app = angular.module('myApp', []);
 
+			app.factory('GameEventListener', [ '$window', function($window) {
+				return {
+					hi: function() {
+      					$window.alert('Hello');
+    				}
+				}
+			}]);
 			// Définition du controller myCtrl (ne pas oublier de la déclarer dans le html)
-			app.controller('myCtrl', function($scope) {
+			app.controller('myCtrl', ['$scope', 'GameEventListener', function($scope, GameEventListener) {
 				$scope.marees = MAREES;
 				// $scope.currentMaree = $scope.marees[1].value;
 
 				$scope.plateau = initPlateau(PLATEAU);
 				$scope.partie = new Partie($scope.plateau);
 				$scope.engine = new Engine($scope.partie);
-
+				$scope.GameEventListener = GameEventListener;
+				// GameEventListener.hi();
 				// $scope.explosionTimer = function() { setTimeout(f)}
-			});
+			}]);
 			// app.directive('rightClick',function() {
 			//     document.oncontextmenu = function (e) {
 			//        if(e.target.hasAttribute('right-click')) {
