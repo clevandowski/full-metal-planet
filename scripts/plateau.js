@@ -159,7 +159,7 @@ var Piece = function(player, pieceType, x, y, orientation) {
 
 var Player = function(name) {
 	this.name = name;
-	this.pointEconomise = 0;
+	this.pointsEconomise = 0;
 	this.selectedPiece = null;
 	this.selectedPieceSoute = null;
 }
@@ -167,10 +167,6 @@ var Player = function(name) {
 var Partie = function(plateau) {
 	this.plateau = plateau;
 	this.tour = 0;
-	var randomMaree = Math.floor((Math.random() * 3));
-	this.currentMaree = MAREES[randomMaree];
-	randomMaree = Math.floor((Math.random() * 3));
-	this.nextMaree = MAREES[randomMaree];
 	this.players = [
 		new Player('Damien'),
 		new Player('Noémie')
@@ -194,23 +190,33 @@ var Partie = function(plateau) {
 	];
 
 	this.setTourToNextPlayer = function(init) {
-		if (init != true) { 
+		if (init == true) {
+			var randomMaree = Math.floor((Math.random() * 3));
+			this.currentMaree = MAREES[randomMaree];
+			randomMaree = Math.floor((Math.random() * 3));
+			this.nextMaree = MAREES[randomMaree];
+		} else {
+			// Avant de changer de tour, on récupère les points économisés du player
+			if (this.tourPoints >= 10) {
+				this.getPlayer().pointsEconomise = 10;
+			} else if (this.tourPoints >= 5 && this.tourPoints < 10) {
+				this.getPlayer().pointsEconomise = 5;
+			} else {
+				this.getPlayer().pointsEconomise = 0;
+			}
+
+			// Joueur suivant
 			this.tourPlayer = (this.tourPlayer + 1) % this.players.length;
 			if (this.tourPlayer == 0) {
 				this.tour ++;
 				var randomMaree = Math.floor((Math.random() * 3));
 				this.currentMaree = this.nextMaree;
 				this.nextMaree = MAREES[randomMaree];
+				this.reloadMunitionOnDestroyers();
 			}
 		}
-		// Nouveau tour ?
-		if (this.tourPlayer == 0) {
-			this.reloadMunitionOnDestroyers();
-			// TODO
-			// this.nextMaree();
-		}
 
-		this.tourPoints = this.getPlayer().pointEconomise + 15;
+		this.tourPoints = 15 + this.getPlayer().pointsEconomise;
 	}
 
 	this.reloadMunitionOnDestroyers = function() {
@@ -241,8 +247,9 @@ var Partie = function(plateau) {
 		});
 	}
 
-	this.tourPoints = this.getPlayer().pointEconomise + 15;
-	this.reloadMunitionOnDestroyers();	
+	this.setTourToNextPlayer(true);
+	// this.tourPoints = this.getPlayer().pointEconomise + 15;
+	// this.reloadMunitionOnDestroyers();	
 }
 
 /* 

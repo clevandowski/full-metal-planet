@@ -74,6 +74,25 @@
     float: left;
 }
 
+#fin-tour {
+    position: relative;
+    float: left;
+    /*clear: left;*/
+    border-color: black;
+    border-style: solid;
+    border-width: 5px;
+    box-shadow: 8px, 8px, 0px, #aaa;
+    width: 120px;
+    height: 104px;
+    background-color: brown;
+    text-align: center;
+    vertical-align: text-middle;
+    color: #fff;
+    font-size: 24px;
+}
+#fin-tour:hover {
+    -webkit-filter: brightness(1.5);
+}
 
 .orientation-nord {
     -webkit-transform: rotate(180deg);

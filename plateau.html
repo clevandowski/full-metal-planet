@@ -16,7 +16,7 @@
 			</select></label> -->
 			<div id="info-partie">
 				<span class="info">JOUEUR: {{partie.getPlayer().name}}</span><br/>
-				<span class="info">POINTS: {{partie.tourPoints}}<button ng-show="partie.tourPoints <= 0" ng-click="partie.setTourToNextPlayer(); engine.centerPlateau()">Fin du tour</button></span><br/>
+				<span class="info">POINTS: {{partie.tourPoints}}</span><span ng-show="partie.getPlayer().pointsEconomise > 0"> (+{{partie.getPlayer().pointsEconomise}})</span><br/>
 				<span class="info">MAR&Eacute;E: {{partie.currentMaree.name}}</span><br/>
 				<span class="info">SUIVANTE: {{partie.nextMaree.name}}</span><br/>
 			</div>
@@ -25,7 +25,10 @@
 					ng-repeat="piece in engine.getSelectedPiece().contenu" ng-click="engine.onClickSoute(piece)">
 				</div>
 			</div>
-			<hr>
+			<div id="fin-tour" ng-click="partie.setTourToNextPlayer(false); engine.centerPlateau()">
+				<span>FIN DU TOUR</span><br/><br/>
+				<span ng-show="partie.tourPoints <= 0">CLIC ! CLIC !</span>
+			</div>
 			<div class="container" id="container">
 				<div class="plateau" id="plateau">
 					<div class="hexagon-row" ng-repeat="ligne in plateau">
@@ -53,7 +56,7 @@
 				$scope.partie = new Partie($scope.plateau);
 				$scope.engine = new Engine($scope.partie);
 
-				$scope.explosionTimer = function() { setTimeout(f)}
+				// $scope.explosionTimer = function() { setTimeout(f)}
 			});
 			// app.directive('rightClick',function() {
 			//     document.oncontextmenu = function (e) {
