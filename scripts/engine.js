@@ -7,6 +7,32 @@
 /*
  * @Import(constant.js, case.js, piece.js, player.js, partie.js, plateau.js)
  */
+var GameDisplayService = function(partie) {
+	this.getCurrentPlayerName = function() {
+		return partie.getPlayer().name;
+	}
+	this.getCurrentPlayerTourPoint = function() {
+		return partie.tourPoints;
+	}
+	this.showCurrentPlayerPointsEconomise = function() {
+		return partie.getPlayer().pointsEconomise > 0;
+	}
+	this.getCurrentPlayerPointsEconomise = function() {
+		return partie.getPlayer().pointsEconomise;
+	}
+	this.getCurrentMareeName = function() {
+		return partie.currentMaree.name;
+	}
+	this.getNextMareeName = function() {
+		return partie.nextMaree.name;
+	}
+	this.getContenuSelectedPiece = function () {
+		return partie.getPlayer().selectedPiece.contenu;
+	}
+	this.getPlateau = function() {
+		return partie.plateau;
+	}
+}
 
 /* 
  * engine
@@ -18,16 +44,17 @@ var Engine = function(partie) {
 	this.partie = partie;
 
 	/*
-	 * @UtilService
+	 * @EngineService
 	 */
-	this.setPieceToCase = function(piece, hexagonalCase) {
+	this._setPieceToCase = function(piece, hexagonalCase) {
 		piece.x = hexagonalCase.x;
 		piece.y = hexagonalCase.y;
 	}
+
 	/*
 	 * @UtilService
 	 */
-	this.areCoordinatesInRadius = function(x0, y0, x1, y1, radius) {
+	this._areCoordinatesInRadius = function(x0, y0, x1, y1, radius) {
 		var deltaX = x1 - x0;
 		var deltaY = y1 - y0;
 
@@ -56,7 +83,7 @@ var Engine = function(partie) {
 	 * @UtilService
 	 */
 	this.areCoordinatesAdjacent = function(x0, y0, x1, y1) {
-		return this.areCoordinatesInRadius(x0, y0, x1, y1, 1);
+		return this._areCoordinatesInRadius(x0, y0, x1, y1, 1);
 	}
 
 	/*
@@ -509,12 +536,12 @@ var Engine = function(partie) {
 				var caseAvantBargeCoords = this.getCaseCoordsInOrientation(piece, piece.orientation);
 				var caseAvantBarge = this.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
 				var nextOrientation = this.getOrientation(caseAvantBarge, targetCase);
-				this.setPieceToCase(piece, caseAvantBarge);
+				this._setPieceToCase(piece, caseAvantBarge);
 				piece.orientation = nextOrientation;
 			}
 		} else {
 			piece.orientation = this.getOrientation(piece, targetCase);
-			this.setPieceToCase(piece, targetCase);
+			this._setPieceToCase(piece, targetCase);
 		}
 	}
 
@@ -627,7 +654,7 @@ var Engine = function(partie) {
 		} else {
 			this.partie.pieces.push(pieceADecharger);
 			pieceTransporter.getContenu().splice(index, 1);
-			this.setPieceToCase(pieceADecharger, targetCase);
+			this._setPieceToCase(pieceADecharger, targetCase);
 		}
 	}
 

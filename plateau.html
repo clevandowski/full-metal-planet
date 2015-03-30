@@ -5,6 +5,7 @@
 		<script type="text/javascript" src="scripts/jquery-2.1.3.js"></script>
 		<script type="text/javascript" src="scripts/angular.js"></script>
 		<script type="text/javascript" src="scripts/constants.js"></script>
+		<script type="text/javascript" src="scripts/tools.js"></script>
 		<script type="text/javascript" src="scripts/case.js"></script>
 		<script type="text/javascript" src="scripts/plateau.js"></script>
 		<script type="text/javascript" src="scripts/piece.js"></script>
@@ -21,14 +22,14 @@
 				ng-options="maree.value as maree.name for maree in marees">
 			</select></label> -->
 			<div id="info-partie">
-				<span class="info">JOUEUR: {{partie.getPlayer().name}}</span><br/>
-				<span class="info">POINTS: {{partie.tourPoints}}</span><span ng-show="partie.getPlayer().pointsEconomise > 0"> (+{{partie.getPlayer().pointsEconomise}})</span><br/>
-				<span class="info">MAR&Eacute;E: {{partie.currentMaree.name}}</span><br/>
-				<span class="info">SUIVANTE: {{partie.nextMaree.name}}</span><br/>
+				<!-- <span class="info">JOUEUR: {{partie.getPlayer().name}}</span><br/> -->
+				<span class="info">JOUEUR: {{display.getCurrentPlayerName()}}</span><br/>
+				<span class="info">POINTS: {{display.getCurrentPlayerTourPoint()}}</span><span ng-show="display.showCurrentPlayerPointsEconomise()"> (+{{display.getCurrentPlayerPointsEconomise()}})</span><br/>
+				<span class="info">MAR&Eacute;E: {{display.getCurrentMareeName()}}</span><br/>
+				<span class="info">SUIVANTE: {{display.getNextMareeName()}}</span><br/>
 			</div>
 			<div id="soute" class="soute">
-				<div class="soute-container piece {{piece.pieceType.cssName}} {{engine.cssSelectedPieceSoute(piece)}}" 
-					ng-repeat="piece in engine.getSelectedPiece().contenu" ng-click="engine.onClickSoute(piece)">
+				<div class="soute-container piece {{piece.pieceType.cssName}} {{engine.cssSelectedPieceSoute(piece)}}" ng-repeat="piece in display.getContenuSelectedPiece()" ng-click="engine.onClickSoute(piece)">
 				</div>
 			</div>
 			<div id="fin-tour" ng-click="partie.setTourToNextPlayer(false); engine.centerPlateau()">
@@ -37,7 +38,7 @@
 			</div>
 			<div class="container" id="container">
 				<div class="plateau" id="plateau">
-					<div class="hexagon-row" ng-repeat="ligne in plateau">
+					<div class="hexagon-row" ng-repeat="ligne in display.getPlateau()">
 						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(partie.currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="GameEventListener.onClickCase(hexagonalCase); engine.onClick(hexagonalCase)">
 							<!-- {{hexagonalCase.x}}, {{hexagonalCase.y}} -->
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
@@ -53,26 +54,41 @@
 			// dans le html)
 			var app = angular.module('myApp', []);
 
-			app.factory('GameEventListener', [ '$window', function($window) {
+			app.factory('PlateauService', [ function() {
+				var plateau = new Plateau();
 				return {
-					hi: function() {
-      					$window.alert('Hello');
-    				},
-    				onClickCase: function(targetCase) {
-    					console.log('CoinCoinCoin: ' + targetCase.caseType.name);
-    					// console.log('CoinCoinCoin: ' + engine.partie.getPlayer().name);
+					getPlateau: function() {
+      					return plateau.cases;
     				}
 				}
 			}]);
-			// Définition du controller myCtrl (ne pas oublier de la déclarer dans le html)
-			app.controller('myCtrl', ['$scope', 'GameEventListener', function($scope, GameEventListener) {
-				// $scope.marees = MAREES;
-				// $scope.currentMaree = $scope.marees[1].value;
+			app.factory('PartieService', [ 'PlateauService', function(PlateauService) {
+				return new Partie(PlateauService.getPlateau());
+			}]);
 
-				$scope.plateau = initPlateau(PLATEAU);
-				$scope.partie = new Partie($scope.plateau);
+			app.factory('GameEventListener', [ '$window', function($window) {
+				return {
+    				onClickCase: function(targetCase) {
+    					console.log('CoinCoinCoin: ' + targetCase.caseType.name);
+    				},
+    				// func1: function(...) { },
+    				// func1: function(...) { }, ...
+				}
+			}]);
+
+			app.factory('GameDisplayService', [ 'PartieService', function(PartieService) {
+				return new GameDisplayService(PartieService);
+			}]);
+
+			// Définition du controller myCtrl (ne pas oublier de la déclarer dans le html)
+			app.controller('myCtrl', ['$scope', 'GameEventListener', 'PartieService', 'GameDisplayService', function($scope, GameEventListener, PartieService, GameDisplayService) {
+
+				$scope.tools = new Tools();
+				$scope.partie = PartieService;
 				$scope.engine = new Engine($scope.partie);
-				$scope.GameEventListener = GameEventListener;
+				$scope.listener = GameEventListener;
+				$scope.display = GameDisplayService;
+				// console.log('RAW_DATAS.length: ' + RAW_DATAS.length);
 				// GameEventListener.hi();
 				// $scope.explosionTimer = function() { setTimeout(f)}
 			}]);
