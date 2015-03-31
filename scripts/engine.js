@@ -27,10 +27,107 @@ var GameDisplayService = function(partie) {
 		return partie.nextMaree.name;
 	}
 	this.getContenuSelectedPiece = function () {
-		return partie.getPlayer().selectedPiece.contenu;
+		if (partie.getPlayer().selectedPiece) {
+			return partie.getPlayer().selectedPiece.contenu;
+		}
 	}
 	this.getPlateau = function() {
 		return partie.plateau;
+	}
+	this.getCssPieceSoute = function(piece) {
+		return 'soute-container piece ' 
+			+ piece.pieceType.cssName + ' ' 
+			+ this.cssSelectedPieceSoute(piece);
+	}
+
+
+	this.noActionPointAnymore = function() {
+		return partie.tourPoints <= 0;
+	}
+
+	this.getCssCase = function(targetCase) {
+		return 'hexagon-case '
+			+ targetCase.getCaseTypeMaree(partie.currentMaree).cssName
+			+ this.cssSelectedPiece(targetCase);
+	}
+
+	/*
+	 * @PartieService
+	 * Retourne la piece posee sur l'instance de la case en fonction de la partie.
+	 * Retourne null s'il n'y a pas de piece sur la case
+	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
+	 */
+	this.getPieceIfAvailable = function(hexagonalCase) {
+		for (var i = 0; i < partie.pieces.length; i++) {
+			var piece = partie.pieces[i];
+			// Match !
+			if (hexagonalCase.x == piece.x 
+				&& hexagonalCase.y == piece.y) {
+				return piece;
+			}
+		}
+		return null;
+	}
+
+	this.getCssPiece = function(targetCase) {
+		var piece = this.getPieceIfAvailable(targetCase);
+
+		if (piece == null) {
+			return 'piece';
+		} else {
+			return 'piece ' 
+			+ piece.pieceType.cssName + ' '
+			+ piece.orientation.cssName;
+		}
+	}
+	/*
+	 * @CssService
+	 * @dependsOn(@PartieService, getSelectedPiece)
+	 */	
+	this.cssSelectedPiece = function(targetCase) {
+	 	if (this.getSelectedPiece() != null
+	 		&& targetCase.x == this.getSelectedPiece().x
+	 		&& targetCase.y == this.getSelectedPiece().y) {
+ 			return ' selectedPiece';
+ 		} else {
+ 			return '';
+ 		}
+	 		// TODO Corriger la css pour que le résultat sur la barge ne soit pas
+	 		// trop horrible
+	 		// else if (this.getSelectedPiece().pieceType == PIECE_TYPE.BARGE) {
+	 		// 	var caseBarge = this.getCasePiece(this.getSelectedPiece());
+	 		// 	var caseAvantBargeCoords = 
+	 		// 		this.getCaseCoordsInOrientation(caseBarge, this.getSelectedPiece().orientation);
+				// if ((targetCase.x == caseAvantBargeCoords.x)
+			 // 		&& (targetCase.y == caseAvantBargeCoords.y)) {
+				//  	return 'selectedPiece';
+				// }
+	 		// }	
+	}
+	/*
+	 * @CssService
+	 * @dependsOn(@PartieService, getSelectedPiece)
+	 */	
+	this.cssSelectedPieceSoute = function(piece) {
+	 	if (this.getSelectedPieceSoute() == piece) {
+ 			return 'selectedPiece';
+	 	} else {
+	 		return '';
+	 	}
+	}
+
+
+	/*
+	 * @PartieService
+	 */
+	this.getSelectedPieceSoute = function () {
+		return partie.getPlayer().selectedPieceSoute;
+	}
+	/*
+	 * @PartieService
+	 */
+	this.getSelectedPiece = function () {
+		return partie.getPlayer().selectedPiece;
 	}
 }
 
@@ -320,42 +417,6 @@ var Engine = function(partie) {
 		}
 		return nbDestructeurEnnemisDansZone;
 	}
-
-	/*
-	 * @CssService
-	 * @dependsOn(@PartieService, getSelectedPiece)
-	 */	
-	this.cssSelectedPiece = function(targetCase) {
-	 	if (this.getSelectedPiece() != null) {
-	 		if ((targetCase.x == this.getSelectedPiece().x)
-	 			&& (targetCase.y == this.getSelectedPiece().y)) {
-	 			return 'selectedPiece';
-	 		}
-	 		// TODO Corriger la css pour que le résultat sur la barge ne soit pas
-	 		// trop horrible
-	 		// else if (this.getSelectedPiece().pieceType == PIECE_TYPE.BARGE) {
-	 		// 	var caseBarge = this.getCasePiece(this.getSelectedPiece());
-	 		// 	var caseAvantBargeCoords = 
-	 		// 		this.getCaseCoordsInOrientation(caseBarge, this.getSelectedPiece().orientation);
-				// if ((targetCase.x == caseAvantBargeCoords.x)
-			 // 		&& (targetCase.y == caseAvantBargeCoords.y)) {
-				//  	return 'selectedPiece';
-				// }
-	 		// }	
-	 	}
-	}
-	/*
-	 * @CssService
-	 * @dependsOn(@PartieService, getSelectedPiece)
-	 */	
-	this.cssSelectedPieceSoute = function(targetCase) {
-	 	if (this.getSelectedPieceSoute() != null) {
-	 		if ((targetCase.x == this.getSelectedPieceSoute().x)
-	 			&& (targetCase.y == this.getSelectedPieceSoute().y)) {
-	 			return 'selectedPiece';
-	 		}
-	 	}
-	 }
 
 	/*
 	 * @???Service
@@ -702,6 +763,27 @@ var Engine = function(partie) {
 		this.partie.pieces.splice(index, 1);
 		this.partie.tourPoints -=2;
 		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + piece.player.name + ' par ' + this.partie.getPlayer().name);
+	}
+
+	/*
+	 * TODO A finir pour le listener
+	 */
+	this.onClickNew = function(targetCase) {
+		if (this.partie.tourPoints <= 0) {
+			throw 'Plus aucun point d\'action restants pour le joueur ' + this.partie.getPlayer().name;
+		}
+
+		var maree = this.partie.currentMaree;
+		var piece = this.getPieceIfAvailable(targetCase);
+
+		var actionDetected = this._detectPlayerAction(targetCase);
+		var validation = this._validatePlayerAction(actionDetected);
+
+		if (validation.result) {
+			actionDetected.execute();
+		} else {
+			throw validation.errorMessage;
+		}
 	}
 
 	/*

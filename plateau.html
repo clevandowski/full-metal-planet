@@ -16,33 +16,40 @@
 	<body style="overflow: hidden">
 		<div ng-app="myApp" ng-controller="myCtrl">
 
-			<!-- Voir la directive hexagonalCase associée -->
-<!-- 			<label>Marée: <select 
-				ng-model="currentMaree" 
-				ng-options="maree.value as maree.name for maree in marees">
-			</select></label> -->
 			<div id="info-partie">
-				<!-- <span class="info">JOUEUR: {{partie.getPlayer().name}}</span><br/> -->
 				<span class="info">JOUEUR: {{display.getCurrentPlayerName()}}</span><br/>
 				<span class="info">POINTS: {{display.getCurrentPlayerTourPoint()}}</span><span ng-show="display.showCurrentPlayerPointsEconomise()"> (+{{display.getCurrentPlayerPointsEconomise()}})</span><br/>
 				<span class="info">MAR&Eacute;E: {{display.getCurrentMareeName()}}</span><br/>
 				<span class="info">SUIVANTE: {{display.getNextMareeName()}}</span><br/>
 			</div>
 			<div id="soute" class="soute">
-				<div class="soute-container piece {{piece.pieceType.cssName}} {{engine.cssSelectedPieceSoute(piece)}}" ng-repeat="piece in display.getContenuSelectedPiece()" ng-click="engine.onClickSoute(piece)">
+				<div 
+					ng-repeat="piece in display.getContenuSelectedPiece()" 
+					ng-class="display.getCssPieceSoute(piece)" 
+					ng-click="engine.onClickSoute(piece)">
 				</div>
 			</div>
 			<div id="fin-tour" ng-click="partie.setTourToNextPlayer(false); engine.centerPlateau()">
+				<span ng-show="display.noActionPointAnymore()">CLIC !<br/></span>
 				<span>FIN DU TOUR</span><br/>
-				<span ng-show="partie.tourPoints <= 0">CLIC ! CLIC !</span>
+				<span ng-show="display.noActionPointAnymore()">CLIC !</span>
 			</div>
-			<div class="container" id="container">
+			<div class="container">
 				<div class="plateau" id="plateau">
-					<div class="hexagon-row" ng-repeat="ligne in display.getPlateau()">
-						<div class="hexagon-case {{hexagonalCase.getCaseTypeMaree(partie.currentMaree).cssName}} {{engine.cssSelectedPiece(hexagonalCase)}}" ng-repeat="hexagonalCase in ligne" ng-click="GameEventListener.onClickCase(hexagonalCase); engine.onClick(hexagonalCase)">
-							<!-- {{hexagonalCase.x}}, {{hexagonalCase.y}} -->
+					<div 
+						ng-repeat="ligne in display.getPlateau()"
+						class="hexagon-row">
+						<div 
+							ng-repeat="hexagonalCase in ligne"
+							ng-class="display.getCssCase(hexagonalCase)" 
+							ng-click="engine.onClick(hexagonalCase)">
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
-							<div ng-show="engine.getPieceIfAvailable(hexagonalCase)" class="piece {{engine.getPieceIfAvailable(hexagonalCase).pieceType.cssName}} {{engine.getPieceIfAvailable(hexagonalCase).orientation.cssName}}" right-click="hexagonalCase" coord-x="{{hexagonalCase.x}}" coord-y="{{hexagonalCase.y}}">
+							<div 
+								ng-show="display.getPieceIfAvailable(hexagonalCase)" 
+								ng-class="display.getCssPiece(hexagonalCase)"
+								right-click="hexagonalCase"
+								coord-x="{{hexagonalCase.x}}"
+								coord-y="{{hexagonalCase.y}}">
 							</div>
 						</div>
 					</div>
@@ -50,8 +57,6 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			// Récupération de l'application myApp (ne pas oublier de la déclarer 
-			// dans le html)
 			var app = angular.module('myApp', []);
 
 			app.factory('PlateauService', [ function() {
@@ -70,7 +75,7 @@
 				return {
     				onClickCase: function(targetCase) {
     					console.log('CoinCoinCoin: ' + targetCase.caseType.name);
-    				},
+    				}
     				// func1: function(...) { },
     				// func1: function(...) { }, ...
 				}
@@ -88,9 +93,6 @@
 				$scope.engine = new Engine($scope.partie);
 				$scope.listener = GameEventListener;
 				$scope.display = GameDisplayService;
-				// console.log('RAW_DATAS.length: ' + RAW_DATAS.length);
-				// GameEventListener.hi();
-				// $scope.explosionTimer = function() { setTimeout(f)}
 			}]);
 			// app.directive('rightClick',function() {
 			//     document.oncontextmenu = function (e) {
