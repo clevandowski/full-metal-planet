@@ -109,3 +109,11 @@ var ZONE_VERIFICATION_MENACE_TIR = [
 	{ x: 2, y: 2, distance: 3 },
 	{ x: 0, y: 3, distance: 3 }
 ]
+
+var PLAYER_ACTION_TYPE = {
+	SELECT: {},
+	MOVE: {},
+	LOAD: {},
+	UNLOAD: {},
+	ATTACK: {}
+}

@@ -11,11 +11,12 @@
 		<script type="text/javascript" src="scripts/piece.js"></script>
 		<script type="text/javascript" src="scripts/player.js"></script>
 		<script type="text/javascript" src="scripts/partie.js"></script>
+		<script type="text/javascript" src="scripts/display-service.js"></script>
 		<script type="text/javascript" src="scripts/engine.js"></script>
+		<script type="text/javascript" src="scripts/event-listener.js"></script>
 	</head>
 	<body style="overflow: hidden">
 		<div ng-app="myApp" ng-controller="myCtrl">
-
 			<div id="info-partie">
 				<span class="info">JOUEUR: {{display.getCurrentPlayerName()}}</span><br/>
 				<span class="info">POINTS: {{display.getCurrentPlayerTourPoint()}}</span><span ng-show="display.showCurrentPlayerPointsEconomise()"> (+{{display.getCurrentPlayerPointsEconomise()}})</span><br/>
@@ -29,12 +30,13 @@
 					ng-click="engine.onClickSoute(piece)">
 				</div>
 			</div>
-			<div id="fin-tour" ng-click="partie.setTourToNextPlayer(false); engine.centerPlateau()">
+			<div id="fin-tour" ng-click="listener.onFinDuTour(); display.centerPlateau()">
 				<span ng-show="display.noActionPointAnymore()">CLIC !<br/></span>
 				<span>FIN DU TOUR</span><br/>
 				<span ng-show="display.noActionPointAnymore()">CLIC !</span>
 			</div>
-			<div class="container">
+			<!-- class pour le css, id pour jquery (méthode engine.centerPlateau()) --> 
+			<div class="container" id="container">
 				<div class="plateau" id="plateau">
 					<div 
 						ng-repeat="ligne in display.getPlateau()"
@@ -45,7 +47,7 @@
 							ng-click="engine.onClick(hexagonalCase)">
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
 							<div 
-								ng-show="display.getPieceIfAvailable(hexagonalCase)" 
+								ng-show="display.isPieceOnCase(hexagonalCase)" 
 								ng-class="display.getCssPiece(hexagonalCase)"
 								right-click="hexagonalCase"
 								coord-x="{{hexagonalCase.x}}"
@@ -71,28 +73,26 @@
 				return new Partie(PlateauService.getPlateau());
 			}]);
 
-			app.factory('GameEventListener', [ '$window', function($window) {
-				return {
-    				onClickCase: function(targetCase) {
-    					console.log('CoinCoinCoin: ' + targetCase.caseType.name);
-    				}
-    				// func1: function(...) { },
-    				// func1: function(...) { }, ...
-				}
+			app.factory('Engine', [ 'PartieService', function(PartieService) {
+				return new Engine(PartieService);
 			}]);
 
-			app.factory('GameDisplayService', [ 'PartieService', function(PartieService) {
-				return new GameDisplayService(PartieService);
+			app.factory('EventListener', [ 'PartieService', function(PartieService) {
+				return new EventListener(PartieService);
 			}]);
 
-			// Définition du controller myCtrl (ne pas oublier de la déclarer dans le html)
-			app.controller('myCtrl', ['$scope', 'GameEventListener', 'PartieService', 'GameDisplayService', function($scope, GameEventListener, PartieService, GameDisplayService) {
+			app.factory('DisplayService', [ 'PartieService', function(PartieService) {
+				return new DisplayService(PartieService);
+			}]);
 
-				$scope.tools = new Tools();
-				$scope.partie = PartieService;
-				$scope.engine = new Engine($scope.partie);
-				$scope.listener = GameEventListener;
-				$scope.display = GameDisplayService;
+			app.controller('myCtrl', ['$scope', 'PartieService', 'EventListener', 'Engine', 'DisplayService', function($scope, PartieService, EventListener, Engine, DisplayService) {
+
+				$scope.engine = Engine;
+				$scope.listener = EventListener;
+				$scope.display = DisplayService;
+
+				// Initialisation plateau
+				$scope.display.centerPlateau();
 			}]);
 			// app.directive('rightClick',function() {
 			//     document.oncontextmenu = function (e) {

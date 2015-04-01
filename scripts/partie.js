@@ -81,6 +81,153 @@ var Partie = function(plateau) {
 			});
 		});
 	}
+	/*
+	 * @PartieService
+	 */
+	this.getSelectedPiece = function () {
+		return this.getPlayer().selectedPiece;
+	}
+	/*
+	 * @PartieService
+	 * Retourne la piece posee sur l'instance de la case en fonction de la partie.
+	 * Retourne null s'il n'y a pas de piece sur la case
+	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
+	 */
+	this.getPieceIfAvailable = function(targetCase) {
+		var pieces = this.pieces;
+		for (var i = 0; i < pieces.length; i++) {
+			var piece = pieces[i];
+			// Match !
+			if ((targetCase.x == piece.x) 
+				&& (targetCase.y == piece.y)) {
+				return piece;
+			}
+		}
+		return null;
+	}
+	/*
+	 * @PartieService
+	 */
+	this.getCase = function(x, y) {
+		return this.plateau[y][x];
+	}
+	/*
+	 * @PartieService
+	 * Retoune la case (type FMPCase) sur laquelle la piece est posee.
+	 */
+	this.getCasePiece = function(piece) {
+		return this.plateau[piece.y][piece.x];
+	}
+	/*
+	 * @PartieService
+	 */
+	this.setSelectedPiece = function (piece) {
+		this.getPlayer().selectedPiece = piece;
+	}
+	/*
+	 * @PartieService
+	 */
+	this.getSelectedPieceSoute = function () {
+		return this.getPlayer().selectedPieceSoute;
+	}
+	/*
+	 * @PartieService
+	 */
+	this.setSelectedPieceSoute = function(piece) {
+		this.getPlayer().selectedPieceSoute = piece;
+	}
+
+	/*
+	 * @PartieService car utilise getCase et getPieceIfAvailable
+	 */
+	this.getEnemiesThatCanAttackInRange = function(x, y, player) {
+		var enemiesInRange = [];
+		var parite = x & 1;
+
+		for (var i = 0; i < ZONE_VERIFICATION_MENACE_TIR.length; i++) {
+			var relativeCase = ZONE_VERIFICATION_MENACE_TIR[i];
+			var currentX = x + relativeCase.x;;
+
+			if (currentX >= 0
+				&& currentX < PLATEAU_WIDTH) {
+				var currentY;
+				if (parite == 0) {
+					currentY = y + relativeCase.y;
+				} else {
+					currentY = y - relativeCase.y;						
+				}
+				if (currentY >= 0
+					&& currentY < PLATEAU_HEIGHT) {
+					var caseToCheck = this.getCase(currentX, currentY);
+					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
+					
+					if (pieceToCheck != null 
+						&& pieceToCheck.player != player
+						&& pieceToCheck.pieceType.destroyer) {
+
+						var portee = pieceToCheck.pieceType.attackRange;
+						if (caseToCheck.caseType == CASE_TYPE.MONTAGNE
+							&& pieceToCheck.pieceType == PIECE_TYPE.TANK) {
+							portee++;
+						}
+
+						if (portee >= relativeCase.distance) {
+							// console.log('destructeur ennemi detecte en x: ' + pieceToCheck.x + ', y: ' + pieceToCheck.y);
+							enemiesInRange.push(pieceToCheck);
+						}
+					}
+				}
+				// Sinon la case à checker est hors de la map on passe à la suite
+			}
+		}
+		return enemiesInRange;
+	}
+	/*
+	 * @PartieService car utilise getCase et getPieceIfAvailable
+	 */
+	this.countEnemiesThatCanAttackInRange = function(x, y, player) {
+		var parite = x & 1;
+		var nbDestructeurEnnemisDansZone = 0;
+
+		for (var i = 0; i < ZONE_VERIFICATION_MENACE_TIR.length; i++) {
+			var relativeCase = ZONE_VERIFICATION_MENACE_TIR[i];
+			var currentX = x + relativeCase.x;;
+
+			if (currentX >= 0
+				&& currentX < PLATEAU_WIDTH) {
+				var currentY;
+				if (parite == 0) {
+					currentY = y + relativeCase.y;
+				} else {
+					currentY = y - relativeCase.y;						
+				}
+				if (currentY >= 0
+					&& currentY < PLATEAU_HEIGHT) {
+					var caseToCheck = this.getCase(currentX, currentY);
+					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
+					
+					if (pieceToCheck != null 
+						&& pieceToCheck.player != player
+						&& pieceToCheck.pieceType.destroyer) {
+
+						var portee = pieceToCheck.pieceType.attackRange;
+						if (caseToCheck.caseType == CASE_TYPE.MONTAGNE
+							&& pieceToCheck.pieceType == PIECE_TYPE.TANK) {
+							portee++;
+						}
+
+						if (portee >= relativeCase.distance) {
+							// console.log('destructeur ennemi detecte en x: ' + pieceToCheck.x + ', y: ' + pieceToCheck.y);
+							nbDestructeurEnnemisDansZone++;
+
+						}
+					}
+				}
+				// Sinon la case à checker est hors de la map on passe à la suite
+			}
+		}
+		return nbDestructeurEnnemisDansZone;
+	}
 
 	this.setTourToNextPlayer(true);
 }

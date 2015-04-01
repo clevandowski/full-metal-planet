@@ -7,138 +7,11 @@
 /*
  * @Import(constant.js, case.js, piece.js, player.js, partie.js, plateau.js)
  */
-var GameDisplayService = function(partie) {
-	this.getCurrentPlayerName = function() {
-		return partie.getPlayer().name;
-	}
-	this.getCurrentPlayerTourPoint = function() {
-		return partie.tourPoints;
-	}
-	this.showCurrentPlayerPointsEconomise = function() {
-		return partie.getPlayer().pointsEconomise > 0;
-	}
-	this.getCurrentPlayerPointsEconomise = function() {
-		return partie.getPlayer().pointsEconomise;
-	}
-	this.getCurrentMareeName = function() {
-		return partie.currentMaree.name;
-	}
-	this.getNextMareeName = function() {
-		return partie.nextMaree.name;
-	}
-	this.getContenuSelectedPiece = function () {
-		if (partie.getPlayer().selectedPiece) {
-			return partie.getPlayer().selectedPiece.contenu;
-		}
-	}
-	this.getPlateau = function() {
-		return partie.plateau;
-	}
-	this.getCssPieceSoute = function(piece) {
-		return 'soute-container piece ' 
-			+ piece.pieceType.cssName + ' ' 
-			+ this.cssSelectedPieceSoute(piece);
-	}
-
-
-	this.noActionPointAnymore = function() {
-		return partie.tourPoints <= 0;
-	}
-
-	this.getCssCase = function(targetCase) {
-		return 'hexagon-case '
-			+ targetCase.getCaseTypeMaree(partie.currentMaree).cssName
-			+ this.cssSelectedPiece(targetCase);
-	}
-
-	/*
-	 * @PartieService
-	 * Retourne la piece posee sur l'instance de la case en fonction de la partie.
-	 * Retourne null s'il n'y a pas de piece sur la case
-	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
-	 */
-	this.getPieceIfAvailable = function(hexagonalCase) {
-		for (var i = 0; i < partie.pieces.length; i++) {
-			var piece = partie.pieces[i];
-			// Match !
-			if (hexagonalCase.x == piece.x 
-				&& hexagonalCase.y == piece.y) {
-				return piece;
-			}
-		}
-		return null;
-	}
-
-	this.getCssPiece = function(targetCase) {
-		var piece = this.getPieceIfAvailable(targetCase);
-
-		if (piece == null) {
-			return 'piece';
-		} else {
-			return 'piece ' 
-			+ piece.pieceType.cssName + ' '
-			+ piece.orientation.cssName;
-		}
-	}
-	/*
-	 * @CssService
-	 * @dependsOn(@PartieService, getSelectedPiece)
-	 */	
-	this.cssSelectedPiece = function(targetCase) {
-	 	if (this.getSelectedPiece() != null
-	 		&& targetCase.x == this.getSelectedPiece().x
-	 		&& targetCase.y == this.getSelectedPiece().y) {
- 			return ' selectedPiece';
- 		} else {
- 			return '';
- 		}
-	 		// TODO Corriger la css pour que le résultat sur la barge ne soit pas
-	 		// trop horrible
-	 		// else if (this.getSelectedPiece().pieceType == PIECE_TYPE.BARGE) {
-	 		// 	var caseBarge = this.getCasePiece(this.getSelectedPiece());
-	 		// 	var caseAvantBargeCoords = 
-	 		// 		this.getCaseCoordsInOrientation(caseBarge, this.getSelectedPiece().orientation);
-				// if ((targetCase.x == caseAvantBargeCoords.x)
-			 // 		&& (targetCase.y == caseAvantBargeCoords.y)) {
-				//  	return 'selectedPiece';
-				// }
-	 		// }	
-	}
-	/*
-	 * @CssService
-	 * @dependsOn(@PartieService, getSelectedPiece)
-	 */	
-	this.cssSelectedPieceSoute = function(piece) {
-	 	if (this.getSelectedPieceSoute() == piece) {
- 			return 'selectedPiece';
-	 	} else {
-	 		return '';
-	 	}
-	}
-
-
-	/*
-	 * @PartieService
-	 */
-	this.getSelectedPieceSoute = function () {
-		return partie.getPlayer().selectedPieceSoute;
-	}
-	/*
-	 * @PartieService
-	 */
-	this.getSelectedPiece = function () {
-		return partie.getPlayer().selectedPiece;
-	}
-}
 
 /* 
  * engine
  */
 var Engine = function(partie) {
-	/*
-	 * Initialisations
-	 */
-	this.partie = partie;
 
 	/*
 	 * @EngineService
@@ -221,7 +94,7 @@ var Engine = function(partie) {
 				break;
 		}
 
-		// return this.getCase(targetX, targetY);
+		// return partie.getCase(targetX, targetY);
 		return { x: targetX, y: targetY };
 	}
 	/*
@@ -272,201 +145,24 @@ var Engine = function(partie) {
 	}
 
 	/*
-	 * @PartieService
-	 */
-	this.getCase = function(x, y) {
-		return this.partie.plateau[y][x];
-	}
-	/*
-	 * @PartieService
-	 * Retoune la case (type FMPCase) sur laquelle la piece est posee.
-	 */
-	this.getCasePiece = function(piece) {
-		return this.partie.plateau[piece.y][piece.x];
-	}
-	/*
-	 * @PartieService
-	 */
-	this.getSelectedPiece = function () {
-		return this.partie.getPlayer().selectedPiece;
-	}
-	/*
-	 * @PartieService
-	 */
-	this.setSelectedPiece = function (piece) {
-		this.partie.getPlayer().selectedPiece = piece;
-	}
-	/*
-	 * @PartieService
-	 */
-	this.getSelectedPieceSoute = function () {
-		return this.partie.getPlayer().selectedPieceSoute;
-	}
-	/*
-	 * @PartieService
-	 */
-	this.setSelectedPieceSoute = function(piece) {
-		this.partie.getPlayer().selectedPieceSoute = piece;
-	}
-	/*
-	 * @PartieService
-	 * Retourne la piece posee sur l'instance de la case en fonction de la partie.
-	 * Retourne null s'il n'y a pas de piece sur la case
-	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
-	 */
-	this.getPieceIfAvailable = function(hexagonalCase) {
-		var pieces = this.partie.pieces;
-		for (var i = 0; i < pieces.length; i++) {
-			var piece = pieces[i];
-			// Match !
-			if ((hexagonalCase.x == piece.x) 
-				&& (hexagonalCase.y == piece.y)) {
-				return piece;
-			}
-		}
-		return null;
-	}
-	/*
-	 * @PartieService car utilise getCase et getPieceIfAvailable
-	 */
-	this.getEnemiesThatCanAttackInRange = function(x, y, player) {
-		var enemiesInRange = [];
-		var parite = x & 1;
-
-		for (var i = 0; i < ZONE_VERIFICATION_MENACE_TIR.length; i++) {
-			var relativeCase = ZONE_VERIFICATION_MENACE_TIR[i];
-			var currentX = x + relativeCase.x;;
-
-			if (currentX >= 0
-				&& currentX < PLATEAU_WIDTH) {
-				var currentY;
-				if (parite == 0) {
-					currentY = y + relativeCase.y;
-				} else {
-					currentY = y - relativeCase.y;						
-				}
-				if (currentY >= 0
-					&& currentY < PLATEAU_HEIGHT) {
-					var caseToCheck = this.getCase(currentX, currentY);
-					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
-					
-					if (pieceToCheck != null 
-						&& pieceToCheck.player != player
-						&& pieceToCheck.pieceType.destroyer) {
-
-						var portee = pieceToCheck.pieceType.attackRange;
-						if (caseToCheck.caseType == CASE_TYPE.MONTAGNE
-							&& pieceToCheck.pieceType == PIECE_TYPE.TANK) {
-							portee++;
-						}
-
-						if (portee >= relativeCase.distance) {
-							// console.log('destructeur ennemi detecte en x: ' + pieceToCheck.x + ', y: ' + pieceToCheck.y);
-							enemiesInRange.push(pieceToCheck);
-						}
-					}
-				}
-				// Sinon la case à checker est hors de la map on passe à la suite
-			}
-		}
-		return enemiesInRange;
-	}
-	/*
-	 * @PartieService car utilise getCase et getPieceIfAvailable
-	 */
-	this.countEnemiesThatCanAttackInRange = function(x, y, player) {
-		var parite = x & 1;
-		var nbDestructeurEnnemisDansZone = 0;
-
-		for (var i = 0; i < ZONE_VERIFICATION_MENACE_TIR.length; i++) {
-			var relativeCase = ZONE_VERIFICATION_MENACE_TIR[i];
-			var currentX = x + relativeCase.x;;
-
-			if (currentX >= 0
-				&& currentX < PLATEAU_WIDTH) {
-				var currentY;
-				if (parite == 0) {
-					currentY = y + relativeCase.y;
-				} else {
-					currentY = y - relativeCase.y;						
-				}
-				if (currentY >= 0
-					&& currentY < PLATEAU_HEIGHT) {
-					var caseToCheck = this.getCase(currentX, currentY);
-					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
-					
-					if (pieceToCheck != null 
-						&& pieceToCheck.player != player
-						&& pieceToCheck.pieceType.destroyer) {
-
-						var portee = pieceToCheck.pieceType.attackRange;
-						if (caseToCheck.caseType == CASE_TYPE.MONTAGNE
-							&& pieceToCheck.pieceType == PIECE_TYPE.TANK) {
-							portee++;
-						}
-
-						if (portee >= relativeCase.distance) {
-							// console.log('destructeur ennemi detecte en x: ' + pieceToCheck.x + ', y: ' + pieceToCheck.y);
-							nbDestructeurEnnemisDansZone++;
-
-						}
-					}
-				}
-				// Sinon la case à checker est hors de la map on passe à la suite
-			}
-		}
-		return nbDestructeurEnnemisDansZone;
-	}
-
-	/*
-	 * @???Service
-	 */
-	this.centerPlateauOnCoordinates = function(x, y) {
-		// C'est un peu à l'arrache mais ça permet d'eviter d'avoir a scroller pour trouver 
-		// la derniere unite selectionnee
-		$('#container').scrollLeft(x * 90 - 755);
-		$('#container').scrollTop(y * 102 - 298);
-	}
-	/*
-	 * @???Service
-	 * @dependsOn(@PartieService, getSelectedPiece, getPlayer, pieces)
-	 * @dependsOn(@UtilService, centerPlateauOnCoordinates)
-	 */
-	this.centerPlateau = function() {
-		if (this.getSelectedPiece() != null) {
-			this.centerPlateauOnCoordinates(this.getSelectedPiece().x, this.getSelectedPiece().y);
-		} else {
-			var player = this.partie.getPlayer();
-			var barge = this.partie.pieces.filter(
-				function(piece) { 
-					return piece.player == player && piece.pieceType == PIECE_TYPE.BARGE
-				}
-			)
-			if (barge.length >= 1) {
-		 		this.centerPlateauOnCoordinates(barge[0].x, barge[0].y);
-			}
-		}
-	}
-
-	/*
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
 	// Ou tout objet ayant le couple de propriétés x, y
 	// Remplir player uniquement si c'est une case
 	this.isFreeFromEnemyFire = function(pieceOrCase) {
-		var player = this.partie.getPlayer();
+		var player = partie.getPlayer();
 
 		if (pieceOrCase instanceof Piece) {
 			player = pieceOrCase.player;
 		}
 
-		if (this.countEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, player) < 2) {
+		if (partie.countEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, player) < 2) {
 			// Fo vérifier au cas ou ce n'est pas une barge, la case avant est concernée aussi
 			if (pieceOrCase instanceof Piece && pieceOrCase.pieceType == PIECE_TYPE.BARGE) {
-				var caseArriereBarge = this.getCasePiece(pieceOrCase);
+				var caseArriereBarge = partie.getCasePiece(pieceOrCase);
 				var caseAvantBargeCoords = this.getCaseCoordsInOrientation(caseArriereBarge, pieceOrCase.orientation);
-				if (this.countEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, player) < 2) {
+				if (partie.countEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, player) < 2) {
 					return true;
 				} else {
 					console.log('L\'avant de la barge est sous le feu ennemi');
@@ -490,7 +186,7 @@ var Engine = function(partie) {
 	 * @dependsOn(@PartieService)
 	 */
 	this.isPieceMovableByMaree = function(piece, maree) {
-		var casePiece = this.getCasePiece(piece);
+		var casePiece = partie.getCasePiece(piece);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (piece.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
 			console.log('Impossible de deplacer un ' + piece.pieceType.name + ' de type ' + piece.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
@@ -498,7 +194,7 @@ var Engine = function(partie) {
 		}
 		if (piece.pieceType == PIECE_TYPE.BARGE) {
 			var caseAvantBargeCoords = this.getCaseCoordsInOrientation(casePiece, piece.orientation);
-			var caseAvantBarge = this.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
+			var caseAvantBarge = partie.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
 			var caseAvantBargeMaree = caseAvantBarge.getCaseTypeMaree(maree);
 			if (piece.pieceType.modeDeplacement != caseAvantBargeMaree.modeDeplacement) {
 				console.log('Impossible de deplacer un ' + piece.pieceType.name + ' de type ' + piece.pieceType.modeDeplacement +  ' sur une case ' + caseAvantBargeMaree.name);
@@ -515,7 +211,7 @@ var Engine = function(partie) {
 		if (this.areCoordinatesAdjacent(piece.x, piece.y, targetCase.x, targetCase.y)) {
 			return true;
 		} else if (piece.pieceType == PIECE_TYPE.BARGE) {
-			var caseArriereBarge = this.getCasePiece(piece);
+			var caseArriereBarge = partie.getCasePiece(piece);
 			var caseAvantBargeCoords = this.getCaseCoordsInOrientation(caseArriereBarge, piece.orientation);
 			return this.areCoordinatesAdjacent(caseAvantBargeCoords.x, caseAvantBargeCoords.y, targetCase.x, targetCase.y);
 		}
@@ -544,7 +240,7 @@ var Engine = function(partie) {
 	 * @dependsOn(@PartieService)
 	 */
 	this.isTargetCaseFree = function(targetCase) {
-		if (this.getPieceIfAvailable(targetCase) == null) {
+		if (partie.getPieceIfAvailable(targetCase) == null) {
 			return true;
 		}
 		console.log('La case (x: ' + targetCase.x + ', y: ' + targetCase.y + ') contient deja une piece');
@@ -595,7 +291,7 @@ var Engine = function(partie) {
 				// Sinon on avance.
 				// La case cible et la case avant de la barge sont forcément adjacentes ici
 				var caseAvantBargeCoords = this.getCaseCoordsInOrientation(piece, piece.orientation);
-				var caseAvantBarge = this.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
+				var caseAvantBarge = partie.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
 				var nextOrientation = this.getOrientation(caseAvantBarge, targetCase);
 				this._setPieceToCase(piece, caseAvantBarge);
 				piece.orientation = nextOrientation;
@@ -642,7 +338,7 @@ var Engine = function(partie) {
 	 * @dependsOn(@PartieService)
 	 */
 	this.isPieceChargeableByMaree = function(pieceACharger, maree) {
-		var casePiece = this.getCasePiece(pieceACharger);
+		var casePiece = partie.getCasePiece(pieceACharger);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (pieceACharger.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
 			console.log('Impossible de deplacer un ' + pieceACharger.pieceType.name + ' de type ' + pieceACharger.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
@@ -658,7 +354,7 @@ var Engine = function(partie) {
 		if (this.areCoordinatesAdjacent(pieceTransporter.x, pieceTransporter.y, pieceACharger.x, pieceACharger.y)) {
 			return true;
 		} else if (pieceTransporter.pieceType == PIECE_TYPE.BARGE) {
-			var caseArriereBarge = this.getCasePiece(pieceTransporter);
+			var caseArriereBarge = partie.getCasePiece(pieceTransporter);
 			var caseAvantBargeCoords = this.getCaseCoordsInOrientation(caseArriereBarge, pieceTransporter.orientation);
 			return this.areCoordinatesAdjacent(caseAvantBargeCoords.x, caseAvantBargeCoords.y, pieceACharger.x, pieceACharger.y);
 		}
@@ -698,8 +394,8 @@ var Engine = function(partie) {
 
 		// On déplace le tank du plateau de la partie au contenu du transporteur
 		pieceTransporter.addContenu(pieceACharger);
-		var indexInPieces = this.partie.pieces.indexOf(pieceACharger);
-		this.partie.pieces.splice(indexInPieces, 1);
+		var indexInPieces = partie.pieces.indexOf(pieceACharger);
+		partie.pieces.splice(indexInPieces, 1);
 	}
 	/*
 	 * @ActionService
@@ -713,7 +409,7 @@ var Engine = function(partie) {
 		if (index == -1) {
 			throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
 		} else {
-			this.partie.pieces.push(pieceADecharger);
+			partie.pieces.push(pieceADecharger);
 			pieceTransporter.getContenu().splice(index, 1);
 			this._setPieceToCase(pieceADecharger, targetCase);
 		}
@@ -726,8 +422,8 @@ var Engine = function(partie) {
 	this.attack = function(piece) {
 		// TODO Validation :
 		// - Si plus de 2 destroyers, comment faire interagir le joueur
-		var targetCase = this.getCasePiece(piece);
-		var piecesAttacking = this.getEnemiesThatCanAttackInRange(targetCase.x, targetCase.y, piece.player);
+		var targetCase = partie.getCasePiece(piece);
+		var piecesAttacking = partie.getEnemiesThatCanAttackInRange(targetCase.x, targetCase.y, piece.player);
 		if (piecesAttacking.length > 2) {
 			console.log('TODO: Pouvoir choisir les attaquants');
 		}
@@ -759,31 +455,14 @@ var Engine = function(partie) {
 			console.log('Piece: ' + piece.pieceType.name);
 		    targetCase.explose = false;
 		}, 4000);
-		var index = this.partie.pieces.indexOf(piece);
-		this.partie.pieces.splice(index, 1);
-		this.partie.tourPoints -=2;
-		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + piece.player.name + ' par ' + this.partie.getPlayer().name);
-	}
-
-	/*
-	 * TODO A finir pour le listener
-	 */
-	this.onClickNew = function(targetCase) {
-		if (this.partie.tourPoints <= 0) {
-			throw 'Plus aucun point d\'action restants pour le joueur ' + this.partie.getPlayer().name;
+		var index = partie.pieces.indexOf(piece);
+		// Si la piece attaquee etait la piece selectionne du joueur, on deselectionne
+		if (piece == piece.player.selectedPiece) {
+			piece.player.selectedPiece = null;
 		}
-
-		var maree = this.partie.currentMaree;
-		var piece = this.getPieceIfAvailable(targetCase);
-
-		var actionDetected = this._detectPlayerAction(targetCase);
-		var validation = this._validatePlayerAction(actionDetected);
-
-		if (validation.result) {
-			actionDetected.execute();
-		} else {
-			throw validation.errorMessage;
-		}
+		partie.pieces.splice(index, 1);
+		partie.tourPoints -=2;
+		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + piece.player.name + ' par ' + partie.getPlayer().name);
 	}
 
 	/*
@@ -791,50 +470,50 @@ var Engine = function(partie) {
 	 * @dependsOn(@PartieService)
 	 */
 	this.onClick = function(targetCase) {
-		if (this.partie.tourPoints <= 0) {
-			throw 'Plus aucun point d\'action restants pour le joueur ' + this.partie.getPlayer().name;
+		if (partie.tourPoints <= 0) {
+			throw 'Plus aucun point d\'action restants pour le joueur ' + partie.getPlayer().name;
 		}
 
-		var maree = this.partie.currentMaree;
-		var piece = this.getPieceIfAvailable(targetCase);
+		var maree = partie.currentMaree;
+		var piece = partie.getPieceIfAvailable(targetCase);
 
 		if (piece != null) {
 			// Click sur une unite, selection ou action
 			console.log('onClick: ' + targetCase.getCaseTypeMaree(maree).cssName + '(' + piece.pieceType.name + ', x:' + targetCase.x + ', y: ' + targetCase.y + ')');			
-			if (piece.player != this.partie.getPlayer()) {
+			if (piece.player != partie.getPlayer()) {
 				if (! this.isFreeFromEnemyFire(piece) 
-					&& this.partie.tourPoints >= 2) {
+					&& partie.tourPoints >= 2) {
 					this.attack(piece);
 					return;
 				} else {
-					throw 'La piece n\'appartient pas au joueur ' + this.partie.getPlayer().name;
+					throw 'La piece n\'appartient pas au joueur ' + partie.getPlayer().name;
 				}
 			}
 			// Si on a déjà une piece selectionnée, action
 			// - Est ce qu'on la charge dans une barge ou un crabe ?
-			if (this.getSelectedPiece() != null) {
+			if (partie.getSelectedPiece() != null) {
 
-				// if (this.getSelectedPiece() == piece) {
+				// if (partie.getSelectedPiece() == piece) {
 				// 	console.log('Deselection de la piece ' + piece.pieceType.name);
-				// 	this.setSelectedPiece(null);
+				// 	partie.setSelectedPiece(null);
 				// 	return;
 				// }
 
 				// Chargement ?
-				if (this.validateChargement(piece, this.getSelectedPiece(), maree)) {
+				if (this.validateChargement(piece, partie.getSelectedPiece(), maree)) {
 					// Le joueur est en train de charger selectedPiece dans un transporteur
-					this.chargePiece(piece, this.getSelectedPiece());
-					this.partie.tourPoints --;
+					this.chargePiece(piece, partie.getSelectedPiece());
+					partie.tourPoints --;
 				} else {
 					console.log('Chargement non tente ou impossible');
 				}
 
 				// Si aucune action valide, la nouvelle piece est la piece selectionnee
 				console.log('nouvelle piece selectionnee');
-				this.setSelectedPiece(piece);
+				partie.setSelectedPiece(piece);
 			} else {
 				console.log('nouvelle piece selectionnee');
-				this.setSelectedPiece(piece);
+				partie.setSelectedPiece(piece);
 			}
 		} else {
 			// Click sur une case, tentative de déchargement ou de déplacement 
@@ -843,28 +522,28 @@ var Engine = function(partie) {
 
 			// Comme la case selectionnee ne contenait pas de piece, on reutilise la variable pour 
 			// la piece selectionnee
-			piece = this.getSelectedPiece();
+			piece = partie.getSelectedPiece();
 
 			if (piece != null) {
 				// Déchargement ?
-				if (this.getSelectedPieceSoute() != null) {
+				if (partie.getSelectedPieceSoute() != null) {
 					if (piece.pieceType.transporter) {
-						if (this.validateDechargement(piece, this.getSelectedPieceSoute(), targetCase)) {
-							console.log('Déchargement de ' + this.getSelectedPieceSoute().pieceType.name 
+						if (this.validateDechargement(piece, partie.getSelectedPieceSoute(), targetCase)) {
+							console.log('Déchargement de ' + partie.getSelectedPieceSoute().pieceType.name 
 								+ ' a partir de ' + piece.pieceType.name);
-							this.dechargePiece(this.getSelectedPiece(), this.getSelectedPieceSoute(), targetCase);
-							this.partie.tourPoints --;
+							this.dechargePiece(partie.getSelectedPiece(), partie.getSelectedPieceSoute(), targetCase);
+							partie.tourPoints --;
 						}
 					}
 					// Qque soit la situation, on délectionne la piece de la soute
-					this.setSelectedPieceSoute(null);
+					partie.setSelectedPieceSoute(null);
 					return;
 				}
 
 				// Déplacement ?
 				if (this.validateMove(piece, targetCase, maree)) {
 					this.movePieceToCase(piece, targetCase);
-					this.partie.tourPoints --;
+					partie.tourPoints --;
 				} else {
 					console.log('Deplacement impossible');
 				}
@@ -876,17 +555,15 @@ var Engine = function(partie) {
 	 */
 	this.onClickSoute = function(piece) {
 		console.log('Piece selectionnee dans la soute : ' + piece.pieceType.name);
-		this.setSelectedPieceSoute(piece);
+		partie.setSelectedPieceSoute(piece);
 	}
 	/*
 	 * @ListenerService
 	 */
 	this.onRightClick = function(x, y) {
-		// var targetCase = this.getCase(x, y);
-		// var piece = this.getPieceIfAvailable(targetCase);
+		// var targetCase = partie.getCase(x, y);
+		// var piece = partie.getPieceIfAvailable(targetCase);
 		// console.log('orientation : ' + piece.orientation.name + ', next :' + piece.orientation.next);
 		// piece.orientation = ORIENTATION[piece.orientation.next];
 	}
-
-	this.centerPlateau();
 }
