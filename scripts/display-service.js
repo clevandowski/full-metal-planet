@@ -28,7 +28,7 @@ var DisplayService = function(partie) {
 	this.getCssPieceSoute = function(piece) {
 		return 'soute-container piece ' 
 			+ piece.pieceType.cssName + ' ' 
-			+ this.cssSelectedPieceSoute(piece);
+			+ this._cssSelectedPieceSoute(piece);
 	}
 
 
@@ -39,7 +39,7 @@ var DisplayService = function(partie) {
 	this.getCssCase = function(targetCase) {
 		return 'hexagon-case '
 			+ targetCase.getCaseTypeMaree(partie.currentMaree).cssName
-			+ this.cssSelectedPiece(targetCase);
+			+ this._cssSelectedPiece(targetCase);
 	}
 
 	this.isPieceOnCase = function(targetCase) {
@@ -61,7 +61,7 @@ var DisplayService = function(partie) {
 	 * @CssService
 	 * @dependsOn(@PartieService, getSelectedPiece)
 	 */	
-	this.cssSelectedPiece = function(targetCase) {
+	this._cssSelectedPiece = function(targetCase) {
 	 	if (partie.getSelectedPiece() != null
 	 		&& targetCase.x == partie.getSelectedPiece().x
 	 		&& targetCase.y == partie.getSelectedPiece().y) {
@@ -85,7 +85,7 @@ var DisplayService = function(partie) {
 	 * @CssService
 	 * @dependsOn(@PartieService, getSelectedPiece)
 	 */	
-	this.cssSelectedPieceSoute = function(piece) {
+	this._cssSelectedPieceSoute = function(piece) {
 	 	if (this.getSelectedPieceSoute() == piece) {
  			return 'selectedPiece';
 	 	} else {

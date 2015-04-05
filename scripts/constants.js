@@ -9,9 +9,9 @@ var PLATEAU_HEIGHT = 23;
  * enums & static arrays
  */
 var MAREES = [
-	{ value: 'B', name: 'BASSE'},
-	{ value: 'N', name: 'NORMALE'},
-	{ value: 'H', name: 'HAUTE'} 
+	{ value: 'B', name: 'Basse'},
+	{ value: 'N', name: 'Normale'},
+	{ value: 'H', name: 'Haute'} 
 ];
 
 var CASE_TYPE = {
@@ -49,6 +49,15 @@ var ORIENTATION = {
 	NO: { name: 'nord-ouest', cssName: 'orientation-nord-ouest', next: 'N', previous: 'SO' }
 }
 
+var PLAYER_ACTION_TYPE = {
+	SELECT: { name: 'select' },
+	// SELECT_SOUTE: { name: 'select-soute' },
+	MOVE: { name: 'move'},
+	LOAD: { name: 'load'},
+	UNLOAD: { name: 'unload'},
+	ATTACK: { name: 'attack'},
+	END_OF_TURN: { name: 'end-of-turn' }
+}
 // Pair
 //
 //   OOO
@@ -109,11 +118,3 @@ var ZONE_VERIFICATION_MENACE_TIR = [
 	{ x: 2, y: 2, distance: 3 },
 	{ x: 0, y: 3, distance: 3 }
 ]
-
-var PLAYER_ACTION_TYPE = {
-	SELECT: {},
-	MOVE: {},
-	LOAD: {},
-	UNLOAD: {},
-	ATTACK: {}
-}

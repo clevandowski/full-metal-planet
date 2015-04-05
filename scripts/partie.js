@@ -6,10 +6,7 @@ var Partie = function(plateau) {
 		new Player('Noémie')
 	];
 	this.tourPlayer = 0;
-	this.getPlayer = function() {
-		return this.players[this.tourPlayer];
-	}
-	this.pieces = [ 
+	this.pieces = [
 		new Piece(this.players[1], PIECE_TYPE.TANK, 2, 9), 
 		new Piece(this.players[1], PIECE_TYPE.TANK, 3, 9), 
 		new Piece(this.players[1], PIECE_TYPE.TANK, 2, 8), 
@@ -23,34 +20,37 @@ var Partie = function(plateau) {
 		new Piece(this.players[1], PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
 	];
 
-	this.setTourToNextPlayer = function(init) {
-		if (init == true) {
-			var randomMaree = Math.floor((Math.random() * 3));
-			this.currentMaree = MAREES[randomMaree];
-			randomMaree = Math.floor((Math.random() * 3));
-			this.nextMaree = MAREES[randomMaree];
-		} else {
-			// Avant de changer de tour, on récupère les points économisés du player
-			if (this.tourPoints >= 10) {
-				this.getPlayer().pointsEconomise = 10;
-			} else if (this.tourPoints >= 5 && this.tourPoints < 10) {
-				this.getPlayer().pointsEconomise = 5;
-			} else {
-				this.getPlayer().pointsEconomise = 0;
-			}
-
-			// Joueur suivant
-			this.tourPlayer = (this.tourPlayer + 1) % this.players.length;
-			if (this.tourPlayer == 0) {
-				this.tour ++;
-				// Changement de marée et détermination de la marée suivante
-				var randomMaree = Math.floor((Math.random() * 3));
-				this.currentMaree = this.nextMaree;
-				this.nextMaree = MAREES[randomMaree];
-				// Chargement des munitions de toutes les pieces de tupe destroyer
-			}
-		}
+	this.init = function() {
+		var randomMaree = Math.floor((Math.random() * 3));
+		this.currentMaree = MAREES[randomMaree];
+		randomMaree = Math.floor((Math.random() * 3));
+		this.nextMaree = MAREES[randomMaree];
 		this.reloadMunitionOnDestroyers();
+		this.tourPoints = 15;		
+	}
+	this.getPlayer = function() {
+		return this.players[this.tourPlayer];
+	}
+	this.setTourToNextPlayer = function() {
+		// Avant de changer de tour, on récupère les points économisés du player
+		if (this.tourPoints >= 10) {
+			this.getPlayer().pointsEconomise = 10;
+		} else if (this.tourPoints >= 5 && this.tourPoints < 10) {
+			this.getPlayer().pointsEconomise = 5;
+		} else {
+			this.getPlayer().pointsEconomise = 0;
+		}
+
+		// Joueur suivant
+		this.tourPlayer = (this.tourPlayer + 1) % this.players.length;
+		if (this.tourPlayer == 0) {
+			this.tour ++;
+			// Changement de marée et détermination de la marée suivante
+			var randomMaree = Math.floor((Math.random() * 3));
+			this.currentMaree = this.nextMaree;
+			this.nextMaree = MAREES[randomMaree];
+			// Chargement des munitions de toutes les pieces de tupe destroyer
+		}
 		this.tourPoints = 15 + this.getPlayer().pointsEconomise;
 	}
 
@@ -80,12 +80,6 @@ var Partie = function(plateau) {
 				]
 			});
 		});
-	}
-	/*
-	 * @PartieService
-	 */
-	this.getSelectedPiece = function () {
-		return this.getPlayer().selectedPiece;
 	}
 	/*
 	 * @PartieService
@@ -121,8 +115,15 @@ var Partie = function(plateau) {
 	/*
 	 * @PartieService
 	 */
+	this.getSelectedPiece = function () {
+		return this.getPlayer().selectedPiece;
+	}
+	/*
+	 * @PartieService
+	 */
 	this.setSelectedPiece = function (piece) {
 		this.getPlayer().selectedPiece = piece;
+		this.setSelectedPieceSoute(null);
 	}
 	/*
 	 * @PartieService
@@ -135,6 +136,9 @@ var Partie = function(plateau) {
 	 */
 	this.setSelectedPieceSoute = function(piece) {
 		this.getPlayer().selectedPieceSoute = piece;
+	}
+	this.clearSelectedPieceSoute = function() {
+		this.getPlayer().selectedPieceSoute = null;
 	}
 
 	/*
@@ -228,6 +232,6 @@ var Partie = function(plateau) {
 		}
 		return nbDestructeurEnnemisDansZone;
 	}
-
-	this.setTourToNextPlayer(true);
+	// console.log(JSON.stringify(this));
+	this.init();
 }

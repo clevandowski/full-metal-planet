@@ -11,8 +11,9 @@
 		<script type="text/javascript" src="scripts/piece.js"></script>
 		<script type="text/javascript" src="scripts/player.js"></script>
 		<script type="text/javascript" src="scripts/partie.js"></script>
-		<script type="text/javascript" src="scripts/display-service.js"></script>
+		<script type="text/javascript" src="scripts/referee.js"></script>
 		<script type="text/javascript" src="scripts/engine.js"></script>
+		<script type="text/javascript" src="scripts/display-service.js"></script>
 		<script type="text/javascript" src="scripts/event-listener.js"></script>
 	</head>
 	<body style="overflow: hidden">
@@ -27,7 +28,7 @@
 				<div 
 					ng-repeat="piece in display.getContenuSelectedPiece()" 
 					ng-class="display.getCssPieceSoute(piece)" 
-					ng-click="engine.onClickSoute(piece)">
+					ng-click="listener.onClickSoute(piece)">
 				</div>
 			</div>
 			<div id="fin-tour" ng-click="listener.onFinDuTour(); display.centerPlateau()">
@@ -35,7 +36,7 @@
 				<span>FIN DU TOUR</span><br/>
 				<span ng-show="display.noActionPointAnymore()">CLIC !</span>
 			</div>
-			<!-- class pour le css, id pour jquery (méthode engine.centerPlateau()) --> 
+			<!-- class pour le css, id pour jquery (méthode display.centerPlateau()) --> 
 			<div class="container" id="container">
 				<div class="plateau" id="plateau">
 					<div 
@@ -44,14 +45,11 @@
 						<div 
 							ng-repeat="hexagonalCase in ligne"
 							ng-class="display.getCssCase(hexagonalCase)" 
-							ng-click="engine.onClick(hexagonalCase)">
+							ng-click="listener.onClick(hexagonalCase)">
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
 							<div 
 								ng-show="display.isPieceOnCase(hexagonalCase)" 
-								ng-class="display.getCssPiece(hexagonalCase)"
-								right-click="hexagonalCase"
-								coord-x="{{hexagonalCase.x}}"
-								coord-y="{{hexagonalCase.y}}">
+								ng-class="display.getCssPiece(hexagonalCase)">
 							</div>
 						</div>
 					</div>
@@ -69,44 +67,33 @@
     				}
 				}
 			}]);
+			app.factory('Tools', [ function() {
+				return new Tools();
+			}]);
 			app.factory('PartieService', [ 'PlateauService', function(PlateauService) {
 				return new Partie(PlateauService.getPlateau());
 			}]);
-
-			app.factory('Engine', [ 'PartieService', function(PartieService) {
-				return new Engine(PartieService);
+			app.factory('Referee', [ 'PartieService', 'Tools', function(PartieService, Tools) {
+				return new Referee(PartieService, Tools);
 			}]);
-
-			app.factory('EventListener', [ 'PartieService', function(PartieService) {
-				return new EventListener(PartieService);
+			app.factory('Engine', [ 'PartieService', 'Tools', function(PartieService, Tools) {
+				return new Engine(PartieService, Tools);
 			}]);
-
+			app.factory('EventListener', [ 'PartieService', 'Referee', 'Engine', 'Tools', function(PartieService, Referee, Engine, Tools) {
+				return new EventListener(PartieService, Referee, Engine, Tools);
+			}]);
 			app.factory('DisplayService', [ 'PartieService', function(PartieService) {
 				return new DisplayService(PartieService);
 			}]);
 
-			app.controller('myCtrl', ['$scope', 'PartieService', 'EventListener', 'Engine', 'DisplayService', function($scope, PartieService, EventListener, Engine, DisplayService) {
+			app.controller('myCtrl', ['$scope', 'EventListener', 'DisplayService', function($scope, EventListener, DisplayService) {
 
-				$scope.engine = Engine;
 				$scope.listener = EventListener;
 				$scope.display = DisplayService;
 
 				// Initialisation plateau
 				$scope.display.centerPlateau();
 			}]);
-			// app.directive('rightClick',function() {
-			//     document.oncontextmenu = function (e) {
-			//        if(e.target.hasAttribute('right-click')) {
-			//            return false;
-			//        }
-			//     };
-			//     return function(scope, el, attrs) {
-			//         el.bind('contextmenu',function(e) {
-			//             scope.engine.onRightClick(attrs.coordX, attrs.coordY);
-			//             scope.$apply();
-			//         }) ;
-			//     }
-			// });
 		</script>
 	</body>
 </html>

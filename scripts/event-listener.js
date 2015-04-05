@@ -1,4 +1,4 @@
-var EventListener = function(partie) {
+var EventListener = function(partie, referee, engine, tools) {
 
 	/*
 	 * TODO A finir pour le listener
@@ -9,38 +9,107 @@ var EventListener = function(partie) {
 		}
 
 		var playerActionDetected = this._detectPlayerAction(targetCase);
-		var validation = this._validatePlayerAction(playerActionDetected);
 
-		if (validation.result) {
-			playerActionDetected.execute();
-		} else {
-			throw validation.errorMessage;
+		if (playerActionDetected == null) {
+			console.log('No action No cry...');
+			return;
 		}
+
+		var actionReport = referee.validatePlayerAction(playerActionDetected);
+
+		if (actionReport.success) {
+			var partieHashcode = engine.applyPlayerAction(playerActionDetected);
+			// Vérification
+			// if (actionReport.partieHashcode != partieHashcode) {
+			// 	throw 'Error on party checksum ! Reload the party !!!';
+			// }
+		} else {
+			for (var id in actionReport.errorMessages) {
+				console.log('Erreur #' + id + ': ' + actionReport.errorMessages[id]);
+			}
+			console.log('Action de déplacement non valide.');
+		}
+	}
+	
+	/*
+	 * @ListenerService
+	 */
+	this.onClickSoute = function(piece) {
+		console.log('Piece selectionnee dans la soute : ' + piece.pieceType.name);
+		partie.setSelectedPieceSoute(piece);
 	}
 
 	this.onFinDuTour = function() {
-		partie.setTourToNextPlayer(false);
+		partie.setTourToNextPlayer();
 	}
 
 	this._detectPlayerAction = function(targetCase) {
-		var selectedPiece = partie.getSelectedPiece();
 		var targetPiece = partie.getPieceIfAvailable(targetCase);
+		var selectedPiece = partie.getSelectedPiece();
+		var selectedPieceSoute = partie.getSelectedPieceSoute();
 
-		if (selectedPiece == null 
-			&& targetPiece != null) {
-			return {
-				actionType: PLAYER_ACTION_TYPE.SELECT,
-				targetPiece: targetPiece,
-				execute: partie.setSelectedPiece
-			}	
+		// Si on cible une case vide
+		if (targetPiece == null) {
+			if (selectedPiece == null 
+				&& selectedPieceSoute == null) {
+				return null;
+			} else {
+				// Note : si selectedPieceSoute est != null c'est que selectedPiece est != null
+				if (selectedPieceSoute != null) {
+					return {
+						actionType: PLAYER_ACTION_TYPE.UNLOAD,
+						pieceADecharger: selectedPieceSoute,
+						pieceTransporter: selectedPiece,
+						targetCase: targetCase,
+					}
+				} else if (selectedPiece != null) {
+					return {
+						actionType: PLAYER_ACTION_TYPE.MOVE,
+						targetPiece: selectedPiece,
+						targetCase: targetCase,
+					}
+				}
+			}
+		} else {
+			if (targetPiece.player != partie.getPlayer()) {
+				// Attaque
+				return {
+					actionType: PLAYER_ACTION_TYPE.ATTACK,
+					targetPiece: targetPiece
+				}
+			} else if (targetPiece.pieceType.transporter
+				&& selectedPiece != null
+				&& selectedPiece != targetPiece
+				&& this._areTransporterAndPieceToLoadAdjacent(targetPiece, selectedPiece)) {
+				// Chargement
+				return {
+					actionType: PLAYER_ACTION_TYPE.LOAD,
+					pieceACharger: selectedPiece,
+					pieceTransporter: targetPiece,
+				}
+			} else {
+				/*
+				 * Selection, après la vérification d'une tentative d'attaque
+				 * (S'il ya une pièce amie sur la case cliquée et qu'aucune pièce n'est sélectionnée)
+				 */
+				return {
+					actionType: PLAYER_ACTION_TYPE.SELECT,
+					targetPiece: targetPiece,
+				}
+			}
 		}
 	}
-	this._validatePlayerAction = function(playerAction) {
-		switch(playerAction.actionType) {
-			case PLAYER_ACTION_TYPE.SELECT:
-			return {
-				result: true
-			};
+
+	this._areTransporterAndPieceToLoadAdjacent = function(pieceTransporter, toUnloadPiece) {
+		if (tools.areCoordinatesAdjacent(pieceTransporter.x, pieceTransporter.y, toUnloadPiece.x, toUnloadPiece.y)) {
+			return true;
+		} else if (pieceTransporter.pieceType == PIECE_TYPE.BARGE) {
+			var caseArriereBarge = partie.getCasePiece(pieceTransporter);
+			var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(caseArriereBarge, pieceTransporter.orientation);
+			if (tools.areCoordinatesAdjacent(caseAvantBargeCoords.x, caseAvantBargeCoords.y, toUnloadPiece.x, toUnloadPiece.y)) {
+				return true;
+			}
 		}
+		return false;
 	}
 }
