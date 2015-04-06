@@ -68,7 +68,7 @@ var Engine = function(partie, tools) {
 			piece.orientation = tools.getOrientation(piece, targetCase);
 			this._setPieceToCase(piece, targetCase);
 		}
-		partie.datas.tourPoints --;
+		partie.removeToursPoints(1);
 	}
 	/*
 	 * @ActionService
@@ -85,7 +85,7 @@ var Engine = function(partie, tools) {
 		var indexInPieces = partie.getPieces().indexOf(pieceACharger);
 		partie.getPieces().splice(indexInPieces, 1);
 		partie.setSelectedPiece(pieceTransporter);
-		partie.datas.tourPoints --;
+		partie.removeToursPoints(1);
 	}
 	/*
 	 * @ActionService
@@ -104,7 +104,7 @@ var Engine = function(partie, tools) {
 			this._setPieceToCase(pieceADecharger, targetCase);
 			partie.setSelectedPieceSoute(null);
 		}
-		partie.datas.tourPoints --;
+		partie.removeToursPoints(1);
 	}
 
 	/*
@@ -135,7 +135,7 @@ var Engine = function(partie, tools) {
 			piece.player.selectedPiece = null;
 		}
 		partie.getPieces().splice(index, 1);
-		partie.datas.tourPoints -=2;
+		partie.removeToursPoints(2);
 		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + piece.player.name + ' par ' + partie.getPlayer().name);
 	}
 
