@@ -35,6 +35,18 @@
     /*text-shadow:#fff 0px 1px 0, #000 0 -1px 0;*/
     font:bolder;
 }
+#error-popup {
+    position: relative;
+    /*clear: left;*/
+    float: left;
+    width: 520px;
+    /*text-shadow:#fff 0px 1px 0, #000 0 -1px 0;*/
+    /*font:bolder;*/
+}
+#error-popup .titre1 {
+    font: bolder;
+    text-align: center;
+}
 .info {
     font-size: 24px;
     /*font: "Impact";*/

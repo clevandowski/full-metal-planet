@@ -1,61 +1,93 @@
-var Partie = function(plateau) {
-	this.plateau = plateau;
-	this.tour = 0;
-	this.players = [
+var Partie = function(plateau, tools) {
+	var randomCurrentMaree = Math.floor((Math.random() * 3));
+	var randomNextMaree = Math.floor((Math.random() * 3));
+	var players = [
 		new Player('Damien'),
 		new Player('Noémie')
 	];
-	this.tourPlayer = 0;
-	this.pieces = [
-		new Piece(this.players[1], PIECE_TYPE.TANK, 2, 9), 
-		new Piece(this.players[1], PIECE_TYPE.TANK, 3, 9), 
-		new Piece(this.players[1], PIECE_TYPE.TANK, 2, 8), 
-		new Piece(this.players[0], PIECE_TYPE.TANK, 5, 9), 
-		new Piece(this.players[0], PIECE_TYPE.TANK, 6, 9), 
-		new Piece(this.players[0], PIECE_TYPE.TANK, 7, 8),
-		new Piece(this.players[1], PIECE_TYPE.TANK, 33, 11),
-		new Piece(this.players[1], PIECE_TYPE.TANK, 34, 12), 
-		new Piece(this.players[1], PIECE_TYPE.TANK, 34, 13),
-		new Piece(this.players[0], PIECE_TYPE.BARGE, 7, 9, ORIENTATION.SO),
-		new Piece(this.players[1], PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
-	];
+	this.plateau = plateau;
+	this.datas = {
+		tour: 0,
+		tourPlayer: 0,
+		tourPoints: 15,
+		currentMaree: MAREES[randomCurrentMaree],
+		nextMaree: MAREES[randomNextMaree],
+		players: players,
+		pieces: [
+			new Piece(players[1], PIECE_TYPE.TANK, 2, 9), 
+			new Piece(players[1], PIECE_TYPE.TANK, 3, 9), 
+			new Piece(players[1], PIECE_TYPE.TANK, 2, 8), 
+			new Piece(players[0], PIECE_TYPE.TANK, 5, 9), 
+			new Piece(players[0], PIECE_TYPE.TANK, 6, 9), 
+			new Piece(players[0], PIECE_TYPE.TANK, 7, 8),
+			new Piece(players[1], PIECE_TYPE.TANK, 33, 11),
+			new Piece(players[1], PIECE_TYPE.TANK, 34, 12), 
+			new Piece(players[1], PIECE_TYPE.TANK, 34, 13),
+			new Piece(players[0], PIECE_TYPE.BARGE, 7, 9, ORIENTATION.SO),
+			new Piece(players[1], PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
+		]
+	}
+
+	// this.tour = 0;
+	// this.players = [
+	// 	new Player('Damien'),
+	// 	new Player('Noémie')
+	// ];
+	// this.tourPlayer = 0;
+	// this.pieces = [
+	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 2, 9), 
+	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 3, 9), 
+	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 2, 8), 
+	// 	new Piece(this.players[0], PIECE_TYPE.TANK, 5, 9), 
+	// 	new Piece(this.players[0], PIECE_TYPE.TANK, 6, 9), 
+	// 	new Piece(this.players[0], PIECE_TYPE.TANK, 7, 8),
+	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 33, 11),
+	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 34, 12), 
+	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 34, 13),
+	// 	new Piece(this.players[0], PIECE_TYPE.BARGE, 7, 9, ORIENTATION.SO),
+	// 	new Piece(this.players[1], PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
+	// ];
 
 	this.init = function() {
 		var randomMaree = Math.floor((Math.random() * 3));
-		this.currentMaree = MAREES[randomMaree];
+		this.datas.currentMaree = MAREES[randomMaree];
 		randomMaree = Math.floor((Math.random() * 3));
-		this.nextMaree = MAREES[randomMaree];
+		this.datas.nextMaree = MAREES[randomMaree];
 		this.reloadMunitionOnDestroyers();
-		this.tourPoints = 15;		
+		this.datas.tourPoints = 15;
 	}
 	this.getPlayer = function() {
-		return this.players[this.tourPlayer];
+		return this.datas.players[this.datas.tourPlayer];
+	}
+	this.getPieces = function() {
+		return this.datas.pieces;
 	}
 	this.setTourToNextPlayer = function() {
 		// Avant de changer de tour, on récupère les points économisés du player
-		if (this.tourPoints >= 10) {
+		if (this.datas.tourPoints >= 10) {
 			this.getPlayer().pointsEconomise = 10;
-		} else if (this.tourPoints >= 5 && this.tourPoints < 10) {
+		} else if (this.datas.tourPoints >= 5 && this.datas.tourPoints < 10) {
 			this.getPlayer().pointsEconomise = 5;
 		} else {
 			this.getPlayer().pointsEconomise = 0;
 		}
 
 		// Joueur suivant
-		this.tourPlayer = (this.tourPlayer + 1) % this.players.length;
-		if (this.tourPlayer == 0) {
-			this.tour ++;
+		this.datas.tourPlayer = (this.datas.tourPlayer + 1) % this.datas.players.length;
+		if (this.datas.tourPlayer == 0) {
+			this.datas.tour ++;
 			// Changement de marée et détermination de la marée suivante
 			var randomMaree = Math.floor((Math.random() * 3));
-			this.currentMaree = this.nextMaree;
-			this.nextMaree = MAREES[randomMaree];
-			// Chargement des munitions de toutes les pieces de tupe destroyer
+			this.datas.currentMaree = this.datas.nextMaree;
+			this.datas.nextMaree = MAREES[randomMaree];
+			// Chargement des munitions de toutes les pieces de type destroyer
+			this.reloadMunitionOnDestroyers();
 		}
-		this.tourPoints = 15 + this.getPlayer().pointsEconomise;
+		this.datas.tourPoints = 15 + this.getPlayer().pointsEconomise;
 	}
 
 	this.reloadMunitionOnDestroyers = function() {
-		this.pieces.filter(function(piece) {
+		this.datas.pieces.filter(function(piece) {
 			return piece.pieceType.destroyer;
 		})
 		.forEach(function(destroyer) {
@@ -66,7 +98,7 @@ var Partie = function(plateau) {
 		});
 		
 		// Destroyer contenues dans des transporteurs
-		this.pieces.filter(function(piece) {
+		this.datas.pieces.filter(function(piece) {
 			return piece.pieceType.transporter
 		})
 		.forEach(function(transporter) {
@@ -88,12 +120,12 @@ var Partie = function(plateau) {
 	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
 	 */
 	this.getPieceIfAvailable = function(targetCase) {
-		var pieces = this.pieces;
-		for (var i = 0; i < pieces.length; i++) {
-			var piece = pieces[i];
+		var pieces = this.datas.pieces;
+		for (var id in pieces) {
+			var piece = pieces[id];
 			// Match !
-			if ((targetCase.x == piece.x) 
-				&& (targetCase.y == piece.y)) {
+			if (targetCase.x == piece.x 
+				&& targetCase.y == piece.y) {
 				return piece;
 			}
 		}
@@ -233,5 +265,31 @@ var Partie = function(plateau) {
 		return nbDestructeurEnnemisDansZone;
 	}
 	// console.log(JSON.stringify(this));
+	this.isFreeFromEnemyFire = function(pieceOrCase) {
+		var player = this.getPlayer();
+
+		if (pieceOrCase instanceof Piece) {
+			player = pieceOrCase.player;
+		}
+
+		if (this.countEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, player) < 2) {
+			// Fo vérifier au cas ou ce n'est pas une barge, la case avant est concernée aussi
+			if (pieceOrCase instanceof Piece && pieceOrCase.pieceType == PIECE_TYPE.BARGE) {
+				var caseArriereBarge = this.getCasePiece(pieceOrCase);
+				var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(caseArriereBarge, pieceOrCase.orientation);
+				if (this.countEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, player) < 2) {
+					return true;
+				} else {
+					// console.log('L\'avant de la barge est sous le feu ennemi');
+					return false;
+				}
+			} else {
+				return true;
+			}
+		} else {
+			// console.log('La case / piece en x: ' + pieceOrCase.x + ', y: ' + pieceOrCase.y + ' est sous le feu ennemi');
+			return false;
+		}
+	}
 	this.init();
 }

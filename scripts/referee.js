@@ -3,7 +3,7 @@ var Referee = function(partie, tools) {
 	this.validatePlayerAction = function(playerAction) {
 		switch (playerAction.actionType) {
 			case PLAYER_ACTION_TYPE.SELECT:
-				return { success: true };
+				return this._validateSelect(playerAction);
 				break;
 			case PLAYER_ACTION_TYPE.MOVE:
 				return this._validateMove(playerAction);
@@ -26,6 +26,24 @@ var Referee = function(partie, tools) {
 		}
 	}
 
+	this._validateSelect = function(playerAction) {
+		var targetPiece = playerAction.targetPiece;
+
+		var errorMessages = [];
+		var validationStatus = true;
+
+		if (targetPiece.player != partie.getPlayer()) {
+			validationStatus = false;
+			errorMessages.push(
+				'Cette pièce ne vous appartient pas');
+		}
+
+		return { 
+			success: validationStatus,
+			errorMessages: errorMessages
+		}
+	}
+
 	this._validateLoad = function(playerAction) {
 		var pieceTransporter = playerAction.pieceTransporter;
 		var pieceACharger = playerAction.pieceACharger;
@@ -33,6 +51,11 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
+		if (partie.datas.tourPoints == 0) {
+			validationStatus = false;
+			errorMessages.push(
+				'Pas de réserve de point suffisant pour attaquer');
+		}
 		if (! this._canTransporterChargePiece(pieceTransporter, pieceACharger)) {
 			validationStatus = false;
 			errorMessages.push(
@@ -42,14 +65,14 @@ var Referee = function(partie, tools) {
 		if (! this._isPieceLoadable(pieceACharger)) {
 			validationStatus = false;
 			errorMessages.push(
-				'La pièce à charger est bloquée à marée ' + partie.currentMaree.name);
+				'La pièce à charger est bloquée à marée ' + partie.datas.currentMaree.name);
 		}
-		if (! this._isFreeFromEnemyFire(pieceTransporter)) {
+		if (! partie.isFreeFromEnemyFire(pieceTransporter)) {
 			validationStatus = false;
 			errorMessages.push(
 				'Le transporteur est à portée de tir ennemi');
 		}
-		if (! this._isFreeFromEnemyFire(pieceACharger)) {
+		if (! partie.isFreeFromEnemyFire(pieceACharger)) {
 			validationStatus = false;
 			errorMessages.push(
 				'La pièce à charger est à portée de tir ennemi');
@@ -68,6 +91,11 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
+		if (partie.datas.tourPoints == 0) {
+			validationStatus = false;
+			errorMessages.push(
+				'Pas de réserve de point suffisant pour attaquer');
+		}
 		if (! this._arePieceAndCaseAdjacent(pieceTransporter, targetCase)) {
 			validationStatus = false;
 			errorMessages.push(
@@ -78,12 +106,12 @@ var Referee = function(partie, tools) {
 			errorMessages.push(
 				'Le déchargement en mer est interdit');			
 		}
-		if (! this._isFreeFromEnemyFire(pieceTransporter)) {
+		if (! partie.isFreeFromEnemyFire(pieceTransporter)) {
 			validationStatus = false;
 			errorMessages.push(
 				'Le transporteur est à portée de tir ennemi');
 		}
-		if (! this._isFreeFromEnemyFire(targetCase)) {
+		if (! partie.isFreeFromEnemyFire(targetCase)) {
 			validationStatus = false;
 			errorMessages.push(
 				'La case ciblée pour décharger est à portée de tir ennemi');
@@ -102,12 +130,7 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (this._isFreeFromEnemyFire(targetPiece)) {
-			validationStatus = false;
-			errorMessages.push(
-				'La pièce sélectionnée n\'appartient pas au joueur ' + partie.getPlayer().name);
-		}
-		if (partie.tourPoints < 2) {
+		if (partie.datas.tourPoints < 2) {
 			validationStatus = false;
 			errorMessages.push(
 				'Pas de réserve de point suffisant pour attaquer');
@@ -140,6 +163,11 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
+		if (partie.datas.tourPoints == 0) {
+			validationStatus = false;
+			errorMessages.push(
+				'Pas de réserve de point suffisant pour attaquer');
+		}
 		if (! targetPiece.pieceType.mobile) {
 			validationStatus = false;
 			errorMessages.push(
@@ -149,7 +177,7 @@ var Referee = function(partie, tools) {
 		if (this._isPieceBoggedDown(targetPiece)) {
 			validationStatus = false;
 			errorMessages.push(
-				'La pièce sélectionnée est bloquée à marée ' + partie.currentMaree.name);
+				'La pièce sélectionnée est bloquée à marée ' + partie.datas.currentMaree.name);
 		}
 		// Si la pièce sélectionnée et la case ciblée ne sont pas adjacentes
 		if (! this._arePieceAndCaseAdjacent(targetPiece, targetCase)) {
@@ -173,12 +201,12 @@ var Referee = function(partie, tools) {
 			errorMessages.push(
 				'La case ciblée n\'est pas libre');
 		}
-		if (! this._isFreeFromEnemyFire(targetPiece)) {
+		if (! partie.isFreeFromEnemyFire(targetPiece)) {
 			validationStatus = false;
 			errorMessages.push(
 				'La pièce sélectionnée est à portée de tir de l\'ennemi');
 		}
-		if (! this._isFreeFromEnemyFire(targetCase)) {
+		if (! partie.isFreeFromEnemyFire(targetCase)) {
 			validationStatus = false;
 			errorMessages.push(
 				'La case ciblée est à portée de tir de l\'ennemi');
@@ -189,7 +217,7 @@ var Referee = function(partie, tools) {
 		}
 	}
 	this._isPieceBoggedDown = function(piece) {
-		var maree = partie.currentMaree;
+		var maree = partie.datas.currentMaree;
 		var casePiece = partie.getCasePiece(piece);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (piece.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
@@ -225,7 +253,7 @@ var Referee = function(partie, tools) {
 	// - Les véhicules maritimes ne peuvent pas aller sur les cases de type PLAINE et MONTAGNE
 	// - Les gros tas ne peuvent pas aller sur les cases type MER et MONTAGNE
 	this._isPieceMovableOnCase = function(piece, targetCase) {
-		var maree = partie.currentMaree;
+		var maree = partie.datas.currentMaree;
 		var targetCaseMaree = targetCase.getCaseTypeMaree(maree);
 		if (piece.pieceType.modeDeplacement != targetCaseMaree.modeDeplacement) {
 			// Exception : On peut obliger une unité à aller sur un endroit
@@ -245,32 +273,6 @@ var Referee = function(partie, tools) {
 		}
 		console.log('La case (x: ' + targetCase.x + ', y: ' + targetCase.y + ') contient deja une piece');
 		return false;
-	}
-	this._isFreeFromEnemyFire = function(pieceOrCase) {
-		var player = partie.getPlayer();
-
-		if (pieceOrCase instanceof Piece) {
-			player = pieceOrCase.player;
-		}
-
-		if (partie.countEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, player) < 2) {
-			// Fo vérifier au cas ou ce n'est pas une barge, la case avant est concernée aussi
-			if (pieceOrCase instanceof Piece && pieceOrCase.pieceType == PIECE_TYPE.BARGE) {
-				var caseArriereBarge = partie.getCasePiece(pieceOrCase);
-				var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(caseArriereBarge, pieceOrCase.orientation);
-				if (partie.countEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, player) < 2) {
-					return true;
-				} else {
-					console.log('L\'avant de la barge est sous le feu ennemi');
-					return false;
-				}
-			} else {
-				return true;
-			}
-		} else {
-			// console.log('La case / piece en x: ' + pieceOrCase.x + ', y: ' + pieceOrCase.y + ' est sous le feu ennemi');
-			return false;
-		}
 	}
 
 	/****************************
@@ -296,7 +298,7 @@ var Referee = function(partie, tools) {
 		return true;
 	}
 	this._isPieceLoadable = function(pieceACharger) {
-		var maree = partie.currentMaree;
+		var maree = partie.datas.currentMaree;
 		var casePiece = partie.getCasePiece(pieceACharger);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (pieceACharger.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {

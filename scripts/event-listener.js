@@ -1,11 +1,20 @@
-var EventListener = function(partie, referee, engine, tools) {
-
+var EventListener = function(partie, referee, engine, tools, displayService) {
 	/*
 	 * TODO A finir pour le listener
 	 */
 	this.onClick = function(targetCase) {
+		// console.log(JSON.stringify(partie.datas));
+		if (displayService.getError().showErrorPopup) {
+			displayService.clearError();
+		}
+
 		if (partie.tourPoints <= 0) {
-			throw 'Plus aucun point d\'action restants pour le joueur ' + partie.getPlayer().name;
+			displayService.setError({
+				actionType: null,
+				errorMessages: [ 'Plus aucun point d\'action restant pour le joueur ' + partie.getPlayer().name ],
+				showErrorPopup: true
+			});
+			return;
 		}
 
 		var playerActionDetected = this._detectPlayerAction(targetCase);
@@ -24,10 +33,11 @@ var EventListener = function(partie, referee, engine, tools) {
 			// 	throw 'Error on party checksum ! Reload the party !!!';
 			// }
 		} else {
-			for (var id in actionReport.errorMessages) {
-				console.log('Erreur #' + id + ': ' + actionReport.errorMessages[id]);
-			}
-			console.log('Action de déplacement non valide.');
+			displayService.setError({
+				actionType: playerActionDetected.actionType,
+				errorMessages: actionReport.errorMessages,
+				showErrorPopup: true
+			});
 		}
 	}
 	
@@ -39,8 +49,10 @@ var EventListener = function(partie, referee, engine, tools) {
 		partie.setSelectedPieceSoute(piece);
 	}
 
-	this.onFinDuTour = function() {
+	this.finDuTour = function() {
 		partie.setTourToNextPlayer();
+		displayService.centerPlateau();
+		displayService.clearError();
 	}
 
 	this._detectPlayerAction = function(targetCase) {
@@ -60,18 +72,19 @@ var EventListener = function(partie, referee, engine, tools) {
 						actionType: PLAYER_ACTION_TYPE.UNLOAD,
 						pieceADecharger: selectedPieceSoute,
 						pieceTransporter: selectedPiece,
-						targetCase: targetCase,
+						targetCase: targetCase
 					}
 				} else if (selectedPiece != null) {
 					return {
 						actionType: PLAYER_ACTION_TYPE.MOVE,
 						targetPiece: selectedPiece,
-						targetCase: targetCase,
+						targetCase: targetCase
 					}
 				}
 			}
 		} else {
-			if (targetPiece.player != partie.getPlayer()) {
+			if (targetPiece.player != partie.getPlayer()
+				&& ! partie.isFreeFromEnemyFire(targetPiece)) {
 				// Attaque
 				return {
 					actionType: PLAYER_ACTION_TYPE.ATTACK,
@@ -85,7 +98,7 @@ var EventListener = function(partie, referee, engine, tools) {
 				return {
 					actionType: PLAYER_ACTION_TYPE.LOAD,
 					pieceACharger: selectedPiece,
-					pieceTransporter: targetPiece,
+					pieceTransporter: targetPiece
 				}
 			} else {
 				/*
@@ -94,7 +107,7 @@ var EventListener = function(partie, referee, engine, tools) {
 				 */
 				return {
 					actionType: PLAYER_ACTION_TYPE.SELECT,
-					targetPiece: targetPiece,
+					targetPiece: targetPiece
 				}
 			}
 		}

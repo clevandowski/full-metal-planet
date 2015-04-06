@@ -1,9 +1,24 @@
 var DisplayService = function(partie) {
+	this.clearError = function() {
+		this.error = {
+			showErrorPopup: false,
+			actionType: null,
+			errorMessages: []
+		}
+	}
+	this.clearError();
+	this.getError = function() {
+		return this.error;
+	}
+	this.setError = function(error) {
+		this.error = error;
+	}
+
 	this.getCurrentPlayerName = function() {
 		return partie.getPlayer().name;
 	}
 	this.getCurrentPlayerTourPoint = function() {
-		return partie.tourPoints;
+		return partie.datas.tourPoints;
 	}
 	this.showCurrentPlayerPointsEconomise = function() {
 		return partie.getPlayer().pointsEconomise > 0;
@@ -12,10 +27,10 @@ var DisplayService = function(partie) {
 		return partie.getPlayer().pointsEconomise;
 	}
 	this.getCurrentMareeName = function() {
-		return partie.currentMaree.name;
+		return partie.datas.currentMaree.name;
 	}
 	this.getNextMareeName = function() {
-		return partie.nextMaree.name;
+		return partie.datas.nextMaree.name;
 	}
 	this.getContenuSelectedPiece = function () {
 		if (partie.getPlayer().selectedPiece) {
@@ -31,14 +46,13 @@ var DisplayService = function(partie) {
 			+ this._cssSelectedPieceSoute(piece);
 	}
 
-
 	this.noActionPointAnymore = function() {
-		return partie.tourPoints <= 0;
+		return partie.datas.tourPoints <= 0;
 	}
 
 	this.getCssCase = function(targetCase) {
 		return 'hexagon-case '
-			+ targetCase.getCaseTypeMaree(partie.currentMaree).cssName
+			+ targetCase.getCaseTypeMaree(partie.datas.currentMaree).cssName
 			+ this._cssSelectedPiece(targetCase);
 	}
 
@@ -112,7 +126,7 @@ var DisplayService = function(partie) {
 			this.centerPlateauOnCoordinates(partie.getSelectedPiece().x, partie.getSelectedPiece().y);
 		} else {
 			var player = partie.getPlayer();
-			var barge = partie.pieces.filter(
+			var barge = partie.getPieces().filter(
 				function(piece) { 
 					return piece.player == player && piece.pieceType == PIECE_TYPE.BARGE
 				}

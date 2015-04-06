@@ -69,7 +69,7 @@ var Engine = function(partie, tools) {
 			piece.orientation = tools.getOrientation(piece, targetCase);
 			this._setPieceToCase(piece, targetCase);
 		}
-		partie.tourPoints --;
+		partie.datas.tourPoints --;
 	}
 	/*
 	 * @ActionService
@@ -83,10 +83,10 @@ var Engine = function(partie, tools) {
 
 		// On déplace le tank du plateau de la partie au contenu du transporteur
 		pieceTransporter.addContenu(pieceACharger);
-		var indexInPieces = partie.pieces.indexOf(pieceACharger);
-		partie.pieces.splice(indexInPieces, 1);
+		var indexInPieces = partie.getPieces().indexOf(pieceACharger);
+		partie.getPieces().splice(indexInPieces, 1);
 		partie.setSelectedPiece(pieceTransporter);
-		partie.tourPoints --;
+		partie.datas.tourPoints --;
 	}
 	/*
 	 * @ActionService
@@ -100,12 +100,12 @@ var Engine = function(partie, tools) {
 		if (index == -1) {
 			throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
 		} else {
-			partie.pieces.push(pieceADecharger);
+			partie.getPieces().push(pieceADecharger);
 			pieceTransporter.getContenu().splice(index, 1);
 			this._setPieceToCase(pieceADecharger, targetCase);
 			partie.setSelectedPieceSoute(null);
 		}
-		partie.tourPoints --;
+		partie.datas.tourPoints --;
 	}
 
 	/*
@@ -130,13 +130,13 @@ var Engine = function(partie, tools) {
 			console.log('Piece: ' + piece.pieceType.name);
 		    targetCase.explose = false;
 		}, 4000);
-		var index = partie.pieces.indexOf(piece);
+		var index = partie.getPieces().indexOf(piece);
 		// Si la piece attaquee etait la piece selectionne du joueur, on deselectionne
 		if (piece == piece.player.selectedPiece) {
 			piece.player.selectedPiece = null;
 		}
-		partie.pieces.splice(index, 1);
-		partie.tourPoints -=2;
+		partie.getPieces().splice(index, 1);
+		partie.datas.tourPoints -=2;
 		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + piece.player.name + ' par ' + partie.getPlayer().name);
 	}
 

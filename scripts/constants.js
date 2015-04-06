@@ -50,13 +50,13 @@ var ORIENTATION = {
 }
 
 var PLAYER_ACTION_TYPE = {
-	SELECT: { name: 'select' },
+	SELECT: { name: 'sélection' },
 	// SELECT_SOUTE: { name: 'select-soute' },
-	MOVE: { name: 'move'},
-	LOAD: { name: 'load'},
-	UNLOAD: { name: 'unload'},
-	ATTACK: { name: 'attack'},
-	END_OF_TURN: { name: 'end-of-turn' }
+	MOVE: { name: 'déplacement'},
+	LOAD: { name: 'chargement'},
+	UNLOAD: { name: 'déchargement'},
+	ATTACK: { name: 'attaque'},
+	END_OF_TURN: { name: 'fin du tour' }
 }
 // Pair
 //
