@@ -69,7 +69,7 @@ var Tools = function() {
 				targetY = targetY - (1 - parite);
 				break;
 			default:
-				throw 'Orientation ' + orientation.name + ' unknown';
+				throw 'Orientation unknown: ' + JSON.stringify(orientation);
 				break;
 		}
 
@@ -121,5 +121,42 @@ var Tools = function() {
 				}
 			}
 		}
+	}
+
+	this.areAdjacent = function(pieceOrCase1, pieceOrCase2) {
+		if (pieceOrCase1 instanceof Piece
+			&& pieceOrCase1.pieceType == PIECE_TYPE.BARGE) {
+			if (pieceOrCase2 instanceof Piece
+				&& pieceOrCase2.pieceType == PIECE_TYPE.BARGE) {
+				// Les 2 pieces sont des barges
+				var caseAvantBarge1Coords = this.getCoordsCaseAvantBarge(pieceOrCase1, pieceOrCase1.orientation);
+				var caseAvantBarge2Coords = this.getCoordsCaseAvantBarge(pieceOrCase2, pieceOrCase2.orientation);
+
+				return this.areCoordinatesAdjacent(pieceOrCase1.x, pieceOrCase1.y, pieceOrCase2.x, pieceOrCase2.y)
+					|| this.areCoordinatesAdjacent(caseAvantBarge1Coords.x, caseAvantBarge1Coords.y, pieceOrCase2.x, pieceOrCase2.y)
+					|| this.areCoordinatesAdjacent(pieceOrCase1.x, pieceOrCase1.y, caseAvantBarge2Coords.x, caseAvantBarge2Coords.y)
+					|| this.areCoordinatesAdjacent(caseAvantBarge1Coords.x, caseAvantBarge1Coords.y , caseAvantBarge2Coords.x, caseAvantBarge2Coords.y);
+			} else {
+				// La piece1 est une barge mais pas la piece2
+				var caseAvantBarge1Coords = this.getCoordsCaseAvantBarge(pieceOrCase1, pieceOrCase1.orientation);
+				return this.areCoordinatesAdjacent(pieceOrCase1.x, pieceOrCase1.y, pieceOrCase2.x, pieceOrCase2.y)
+					|| this.areCoordinatesAdjacent(caseAvantBarge1Coords.x, caseAvantBarge1Coords.y, pieceOrCase2.x, pieceOrCase2.y);
+			}
+		} else {
+			if (pieceOrCase2 instanceof Piece
+				&& pieceOrCase2.pieceType == PIECE_TYPE.BARGE) {
+				// La piece2 est une barge mais pas la piece1
+				var caseAvantBarge2Coords = this.getCoordsCaseAvantBarge(pieceOrCase2, pieceOrCase2.orientation);
+				return this.areCoordinatesAdjacent(pieceOrCase1.x, pieceOrCase1.y, pieceOrCase2.x, pieceOrCase2.y)
+					|| this.areCoordinatesAdjacent(pieceOrCase1.x, pieceOrCase1.y, caseAvantBarge2Coords.x, caseAvantBarge2Coords.y);
+			} else {
+				// La piece1 et la piece2 ne sont pas des barges
+				return this.areCoordinatesAdjacent(pieceOrCase1.x, pieceOrCase1.y, pieceOrCase2.x, pieceOrCase2.y);
+			}
+		}
+	}
+
+	this.getCoordsCaseAvantBarge = function(barge) {
+		return this.getCaseCoordsInOrientation(barge, barge.orientation);
 	}
 }

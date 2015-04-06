@@ -1,14 +1,16 @@
 var EventListener = function(partie, referee, engine, tools, displayService) {
+	
+	// this.init()
+
 	/*
 	 * TODO A finir pour le listener
 	 */
 	this.onClick = function(targetCase) {
-		// console.log(JSON.stringify(partie.datas));
 		if (displayService.getError().showErrorPopup) {
 			displayService.clearError();
 		}
 
-		if (partie.tourPoints <= 0) {
+		if (partie.getTourPoints() <= 0) {
 			displayService.setError({
 				actionType: null,
 				errorMessages: [ 'Plus aucun point d\'action restant pour le joueur ' + partie.getPlayer().name ],
@@ -50,9 +52,19 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 	}
 
 	this.finDuTour = function() {
-		partie.setTourToNextPlayer();
-		displayService.centerPlateau();
-		displayService.clearError();
+		var playerAction = { actionType: PLAYER_ACTION_TYPE.END_OF_TURN	};
+		var actionReport = referee.validatePlayerAction(playerAction);
+		if (actionReport.success) {
+			var partieHashcode = engine.applyPlayerAction(playerAction);
+			displayService.centerPlateau();
+			displayService.clearError();
+		} else {
+			displayService.setError({
+				actionType: playerAction.actionType,
+				errorMessages: actionReport.errorMessages,
+				showErrorPopup: true
+			});
+		}
 	}
 
 	this._detectPlayerAction = function(targetCase) {
@@ -93,7 +105,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			} else if (targetPiece.pieceType.transporter
 				&& selectedPiece != null
 				&& selectedPiece != targetPiece
-				&& this._areTransporterAndPieceToLoadAdjacent(targetPiece, selectedPiece)) {
+				&& tools.areAdjacent(targetPiece, selectedPiece)) {
 				// Chargement
 				return {
 					actionType: PLAYER_ACTION_TYPE.LOAD,
@@ -111,18 +123,5 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 				}
 			}
 		}
-	}
-
-	this._areTransporterAndPieceToLoadAdjacent = function(pieceTransporter, toUnloadPiece) {
-		if (tools.areCoordinatesAdjacent(pieceTransporter.x, pieceTransporter.y, toUnloadPiece.x, toUnloadPiece.y)) {
-			return true;
-		} else if (pieceTransporter.pieceType == PIECE_TYPE.BARGE) {
-			var caseArriereBarge = partie.getCasePiece(pieceTransporter);
-			var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(caseArriereBarge, pieceTransporter.orientation);
-			if (tools.areCoordinatesAdjacent(caseAvantBargeCoords.x, caseAvantBargeCoords.y, toUnloadPiece.x, toUnloadPiece.y)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

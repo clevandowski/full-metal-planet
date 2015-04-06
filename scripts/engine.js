@@ -36,7 +36,7 @@ var Engine = function(partie, tools) {
 				this._attack(targetPiece);
 				break;
 			case PLAYER_ACTION_TYPE.END_OF_TURN:
-				// TODO A faire :)
+				partie.setTourToNextPlayer();
 				break;
 			default:
 				throw "Unknow playerAction: " + JSON.stringify(playerAction);
@@ -59,10 +59,9 @@ var Engine = function(partie, tools) {
 			} else {
 				// Sinon on avance.
 				// La case cible et la case avant de la barge sont forcément adjacentes ici
-				var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(piece, piece.orientation);
-				var caseAvantBarge = partie.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
-				var nextOrientation = tools.getOrientation(caseAvantBarge, targetCase);
-				this._setPieceToCase(piece, caseAvantBarge);
+				var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(piece);
+				var nextOrientation = tools.getOrientation(caseAvantBargeCoords, targetCase);
+				this._setPieceToCase(piece, caseAvantBargeCoords);
 				piece.orientation = nextOrientation;
 			}
 		} else {

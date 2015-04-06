@@ -1,4 +1,7 @@
 var DisplayService = function(partie) {
+	this.init = function() {
+		this.clearError();
+	}
 	this.clearError = function() {
 		this.error = {
 			showErrorPopup: false,
@@ -6,7 +9,6 @@ var DisplayService = function(partie) {
 			errorMessages: []
 		}
 	}
-	this.clearError();
 	this.getError = function() {
 		return this.error;
 	}
@@ -18,7 +20,7 @@ var DisplayService = function(partie) {
 		return partie.getPlayer().name;
 	}
 	this.getCurrentPlayerTourPoint = function() {
-		return partie.datas.tourPoints;
+		return partie.getTourPoints();
 	}
 	this.showCurrentPlayerPointsEconomise = function() {
 		return partie.getPlayer().pointsEconomise > 0;
@@ -27,10 +29,10 @@ var DisplayService = function(partie) {
 		return partie.getPlayer().pointsEconomise;
 	}
 	this.getCurrentMareeName = function() {
-		return partie.datas.currentMaree.name;
+		return partie.getCurrentMaree().name;
 	}
 	this.getNextMareeName = function() {
-		return partie.datas.nextMaree.name;
+		return partie.getNextMaree().name;
 	}
 	this.getContenuSelectedPiece = function () {
 		if (partie.getPlayer().selectedPiece) {
@@ -47,12 +49,12 @@ var DisplayService = function(partie) {
 	}
 
 	this.noActionPointAnymore = function() {
-		return partie.datas.tourPoints <= 0;
+		return partie.getTourPoints() <= 0;
 	}
 
 	this.getCssCase = function(targetCase) {
 		return 'hexagon-case '
-			+ targetCase.getCaseTypeMaree(partie.datas.currentMaree).cssName
+			+ targetCase.getCaseTypeMaree(partie.getCurrentMaree()).cssName
 			+ this._cssSelectedPiece(targetCase);
 	}
 

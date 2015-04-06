@@ -28,26 +28,6 @@ var Partie = function(plateau, tools) {
 		]
 	}
 
-	// this.tour = 0;
-	// this.players = [
-	// 	new Player('Damien'),
-	// 	new Player('Noémie')
-	// ];
-	// this.tourPlayer = 0;
-	// this.pieces = [
-	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 2, 9), 
-	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 3, 9), 
-	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 2, 8), 
-	// 	new Piece(this.players[0], PIECE_TYPE.TANK, 5, 9), 
-	// 	new Piece(this.players[0], PIECE_TYPE.TANK, 6, 9), 
-	// 	new Piece(this.players[0], PIECE_TYPE.TANK, 7, 8),
-	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 33, 11),
-	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 34, 12), 
-	// 	new Piece(this.players[1], PIECE_TYPE.TANK, 34, 13),
-	// 	new Piece(this.players[0], PIECE_TYPE.BARGE, 7, 9, ORIENTATION.SO),
-	// 	new Piece(this.players[1], PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
-	// ];
-
 	this.init = function() {
 		var randomMaree = Math.floor((Math.random() * 3));
 		this.datas.currentMaree = MAREES[randomMaree];
@@ -59,9 +39,18 @@ var Partie = function(plateau, tools) {
 	this.getPlayer = function() {
 		return this.datas.players[this.datas.tourPlayer];
 	}
+	this.getTourPoints = function() {
+		return this.datas.tourPoints;
+	}
 	this.getPieces = function() {
 		return this.datas.pieces;
 	}
+	this.getCurrentMaree = function() {
+		return this.datas.currentMaree;
+	}
+	this.getNextMaree = function() {
+		return this.datas.nextMaree;
+	}	
 	this.setTourToNextPlayer = function() {
 		// Avant de changer de tour, on récupère les points économisés du player
 		if (this.datas.tourPoints >= 10) {
@@ -275,8 +264,7 @@ var Partie = function(plateau, tools) {
 		if (this.countEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, player) < 2) {
 			// Fo vérifier au cas ou ce n'est pas une barge, la case avant est concernée aussi
 			if (pieceOrCase instanceof Piece && pieceOrCase.pieceType == PIECE_TYPE.BARGE) {
-				var caseArriereBarge = this.getCasePiece(pieceOrCase);
-				var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(caseArriereBarge, pieceOrCase.orientation);
+				var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(pieceOrCase);
 				if (this.countEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, player) < 2) {
 					return true;
 				} else {
@@ -291,5 +279,7 @@ var Partie = function(plateau, tools) {
 			return false;
 		}
 	}
-	this.init();
+	this.removeToursPoints = function(nbPointsToRemove) {
+		this.datas.tourPoints -= nbPointsToRemove;
+	}
 }

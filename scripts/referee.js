@@ -51,7 +51,7 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.datas.tourPoints == 0) {
+		if (partie.getTourPoints() == 0) {
 			validationStatus = false;
 			errorMessages.push(
 				'Pas de réserve de point suffisant pour attaquer');
@@ -65,7 +65,7 @@ var Referee = function(partie, tools) {
 		if (! this._isPieceLoadable(pieceACharger)) {
 			validationStatus = false;
 			errorMessages.push(
-				'La pièce à charger est bloquée à marée ' + partie.datas.currentMaree.name);
+				'La pièce à charger est bloquée à marée ' + partie.getCurrentMaree().name);
 		}
 		if (! partie.isFreeFromEnemyFire(pieceTransporter)) {
 			validationStatus = false;
@@ -91,12 +91,12 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.datas.tourPoints == 0) {
+		if (partie.getTourPoints() == 0) {
 			validationStatus = false;
 			errorMessages.push(
 				'Pas de réserve de point suffisant pour attaquer');
 		}
-		if (! this._arePieceAndCaseAdjacent(pieceTransporter, targetCase)) {
+		if (! tools.areAdjacent(pieceTransporter, targetCase)) {
 			validationStatus = false;
 			errorMessages.push(
 				'Il faut décharger sur une case adjacente au transporteur');
@@ -130,7 +130,7 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.datas.tourPoints < 2) {
+		if (partie.getTourPoints() < 2) {
 			validationStatus = false;
 			errorMessages.push(
 				'Pas de réserve de point suffisant pour attaquer');
@@ -163,7 +163,7 @@ var Referee = function(partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.datas.tourPoints == 0) {
+		if (partie.getTourPoints() == 0) {
 			validationStatus = false;
 			errorMessages.push(
 				'Pas de réserve de point suffisant pour attaquer');
@@ -177,13 +177,13 @@ var Referee = function(partie, tools) {
 		if (this._isPieceBoggedDown(targetPiece)) {
 			validationStatus = false;
 			errorMessages.push(
-				'La pièce sélectionnée est bloquée à marée ' + partie.datas.currentMaree.name);
+				'La pièce sélectionnée est bloquée à marée ' + partie.getCurrentMaree().name);
 		}
 		// Si la pièce sélectionnée et la case ciblée ne sont pas adjacentes
-		if (! this._arePieceAndCaseAdjacent(targetPiece, targetCase)) {
+		if (! tools.areAdjacent(targetPiece, targetCase)) {
 			validationStatus = false;
 			errorMessages.push(
-				'La case ciblée n\'est pas adjacente à la pièce sélectionnée');
+				'On ne peut se déplacer que d\'une case à la fois');
 		}
 		// - On peut échouer une unité mais uniquement sur les cases 
 		// qui varient en fonction de la marée
@@ -217,7 +217,7 @@ var Referee = function(partie, tools) {
 		}
 	}
 	this._isPieceBoggedDown = function(piece) {
-		var maree = partie.datas.currentMaree;
+		var maree = partie.getCurrentMaree();
 		var casePiece = partie.getCasePiece(piece);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (piece.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
@@ -225,23 +225,11 @@ var Referee = function(partie, tools) {
 			return true;
 		}
 		if (piece.pieceType == PIECE_TYPE.BARGE) {
-			var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(casePiece, piece.orientation);
+			var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(piece);
 			var caseAvantBarge = partie.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
 			var caseAvantBargeMaree = caseAvantBarge.getCaseTypeMaree(maree);
 			if (piece.pieceType.modeDeplacement != caseAvantBargeMaree.modeDeplacement) {
 				// console.log('Impossible de deplacer un ' + piece.pieceType.name + ' de type ' + piece.pieceType.modeDeplacement +  ' sur une case ' + caseAvantBargeMaree.name);
-				return true;
-			}
-		}
-		return false;
-	}
-	this._arePieceAndCaseAdjacent = function(piece, targetCase) {
-		if (tools.areCoordinatesAdjacent(piece.x, piece.y, targetCase.x, targetCase.y)) {
-			return true;
-		} else if (piece.pieceType == PIECE_TYPE.BARGE) {
-			var caseArriereBarge = partie.getCasePiece(piece);
-			var caseAvantBargeCoords = tools.getCaseCoordsInOrientation(caseArriereBarge, piece.orientation);
-			if (tools.areCoordinatesAdjacent(caseAvantBargeCoords.x, caseAvantBargeCoords.y, targetCase.x, targetCase.y)) {
 				return true;
 			}
 		}
@@ -253,7 +241,7 @@ var Referee = function(partie, tools) {
 	// - Les véhicules maritimes ne peuvent pas aller sur les cases de type PLAINE et MONTAGNE
 	// - Les gros tas ne peuvent pas aller sur les cases type MER et MONTAGNE
 	this._isPieceMovableOnCase = function(piece, targetCase) {
-		var maree = partie.datas.currentMaree;
+		var maree = partie.getCurrentMaree();
 		var targetCaseMaree = targetCase.getCaseTypeMaree(maree);
 		if (piece.pieceType.modeDeplacement != targetCaseMaree.modeDeplacement) {
 			// Exception : On peut obliger une unité à aller sur un endroit
@@ -280,12 +268,13 @@ var Referee = function(partie, tools) {
 	****************************/
 	this._getTransportCapaciteRestante = function(pieceTransporter) {
 		var capaciteRestante = pieceTransporter.pieceType.transportCapacite;
+		var contenu = pieceTransporter.getContenu();
 
-		if (pieceTransporter.getContenu() != null 
-			&& pieceTransporter.getContenu().length > 0) {
+		if (contenu != null 
+			&& contenu.length > 0) {
 
-			for (var piece in pieceTransporter.getContenu()) {
-				capaciteRestante -= pieceTransporter.getContenu()[piece].pieceType.encombrement;
+			for (var piece in contenu) {
+				capaciteRestante -= contenu[piece].pieceType.encombrement;
 			}
 		}
 		return capaciteRestante;
@@ -298,7 +287,7 @@ var Referee = function(partie, tools) {
 		return true;
 	}
 	this._isPieceLoadable = function(pieceACharger) {
-		var maree = partie.datas.currentMaree;
+		var maree = partie.getCurrentMaree();
 		var casePiece = partie.getCasePiece(pieceACharger);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (pieceACharger.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {

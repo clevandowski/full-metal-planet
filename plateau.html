@@ -76,7 +76,10 @@
 				return new Tools();
 			}]);
 			app.factory('PartieService', [ 'PlateauService', 'Tools', function(PlateauService, Tools) {
-				return new Partie(PlateauService.getPlateau(), Tools);
+				var partie = new Partie(PlateauService.getPlateau(), Tools);
+				partie.init();
+				// console.log(JSON.stringify(partie.datas));
+				return partie;
 			}]);
 			app.factory('Referee', [ 'PartieService', 'Tools', function(PartieService, Tools) {
 				return new Referee(PartieService, Tools);
@@ -85,7 +88,9 @@
 				return new Engine(PartieService, Tools);
 			}]);
 			app.factory('DisplayService', [ 'PartieService', function(PartieService) {
-				return new DisplayService(PartieService);
+				var displayService = new DisplayService(PartieService);
+				displayService.init();
+				return displayService;
 			}]);
 			app.factory('EventListener', [ 'PartieService', 'Referee', 'Engine', 'Tools', 'DisplayService', function(PartieService, Referee, Engine, Tools, DisplayService) {
 				return new EventListener(PartieService, Referee, Engine, Tools, DisplayService);
