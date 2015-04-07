@@ -19,7 +19,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			return;
 		}
 
-		var playerActionDetected = this._detectPlayerAction(targetCase);
+		var playerActionDetected = _detectPlayerAction(targetCase);
 
 		if (playerActionDetected == null) {
 			console.log('No action No cry...');
@@ -67,14 +67,14 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		}
 	}
 
-	this._detectPlayerAction = function(targetCase) {
+	var _detectPlayerAction = function(targetCase) {
 		var targetPiece = partie.getPieceIfAvailable(targetCase);
 		var selectedPiece = partie.getSelectedPiece();
 		var selectedPieceSoute = partie.getSelectedPieceSoute();
 
 		// Si on cible une case vide
 		if (targetPiece == null) {
-			if (selectedPiece == null 
+			if (selectedPiece == null
 				&& selectedPieceSoute == null) {
 				return null;
 			} else {
@@ -95,7 +95,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 				}
 			}
 		} else {
-			if (targetPiece.player != partie.getPlayer()
+			if (targetPiece.playerId != partie.getPlayer().id
 				&& ! partie.isFreeFromEnemyFire(targetPiece)) {
 				// Attaque
 				return {

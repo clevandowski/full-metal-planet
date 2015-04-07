@@ -1,5 +1,6 @@
-var Player = function(name) {
+var Player = function(name, id) {
 	this.name = name;
+	this.id = id;
 	this.pointsEconomise = 0;
 	this.selectedPiece = null;
 	this.selectedPieceSoute = null;

@@ -1,6 +1,9 @@
 var DisplayService = function(partie) {
 	this.init = function() {
 		this.clearError();
+		// for (var id in player) {
+			
+		// }
 	}
 	this.clearError = function() {
 		this.error = {
@@ -44,8 +47,8 @@ var DisplayService = function(partie) {
 	}
 	this.getCssPieceSoute = function(piece) {
 		return 'soute-container piece ' 
-			+ piece.pieceType.cssName + ' ' 
-			+ this._cssSelectedPieceSoute(piece);
+			+ piece.pieceType.cssName
+			+ _cssSelectedPieceSoute(piece);
 	}
 
 	this.noActionPointAnymore = function() {
@@ -55,7 +58,7 @@ var DisplayService = function(partie) {
 	this.getCssCase = function(targetCase) {
 		return 'hexagon-case '
 			+ targetCase.getCaseTypeMaree(partie.getCurrentMaree()).cssName
-			+ this._cssSelectedPiece(targetCase);
+			+ _cssSelectedPiece(targetCase);
 	}
 
 	this.isPieceOnCase = function(targetCase) {
@@ -74,10 +77,30 @@ var DisplayService = function(partie) {
 		}
 	}
 	/*
+	 * @???Service
+	 * @dependsOn(@PartieService, getSelectedPiece, getPlayer, pieces)
+	 * @dependsOn(@UtilService, centerPlateauOnCoordinates)
+	 */
+	this.centerPlateau = function() {
+		if (partie.getSelectedPiece() != null) {
+			_centerPlateauOnCoordinates(partie.getSelectedPiece().x, partie.getSelectedPiece().y);
+		} else {
+			var player = partie.getPlayer();
+			var barge = partie.getPieces().filter(
+				function(piece) {
+					return piece.playerId == player.id && piece.pieceType == PIECE_TYPE.BARGE
+				}
+			)
+			if (barge.length >= 1) {
+		 		_centerPlateauOnCoordinates(barge[0].x, barge[0].y);
+			}
+		}
+	}
+	/*
 	 * @CssService
 	 * @dependsOn(@PartieService, getSelectedPiece)
 	 */	
-	this._cssSelectedPiece = function(targetCase) {
+	var _cssSelectedPiece = function(targetCase) {
 	 	if (partie.getSelectedPiece() != null
 	 		&& targetCase.x == partie.getSelectedPiece().x
 	 		&& targetCase.y == partie.getSelectedPiece().y) {
@@ -101,9 +124,9 @@ var DisplayService = function(partie) {
 	 * @CssService
 	 * @dependsOn(@PartieService, getSelectedPiece)
 	 */	
-	this._cssSelectedPieceSoute = function(piece) {
-	 	if (this.getSelectedPieceSoute() == piece) {
- 			return 'selectedPiece';
+	var _cssSelectedPieceSoute = function(piece) {
+	 	if (_getSelectedPieceSoute() == piece) {
+ 			return ' selectedPiece';
 	 	} else {
 	 		return '';
 	 	}
@@ -112,37 +135,17 @@ var DisplayService = function(partie) {
 	/*
 	 * @???Service
 	 */
-	this.centerPlateauOnCoordinates = function(x, y) {
+	var _centerPlateauOnCoordinates = function(x, y) {
 		// C'est un peu à l'arrache mais ça permet d'eviter d'avoir a scroller pour trouver 
 		// la derniere unite selectionnee
 		$('#container').scrollLeft(x * 90 - 755);
 		$('#container').scrollTop(y * 102 - 298);
 	}
-	/*
-	 * @???Service
-	 * @dependsOn(@PartieService, getSelectedPiece, getPlayer, pieces)
-	 * @dependsOn(@UtilService, centerPlateauOnCoordinates)
-	 */
-	this.centerPlateau = function() {
-		if (partie.getSelectedPiece() != null) {
-			this.centerPlateauOnCoordinates(partie.getSelectedPiece().x, partie.getSelectedPiece().y);
-		} else {
-			var player = partie.getPlayer();
-			var barge = partie.getPieces().filter(
-				function(piece) { 
-					return piece.player == player && piece.pieceType == PIECE_TYPE.BARGE
-				}
-			)
-			if (barge.length >= 1) {
-		 		this.centerPlateauOnCoordinates(barge[0].x, barge[0].y);
-			}
-		}
-	}
 
 	/*
 	 * @PartieService
 	 */
-	this.getSelectedPieceSoute = function () {
+	var _getSelectedPieceSoute = function () {
 		return partie.getPlayer().selectedPieceSoute;
 	}
 }

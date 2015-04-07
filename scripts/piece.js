@@ -1,8 +1,8 @@
 /*
  * @Import(constant.js)
  */
-var Piece = function(player, pieceType, x, y, orientation) {
-	this.player = player;
+var Piece = function(playerId, pieceType, x, y, orientation) {
+	this.playerId = playerId;
 	this.pieceType = pieceType;
 	this.x = x;
 	this.y = y;

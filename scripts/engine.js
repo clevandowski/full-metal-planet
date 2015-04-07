@@ -15,25 +15,25 @@ var Engine = function(partie, tools) {
 				var targetCase = playerAction.targetCase;
 				var targetPiece = playerAction.targetPiece;
 				console.log('Déplacement');
-				this._movePieceToCase(targetPiece, targetCase);
+				_movePieceToCase(targetPiece, targetCase);
 				break;
 			case PLAYER_ACTION_TYPE.LOAD:
 				var pieceTransporter = playerAction.pieceTransporter;
 				var pieceACharger = playerAction.pieceACharger;
 				console.log('Chargement');
-				this._chargePiece(pieceTransporter, pieceACharger)
+				_chargePiece(pieceTransporter, pieceACharger)
 				break;
 			case PLAYER_ACTION_TYPE.UNLOAD:
 				var pieceTransporter = playerAction.pieceTransporter;
 				var pieceADecharger = playerAction.pieceADecharger;
 				var targetCase = playerAction.targetCase;
 				console.log('Déchargement');
-				this._dechargePiece(pieceTransporter, pieceADecharger, targetCase);
+				_dechargePiece(pieceTransporter, pieceADecharger, targetCase);
 				break;
 			case PLAYER_ACTION_TYPE.ATTACK:
 				var targetPiece = playerAction.targetPiece;
 				console.log('Attaque');
-				this._attack(targetPiece);
+				_attack(targetPiece);
 				break;
 			case PLAYER_ACTION_TYPE.END_OF_TURN:
 				partie.setTourToNextPlayer();
@@ -48,7 +48,7 @@ var Engine = function(partie, tools) {
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	this._movePieceToCase = function(piece, targetCase) {
+	var _movePieceToCase = function(piece, targetCase) {
 		if (piece.pieceType == PIECE_TYPE.BARGE) {
 			// Si c'est une case adjacente à l'arriere de la barge, on tourne, 
 			// ATTENTION on ne peux pas utiliser this.arePieceAndTargetAdjacent 
@@ -61,12 +61,12 @@ var Engine = function(partie, tools) {
 				// La case cible et la case avant de la barge sont forcément adjacentes ici
 				var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(piece);
 				var nextOrientation = tools.getOrientation(caseAvantBargeCoords, targetCase);
-				this._setPieceToCase(piece, caseAvantBargeCoords);
+				_setPieceToCase(piece, caseAvantBargeCoords);
 				piece.orientation = nextOrientation;
 			}
 		} else {
 			piece.orientation = tools.getOrientation(piece, targetCase);
-			this._setPieceToCase(piece, targetCase);
+			_setPieceToCase(piece, targetCase);
 		}
 		partie.removeToursPoints(1);
 	}
@@ -74,7 +74,7 @@ var Engine = function(partie, tools) {
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	this._chargePiece = function(pieceTransporter, pieceACharger) {
+	var _chargePiece = function(pieceTransporter, pieceACharger) {
 		console.log('Chargement de ' + pieceACharger.pieceType.name + ' dans ' + pieceTransporter.pieceType.name);
 		// if (pieceTransporter.getContenu() == null) {
 		// 	pieceTransporter.getContenu() = [];
@@ -91,7 +91,7 @@ var Engine = function(partie, tools) {
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	this._dechargePiece = function(pieceTransporter, pieceADecharger, targetCase) {
+	var _dechargePiece = function(pieceTransporter, pieceADecharger, targetCase) {
 		if (pieceTransporter.getContenu() == null) {
 			throw 'Impossible de décharger car le ' + pieceTransporter.pieceType.name + ' est vide.';
 		}
@@ -101,7 +101,7 @@ var Engine = function(partie, tools) {
 		} else {
 			partie.getPieces().push(pieceADecharger);
 			pieceTransporter.getContenu().splice(index, 1);
-			this._setPieceToCase(pieceADecharger, targetCase);
+			_setPieceToCase(pieceADecharger, targetCase);
 			partie.setSelectedPieceSoute(null);
 		}
 		partie.removeToursPoints(1);
@@ -111,7 +111,7 @@ var Engine = function(partie, tools) {
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	this._attack = function(piece) {
+	var _attack = function(piece) {
 		// TODO Validation :
 		// - Si plus de 2 destroyers, comment faire interagir le joueur
 		var targetCase = partie.getCasePiece(piece);
@@ -122,27 +122,30 @@ var Engine = function(partie, tools) {
 			pieceAttacking.getContenu().splice(0,1);
 		});
 
-		targetCase.explose = true;
 		// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
 		// l'explosion qui disparait en CSS
 		setTimeout(function() {
 			console.log('Piece: ' + piece.pieceType.name);
 		    targetCase.explose = false;
 		}, 4000);
-		var index = partie.getPieces().indexOf(piece);
+
+		partie.removePiece(piece);
+
+		// TODO Déplacer dans DisplayService ça sera pas du luxe vu comme c crado
+		targetCase.explose = true;
 		// Si la piece attaquee etait la piece selectionne du joueur, on deselectionne
-		if (piece == piece.player.selectedPiece) {
-			piece.player.selectedPiece = null;
-		}
-		partie.getPieces().splice(index, 1);
+		// if (piece == piece.player.selectedPiece) {
+		// 	piece.player.selectedPiece = null;
+		// }
+
 		partie.removeToursPoints(2);
-		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + piece.player.name + ' par ' + partie.getPlayer().name);
+		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + partie.getPlayer(piece).name + ' par ' + partie.getPlayer().name);
 	}
 
 	/*
 	 * @EngineService
 	 */
-	this._setPieceToCase = function(piece, hexagonalCase) {
+	 var _setPieceToCase = function(piece, hexagonalCase) {
 		piece.x = hexagonalCase.x;
 		piece.y = hexagonalCase.y;
 	}

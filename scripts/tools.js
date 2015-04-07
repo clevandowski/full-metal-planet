@@ -2,7 +2,7 @@ var Tools = function() {
 	/*
 	 * @UtilService
 	 */
-	this._areCoordinatesInRadius = function(x0, y0, x1, y1, radius) {
+	var _areCoordinatesInRadius = function(x0, y0, x1, y1, radius) {
 		var deltaX = x1 - x0;
 		var deltaY = y1 - y0;
 
@@ -32,7 +32,7 @@ var Tools = function() {
 	 * @UtilService
 	 */
 	this.areCoordinatesAdjacent = function(x0, y0, x1, y1) {
-		return this._areCoordinatesInRadius(x0, y0, x1, y1, 1);
+		return _areCoordinatesInRadius(x0, y0, x1, y1, 1);
 	}
 
 	/*
