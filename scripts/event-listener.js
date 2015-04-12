@@ -26,6 +26,23 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			return;
 		}
 
+		// Actions locales
+		if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.SELECT) {
+			var localActionReport = _validateSelect(playerActionDetected);
+			if (localActionReport.success) {
+				displayService.setSelectedPiece(playerActionDetected.targetPiece);
+				displayService.setSelectedPieceSoute(null);
+			} else {
+				displayService.setError({
+					actionType: playerActionDetected.actionType,
+					errorMessages: localActionReport.errorMessages,
+					showErrorPopup: true
+				});				
+			}
+			return;
+		}
+
+		// Actions globales
 		var actionReport = referee.validatePlayerAction(playerActionDetected);
 
 		if (actionReport.success) {
@@ -34,6 +51,18 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			// if (actionReport.partieHashcode != partieHashcode) {
 			// 	throw 'Error on party checksum ! Reload the party !!!';
 			// }
+			if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.LOAD) {
+				displayService.setSelectedPiece(playerActionDetected.pieceTransporter);
+				displayService.setSelectedPieceSoute(null);
+			}
+			if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.UNLOAD) {
+				displayService.setSelectedPieceSoute(null);
+			}
+			if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.ATTACK) {
+				displayService.exploseOnCase(partie.getCasePiece(playerActionDetected.targetPiece));				
+			}
+			// TODO sur PLAYER_ACTION_TYPE.ATTACK, déselectionner la piece qui vient 
+			// d'être détruite.
 		} else {
 			displayService.setError({
 				actionType: playerActionDetected.actionType,
@@ -48,7 +77,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 	 */
 	this.onClickSoute = function(piece) {
 		console.log('Piece selectionnee dans la soute : ' + piece.pieceType.name);
-		partie.setSelectedPieceSoute(piece);
+		displayService.setSelectedPieceSoute(piece);
 	}
 
 	this.finDuTour = function() {
@@ -69,8 +98,8 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 
 	var _detectPlayerAction = function(targetCase) {
 		var targetPiece = partie.getPieceIfAvailable(targetCase);
-		var selectedPiece = partie.getSelectedPiece();
-		var selectedPieceSoute = partie.getSelectedPieceSoute();
+		var selectedPiece = displayService.getSelectedPiece();
+		var selectedPieceSoute = displayService.getSelectedPieceSoute();
 
 		// Si on cible une case vide
 		if (targetPiece == null) {
@@ -122,6 +151,23 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 					targetPiece: targetPiece
 				}
 			}
+		}
+	}
+	var _validateSelect = function(playerAction) {
+		var targetPiece = playerAction.targetPiece;
+
+		var errorMessages = [];
+		var validationStatus = true;
+
+		if (targetPiece.playerId != partie.getPlayer().id) {
+			validationStatus = false;
+			errorMessages.push(
+				'Cette pièce ne vous appartient pas');
+		}
+
+		return { 
+			success: validationStatus,
+			errorMessages: errorMessages
 		}
 	}
 }

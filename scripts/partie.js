@@ -1,7 +1,6 @@
 var Partie = function(plateau, tools) {
 	var randomCurrentMaree = Math.floor((Math.random() * 3));
 	var randomNextMaree = Math.floor((Math.random() * 3));
-	this.plateau = plateau;
 	var datas = {
 		tour: 0,
 		tourPlayer: 0,
@@ -30,6 +29,8 @@ var Partie = function(plateau, tools) {
 		]
 	}
 
+	this.plateau = plateau;
+
 	this.init = function() {
 		var randomMaree = Math.floor((Math.random() * 3));
 		datas.currentMaree = MAREES[randomMaree];
@@ -52,11 +53,27 @@ var Partie = function(plateau, tools) {
 			}, piece)[0]; 
 		}
 	}
+	this.getPlayers = function() {
+		return datas.players;
+	}
+	this.getPlayerById = function(playerId) {
+		var playerTmp = {
+			playerId: playerId
+		}
+		console.log(JSON.stringify(playerTmp));
+		return datas.players.filter(function(player) { 
+			return player.id == this.playerId;
+		}, playerTmp)[0]; 
+	}
+
 	this.countPlayers = function() {
 		return datas.players.length;
 	}
 	this.getTourPoints = function() {
 		return datas.tourPoints;
+	}
+	this.getTourPlayer = function() {
+		return datas.tourPlayer;
 	}
 	this.getPieces = function() {
 		return datas.pieces;
@@ -149,35 +166,6 @@ var Partie = function(plateau, tools) {
 	this.getCasePiece = function(piece) {
 		return this.plateau[piece.y][piece.x];
 	}
-	/*
-	 * @PartieService
-	 */
-	this.getSelectedPiece = function () {
-		return this.getPlayer().selectedPiece;
-	}
-	/*
-	 * @PartieService
-	 */
-	this.setSelectedPiece = function (piece) {
-		this.getPlayer().selectedPiece = piece;
-		this.setSelectedPieceSoute(null);
-	}
-	/*
-	 * @PartieService
-	 */
-	this.getSelectedPieceSoute = function () {
-		return this.getPlayer().selectedPieceSoute;
-	}
-	/*
-	 * @PartieService
-	 */
-	this.setSelectedPieceSoute = function(piece) {
-		this.getPlayer().selectedPieceSoute = piece;
-	}
-	this.clearSelectedPieceSoute = function() {
-		this.getPlayer().selectedPieceSoute = null;
-	}
-
 	/*
 	 * @PartieService car utilise getCase et getPieceIfAvailable
 	 */

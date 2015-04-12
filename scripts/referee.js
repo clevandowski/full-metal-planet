@@ -2,9 +2,6 @@ var Referee = function(partie, tools) {
 
 	this.validatePlayerAction = function(playerAction) {
 		switch (playerAction.actionType) {
-			case PLAYER_ACTION_TYPE.SELECT:
-				return this._validateSelect(playerAction);
-				break;
 			case PLAYER_ACTION_TYPE.MOVE:
 				return _validateMove(playerAction);
 				break;
@@ -23,24 +20,6 @@ var Referee = function(partie, tools) {
 			default:
 				throw "Unknow playerAction: " + JSON.stringify(playerAction);
 				break;
-		}
-	}
-
-	this._validateSelect = function(playerAction) {
-		var targetPiece = playerAction.targetPiece;
-
-		var errorMessages = [];
-		var validationStatus = true;
-
-		if (targetPiece.playerId != partie.getPlayer().id) {
-			validationStatus = false;
-			errorMessages.push(
-				'Cette pièce ne vous appartient pas');
-		}
-
-		return { 
-			success: validationStatus,
-			errorMessages: errorMessages
 		}
 	}
 

@@ -1,9 +1,17 @@
 var DisplayService = function(partie) {
+	var localContext = {
+		playersContext: []
+	}
 	this.init = function() {
 		this.clearError();
-		// for (var id in player) {
-			
-		// }
+		var players = partie.getPlayers();
+		for (var i in players) {
+			localContext.playersContext.push({
+				playerId: players[i].id,
+				selectedPiece: null, 
+				selectedPieceSoute: null
+			});
+		}
 	}
 	this.clearError = function() {
 		this.error = {
@@ -18,7 +26,22 @@ var DisplayService = function(partie) {
 	this.setError = function(error) {
 		this.error = error;
 	}
-
+	this.getSelectedPiece = function () {
+		var playerLocalContext = _getPlayerLocalContext();
+		return playerLocalContext.selectedPiece;
+	}
+	this.getSelectedPieceSoute = function () {
+		var playerLocalContext = _getPlayerLocalContext();
+		return playerLocalContext.selectedPieceSoute;
+	}
+	this.setSelectedPiece = function(piece) {
+		var playerLocalContext = _getPlayerLocalContext();
+		playerLocalContext.selectedPiece = piece;
+	}
+	this.setSelectedPieceSoute = function(piece) {
+		var playerLocalContext = _getPlayerLocalContext();
+		playerLocalContext.selectedPieceSoute = piece;
+	}
 	this.getCurrentPlayerName = function() {
 		return partie.getPlayer().name;
 	}
@@ -38,8 +61,8 @@ var DisplayService = function(partie) {
 		return partie.getNextMaree().name;
 	}
 	this.getContenuSelectedPiece = function () {
-		if (partie.getPlayer().selectedPiece) {
-			return partie.getPlayer().selectedPiece.contenu;
+		if (this.getSelectedPiece() != null) {
+			return this.getSelectedPiece().contenu;
 		}
 	}
 	this.getPlateau = function() {
@@ -48,23 +71,19 @@ var DisplayService = function(partie) {
 	this.getCssPieceSoute = function(piece) {
 		return 'soute-container piece ' 
 			+ piece.pieceType.cssName
-			+ _cssSelectedPieceSoute(piece);
+			+ this._cssSelectedPieceSoute(piece);
 	}
-
 	this.noActionPointAnymore = function() {
 		return partie.getTourPoints() <= 0;
 	}
-
 	this.getCssCase = function(targetCase) {
 		return 'hexagon-case '
 			+ targetCase.getCaseTypeMaree(partie.getCurrentMaree()).cssName
-			+ _cssSelectedPiece(targetCase);
+			+ this._cssSelectedPiece(targetCase);
 	}
-
 	this.isPieceOnCase = function(targetCase) {
 		return partie.getPieceIfAvailable(targetCase) != null;
 	}
-
 	this.getCssPiece = function(targetCase) {
 		var piece = partie.getPieceIfAvailable(targetCase);
 
@@ -82,8 +101,8 @@ var DisplayService = function(partie) {
 	 * @dependsOn(@UtilService, centerPlateauOnCoordinates)
 	 */
 	this.centerPlateau = function() {
-		if (partie.getSelectedPiece() != null) {
-			_centerPlateauOnCoordinates(partie.getSelectedPiece().x, partie.getSelectedPiece().y);
+		if (this.getSelectedPiece() != null) {
+			_centerPlateauOnCoordinates(this.getSelectedPiece().x, this.getSelectedPiece().y);
 		} else {
 			var player = partie.getPlayer();
 			var barge = partie.getPieces().filter(
@@ -96,24 +115,36 @@ var DisplayService = function(partie) {
 			}
 		}
 	}
+	this.exploseOnCase = function(targetCase) {
+		// TODO Déplacer dans DisplayService
+		targetCase.explose = true;
+		// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
+		// l'explosion qui disparait en CSS
+		setTimeout(function() {
+			console.log('Piece: ' + piece.pieceType.name);
+		    targetCase.explose = false;
+		}, 4000);
+	}
 	/*
 	 * @CssService
 	 * @dependsOn(@PartieService, getSelectedPiece)
 	 */	
-	var _cssSelectedPiece = function(targetCase) {
-	 	if (partie.getSelectedPiece() != null
-	 		&& targetCase.x == partie.getSelectedPiece().x
-	 		&& targetCase.y == partie.getSelectedPiece().y) {
+	// Obligé de déclarer dans this car on utilise des fonctions de this...
+	// TODO A nettoyer
+	this._cssSelectedPiece = function(targetCase) {
+	 	if (this.getSelectedPiece() != null
+	 		&& targetCase.x == this.getSelectedPiece().x
+	 		&& targetCase.y == this.getSelectedPiece().y) {
  			return ' selectedPiece';
  		} else {
  			return '';
  		}
 	 		// TODO Corriger la css pour que le résultat sur la barge ne soit pas
 	 		// trop horrible
-	 		// else if (partie.getSelectedPiece().pieceType == PIECE_TYPE.BARGE) {
-	 		// 	var caseBarge = this.getCasePiece(partie.getSelectedPiece());
+	 		// else if (this.getSelectedPiece().pieceType == PIECE_TYPE.BARGE) {
+	 		// 	var caseBarge = this.getCasePiece(this.getSelectedPiece());
 	 		// 	var caseAvantBargeCoords = 
-	 		// 		this.getCaseCoordsInOrientation(caseBarge, partie.getSelectedPiece().orientation);
+	 		// 		this.getCaseCoordsInOrientation(caseBarge, this.getSelectedPiece().orientation);
 				// if ((targetCase.x == caseAvantBargeCoords.x)
 			 // 		&& (targetCase.y == caseAvantBargeCoords.y)) {
 				//  	return 'selectedPiece';
@@ -123,9 +154,11 @@ var DisplayService = function(partie) {
 	/*
 	 * @CssService
 	 * @dependsOn(@PartieService, getSelectedPiece)
-	 */	
-	var _cssSelectedPieceSoute = function(piece) {
-	 	if (_getSelectedPieceSoute() == piece) {
+	 */
+	// Obligé de déclarer dans this car on utilise des fonctions de this...
+	// TODO A nettoyer
+	this._cssSelectedPieceSoute = function(piece) {
+	 	if (this.getSelectedPieceSoute() == piece) {
  			return ' selectedPiece';
 	 	} else {
 	 		return '';
@@ -142,10 +175,11 @@ var DisplayService = function(partie) {
 		$('#container').scrollTop(y * 102 - 298);
 	}
 
-	/*
-	 * @PartieService
-	 */
-	var _getSelectedPieceSoute = function () {
-		return partie.getPlayer().selectedPieceSoute;
+	var _getPlayerLocalContext = function() {
+		var player = partie.getPlayer();
+		return localContext.playersContext.filter(function(playerContext) {
+			// console.log('playerContext: ' + JSON.stringify(playerContext) + ', this.id: ' + this.id);
+			return playerContext.playerId == this.id;
+		}, player)[0];
 	}
 }

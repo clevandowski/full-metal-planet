@@ -1,39 +1,110 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="css/styles.css?v=1.0">
+		<script type="text/javascript" src="scripts/jquery-2.1.3.js"></script>
+		<script type="text/javascript" src="scripts/angular.js"></script>
+		<script type="text/javascript" src="scripts/constants.js"></script>
+		<script type="text/javascript" src="scripts/tools.js"></script>
+		<script type="text/javascript" src="scripts/case.js"></script>
+		<script type="text/javascript" src="scripts/plateau.js"></script>
+		<script type="text/javascript" src="scripts/piece.js"></script>
+		<script type="text/javascript" src="scripts/player.js"></script>
+		<script type="text/javascript" src="scripts/partie.js"></script>
+		<script type="text/javascript" src="scripts/referee.js"></script>
+		<script type="text/javascript" src="scripts/engine.js"></script>
+		<script type="text/javascript" src="scripts/display-service.js"></script>
+		<script type="text/javascript" src="scripts/event-listener.js"></script>
+	</head>
+	<body style="overflow: hidden">
+		<div ng-app="myApp" ng-controller="myCtrl">
+			<div id="info-partie">
+				<span class="info">JOUEUR: {{display.getCurrentPlayerName()}}</span><br/>
+				<span class="info">POINTS: {{display.getCurrentPlayerTourPoint()}}</span><span ng-show="display.showCurrentPlayerPointsEconomise()"> (+{{display.getCurrentPlayerPointsEconomise()}})</span><br/>
+				<span class="info">MAR&Eacute;E: {{display.getCurrentMareeName()}}</span><br/>
+				<span class="info">SUIVANTE: {{display.getNextMareeName()}}</span><br/>
+			</div>
+			<div id="soute" class="soute">
+				<div 
+					ng-repeat="piece in display.getContenuSelectedPiece()" 
+					ng-class="display.getCssPieceSoute(piece)" 
+					ng-click="listener.onClickSoute(piece)">
+				</div>
+			</div>
+			<div id="fin-tour" ng-click="listener.finDuTour()">
+				<span ng-show="display.noActionPointAnymore()">CLIC !<br/></span>
+				<span>FIN DU TOUR</span><br/>
+				<span ng-show="display.noActionPointAnymore()">CLIC !</span>
+			</div>
+			<div id="error-popup"
+				ng-show="display.getError().showErrorPopup">
+				<span class="titre1">ACTION {{display.getError().actionType.name.toUpperCase()}} IMPOSSIBLE</span><br/>
+				<ul><li ng-repeat="errorMessage in display.getError().errorMessages">{{errorMessage}}</li></ul>
+			</div>
+			<!-- class pour le css, id pour jquery (méthode display.centerPlateau()) --> 
+			<div class="container" id="container">
+				<div class="plateau" id="plateau">
+					<div 
+						ng-repeat="ligne in display.getPlateau()"
+						class="hexagon-row">
+						<div 
+							ng-repeat="hexagonalCase in ligne"
+							ng-class="display.getCssCase(hexagonalCase)" 
+							ng-click="listener.onClick(hexagonalCase)">
+							<div class="explosion" ng-show="hexagonalCase.explose"></div>
+							<div 
+								ng-show="display.isPieceOnCase(hexagonalCase)" 
+								ng-class="display.getCssPiece(hexagonalCase)">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var app = angular.module('myApp', []);
 
-<head>
-<!-- <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script> -->
-<script src="scripts/angular.js"></script>
-</head>
+			app.factory('PlateauService', [ function() {
+				var plateau = new Plateau();
+				return {
+					getPlateau: function() {
+      					return plateau.cases;
+    				}
+				}
+			}]);
+			app.factory('Tools', [ function() {
+				return new Tools();
+			}]);
+			app.factory('PartieService', [ 'PlateauService', 'Tools', function(PlateauService, Tools) {
+				var partie = new Partie(PlateauService.getPlateau(), Tools);
+				partie.init();
+				// console.log(JSON.stringify(partie.datas));
+				return partie;
+			}]);
+			app.factory('Referee', [ 'PartieService', 'Tools', function(PartieService, Tools) {
+				return new Referee(PartieService, Tools);
+			}]);
+			app.factory('Engine', [ 'PartieService', 'Tools', function(PartieService, Tools) {
+				return new Engine(PartieService, Tools);
+			}]);
+			app.factory('DisplayService', [ 'PartieService', function(PartieService) {
+				var displayService = new DisplayService(PartieService);
+				displayService.init();
+				return displayService;
+			}]);
+			app.factory('EventListener', [ 'PartieService', 'Referee', 'Engine', 'Tools', 'DisplayService', function(PartieService, Referee, Engine, Tools, DisplayService) {
+				return new EventListener(PartieService, Referee, Engine, Tools, DisplayService);
+			}]);
 
-<body>
-<div ng-app="myApp" ng-controller="personController">
- 	<p>Name: <input type="text" ng-model="name"></p>
- 	<p ng-bind="name">coincoin</p>
+			app.controller('myCtrl', ['$scope', 'EventListener', 'DisplayService', function($scope, EventListener, DisplayService) {
 
- 	<p>Nombre 1: <input type="text" ng-model="nombre1"></p>
- 	<p>Nombre 2: <input type="text" ng-model="nombre2"></p>
-  <p>Hardcoded expression: {{ 5 + 5 }}</p>
-	<p>My first expression: {{ nombre1 * nombre2 }}</p>
-  <p></p>
-  <p>first name: <input type="text" ng-model="firstName"></p>
-  <p>last name: <input type="text" ng-model="lastName"></p>
-  <p>User name : {{ firstName + " " + lastName }}</p>
-</div>
-<script>
+				$scope.listener = EventListener;
+				$scope.display = DisplayService;
 
-// Retrocompatibilité
-var app = angular.module("myApp",[]).config(['$controllerProvider', function($controllerProvider) {
-     $controllerProvider.allowGlobals();
-}]);
-
-function personController($scope) {
-  $scope.firstName = "Cyrille";
-  $scope.lastName = "Levandowski";
-}
-</script>
-
-
-</body>
+				// Initialisation plateau
+				$scope.display.centerPlateau();
+			}]);
+		</script>
+	</body>
 </html>
-
