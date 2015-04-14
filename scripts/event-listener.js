@@ -9,7 +9,6 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		if (displayService.getError().showErrorPopup) {
 			displayService.clearError();
 		}
-
 		if (partie.getTourPoints() <= 0) {
 			displayService.setError({
 				actionType: null,
@@ -18,15 +17,13 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			});
 			return;
 		}
-
 		var playerActionDetected = _detectPlayerAction(targetCase);
-
 		if (playerActionDetected == null) {
 			console.log('No action No cry...');
 			return;
 		}
-
-		// Actions locales
+		
+		// Actions locales, pas besoin de partager
 		if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.SELECT) {
 			var localActionReport = _validateSelect(playerActionDetected);
 			if (localActionReport.success) {
@@ -43,8 +40,10 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		}
 
 		// Actions globales
-		var actionReport = referee.validatePlayerAction(playerActionDetected);
+		referee.validatePlayerAction(playerActionDetected, callbackValidatePlayerAction);
+	}
 
+	var callbackValidatePlayerAction = function(playerActionDetected, actionReport) {
 		if (actionReport.success) {
 			var partieHashcode = engine.applyPlayerAction(playerActionDetected);
 			// Vérification

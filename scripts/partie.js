@@ -1,4 +1,12 @@
 var Partie = function(plateau, tools) {
+	var refereeRuntimeMode;
+	console.log('window.location:' + window.location.protocol);
+	if (window.location.protocol == 'file:') {
+		refereeRuntimeMode = REFEREE_RUNTIME_MODE.LOCAL;
+	} else {
+		refereeRuntimeMode = REFEREE_RUNTIME_MODE.REMOTE;
+	}
+	// var refereeRuntimeMode = REFEREE_RUNTIME_MODE.REMOTE;
 	var randomCurrentMaree = Math.floor((Math.random() * 3));
 	var randomNextMaree = Math.floor((Math.random() * 3));
 	var datas = {
@@ -17,7 +25,7 @@ var Partie = function(plateau, tools) {
 		pieces: [
 			new Piece(1, PIECE_TYPE.TANK, 2, 9), 
 			new Piece(1, PIECE_TYPE.TANK, 3, 9), 
-			new Piece(1, PIECE_TYPE.TANK, 2, 8), 
+			// new Piece(1, PIECE_TYPE.TANK, 2, 8), 
 			new Piece(0, PIECE_TYPE.TANK, 5, 9), 
 			new Piece(0, PIECE_TYPE.TANK, 6, 9), 
 			new Piece(0, PIECE_TYPE.TANK, 7, 8),
@@ -38,6 +46,10 @@ var Partie = function(plateau, tools) {
 		datas.nextMaree = MAREES[randomMaree];
 		this.reloadMunitionOnDestroyers();
 		datas.tourPoints = 15;
+	}
+
+	this.getRefereeRuntimeMode = function() {
+		return refereeRuntimeMode;
 	}
 	/**
 	 * Retourne le joueur courant si aucune pièce n'est pas passée en paramètre.
@@ -60,7 +72,7 @@ var Partie = function(plateau, tools) {
 		var playerTmp = {
 			playerId: playerId
 		}
-		console.log(JSON.stringify(playerTmp));
+		// console.log(JSON.stringify(playerTmp));
 		return datas.players.filter(function(player) { 
 			return player.id == this.playerId;
 		}, playerTmp)[0]; 

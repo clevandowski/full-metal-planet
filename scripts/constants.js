@@ -118,3 +118,8 @@ var ZONE_VERIFICATION_MENACE_TIR = [
 	{ x: 2, y: 2, distance: 3 },
 	{ x: 0, y: 3, distance: 3 }
 ]
+
+var REFEREE_RUNTIME_MODE = {
+	LOCAL: 'local',
+	REMOTE: 'remote'
+}

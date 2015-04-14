@@ -20,6 +20,7 @@
 	<body style="overflow: hidden">
 		<div ng-app="myApp" ng-controller="myCtrl">
 			<div id="info-partie">
+				<span class="info">TYPE PARTIE: {{display.getRefereeRuntimeMode()}}</span><br/>
 				<span class="info">JOUEUR: {{display.getCurrentPlayerName()}}</span><br/>
 				<span class="info">POINTS: {{display.getCurrentPlayerTourPoint()}}</span><span ng-show="display.showCurrentPlayerPointsEconomise()"> (+{{display.getCurrentPlayerPointsEconomise()}})</span><br/>
 				<span class="info">MAR&Eacute;E: {{display.getCurrentMareeName()}}</span><br/>
@@ -82,8 +83,8 @@
 				// console.log(JSON.stringify(partie.datas));
 				return partie;
 			}]);
-			app.factory('Referee', [ 'PartieService', 'Tools', function(PartieService, Tools) {
-				return new Referee(PartieService, Tools);
+			app.factory('Referee', [ '$http', 'PartieService', 'Tools', function($http, PartieService, Tools) {
+				return new Referee($http, PartieService, Tools);
 			}]);
 			app.factory('Engine', [ 'PartieService', 'Tools', function(PartieService, Tools) {
 				return new Engine(PartieService, Tools);
@@ -93,8 +94,8 @@
 				displayService.init();
 				return displayService;
 			}]);
-			app.factory('EventListener', [ 'PartieService', 'Referee', 'Engine', 'Tools', 'DisplayService', function(PartieService, Referee, Engine, Tools, DisplayService) {
-				return new EventListener(PartieService, Referee, Engine, Tools, DisplayService);
+			app.factory('EventListener', [ 'PartieService', 'Referee', 'Engine', 'Tools', 'DisplayService', function($http, PartieService, Referee, Engine, Tools, DisplayService) {
+				return new EventListener($http, PartieService, Referee, Engine, Tools, DisplayService);
 			}]);
 
 			app.controller('myCtrl', ['$scope', 'EventListener', 'DisplayService', function($scope, EventListener, DisplayService) {

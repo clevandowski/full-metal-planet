@@ -42,6 +42,9 @@ var DisplayService = function(partie) {
 		var playerLocalContext = _getPlayerLocalContext();
 		playerLocalContext.selectedPieceSoute = piece;
 	}
+	this.getRefereeRuntimeMode = function() {
+		return partie.getRefereeRuntimeMode();
+	}
 	this.getCurrentPlayerName = function() {
 		return partie.getPlayer().name;
 	}
@@ -121,7 +124,6 @@ var DisplayService = function(partie) {
 		// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
 		// l'explosion qui disparait en CSS
 		setTimeout(function() {
-			console.log('Piece: ' + piece.pieceType.name);
 		    targetCase.explose = false;
 		}, 4000);
 	}
@@ -171,6 +173,7 @@ var DisplayService = function(partie) {
 	var _centerPlateauOnCoordinates = function(x, y) {
 		// C'est un peu à l'arrache mais ça permet d'eviter d'avoir a scroller pour trouver 
 		// la derniere unite selectionnee
+		// TODO A injecter ?
 		$('#container').scrollLeft(x * 90 - 755);
 		$('#container').scrollTop(y * 102 - 298);
 	}

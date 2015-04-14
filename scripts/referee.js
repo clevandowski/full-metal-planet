@@ -1,28 +1,82 @@
-var Referee = function(partie, tools) {
+var Referee = function($http, partie, tools) {
 
-	this.validatePlayerAction = function(playerAction) {
-		switch (playerAction.actionType) {
-			case PLAYER_ACTION_TYPE.MOVE:
-				return _validateMove(playerAction);
-				break;
-			case PLAYER_ACTION_TYPE.LOAD:
-				return _validateLoad(playerAction);
-				break;
-			case PLAYER_ACTION_TYPE.UNLOAD:
-				return _validateUnload(playerAction);
-				break;
-			case PLAYER_ACTION_TYPE.ATTACK:
-				return _validateAttack(playerAction);
-				break;
-			case PLAYER_ACTION_TYPE.END_OF_TURN:
-				return { success: true };
-				break;
-			default:
-				throw "Unknow playerAction: " + JSON.stringify(playerAction);
-				break;
+	// callback(playerAction, actionReport);
+	// var actionReport = { validationStatus: Boolean, errorMessages: [''] }
+	this.validatePlayerAction = function(playerAction, callback) {
+		var refereeRuntimeMode = partie.getRefereeRuntimeMode();
+
+		if (refereeRuntimeMode == REFEREE_RUNTIME_MODE.LOCAL) {
+			_localValidatePlayerAction(playerAction, callback);
+		} else if (refereeRuntimeMode == REFEREE_RUNTIME_MODE.REMOTE) {
+			_remoteValidatePlayerAction($http, playerAction, callback);
+		} else {
+			throw 'WTF is this referee runtime mode ??????: ' + JSON.stringify(partie.getRefereeRuntimeMode());
 		}
 	}
 
+	var _localValidatePlayerAction = function(playerAction, callback) {
+		var actionReport;
+		switch (playerAction.actionType) {
+			case PLAYER_ACTION_TYPE.MOVE:
+				actionReport = _validateMove(playerAction);
+				break;
+			case PLAYER_ACTION_TYPE.LOAD:
+				actionReport = _validateLoad(playerAction);
+				break;
+			case PLAYER_ACTION_TYPE.UNLOAD:
+				actionReport = _validateUnload(playerAction);
+				break;
+			case PLAYER_ACTION_TYPE.ATTACK:
+				actionReport = _validateAttack(playerAction);
+				break;
+			case PLAYER_ACTION_TYPE.END_OF_TURN:
+				actionReport =  { status: true };
+				break;
+			default:
+				console.log('Unknow playerAction: ' + JSON.stringify(playerAction));
+				actionReport = {
+					status: false, 
+					errorMessages: ['Erreur lors de l\'appel au serveur', 'Regardez les logs dans la console']
+				}
+				break;
+		}
+		callback(playerAction, actionReport);
+		return;
+	}
+	var _remoteValidatePlayerAction = function(playerAction, callback) {
+		// Actions globales En mode multiplayer
+		// In progress
+		var httpRequest = {
+			method: 'POST',
+			// Nécessite un reverse proxy
+			// cf /etc/apache2/sites-enabled/000-default.conf
+			url: '/full-metal-planet-server/',
+			// headers: {
+			// 	Origin: 'http://cyrille-zenika/full-metal-planet/'
+			// },
+			// data: {id: 0, name: partie.getPlayer().name}
+			data: playerAction
+		}
+		$http(httpRequest)
+			.success(function(data, status, headers, config) {
+				actionReport = data;
+				console.log('success: HttpResponse.data: id:' + data.id + ', name: ' + data.name);
+				callback(playerAction, actionReport);
+				return;
+			})
+			.error(function(data, status, headers, config) {
+				console.log('error: HttpResponse.status: ' + JSON.stringify(status));
+				console.log('error: HttpResponse.data: ' + JSON.stringify(data));
+				console.log('error: HttpResponse.headers: ' + JSON.stringify(headers));
+				console.log('error: HttpResponse.config: ' + JSON.stringify(config));
+				actionReport = {
+					status: false,
+					errorMessages: ['Erreur lors de l\'appel au serveur', 'Regardez les logs dans la console']
+				}
+				callback(playerAction, actionReport);
+				return;
+			});
+	}
 	var _validateLoad = function(playerAction) {
 		var pieceTransporter = playerAction.pieceTransporter;
 		var pieceACharger = playerAction.pieceACharger;
@@ -56,7 +110,7 @@ var Referee = function(partie, tools) {
 			errorMessages.push(
 				'La pièce à charger est à portée de tir ennemi');
 		}
-		return { 
+		return {
 			success: validationStatus,
 			errorMessages: errorMessages
 		}
@@ -129,7 +183,7 @@ var Referee = function(partie, tools) {
 				'Le joueur a annulé l\'attaque');
 		}
 
-		return { 
+		return {
 			success: validationStatus,
 			errorMessages: errorMessages
 		}
