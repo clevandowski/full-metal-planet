@@ -10,7 +10,7 @@ var Referee = function($http, partie, tools) {
 		} else if (refereeRuntimeMode == REFEREE_RUNTIME_MODE.REMOTE) {
 			_remoteValidatePlayerAction($http, playerAction, callback);
 		} else {
-			throw 'WTF is this referee runtime mode ??????: ' + JSON.stringify(partie.getRefereeRuntimeMode());
+			throw 'WTF is this referee runtime mode ??????: ' + JSON.stringify(refereeRuntimeMode);
 		}
 	}
 
@@ -43,7 +43,7 @@ var Referee = function($http, partie, tools) {
 		callback(playerAction, actionReport);
 		return;
 	}
-	var _remoteValidatePlayerAction = function(playerAction, callback) {
+	var _remoteValidatePlayerAction = function($http, playerAction, callback) {
 		// Actions globales En mode multiplayer
 		// In progress
 		var httpRequest = {
@@ -60,7 +60,7 @@ var Referee = function($http, partie, tools) {
 		$http(httpRequest)
 			.success(function(data, status, headers, config) {
 				actionReport = data;
-				console.log('success: HttpResponse.data: id:' + data.id + ', name: ' + data.name);
+				console.log('actionReport received from server: ' + JSON.stringify(actionReport));
 				callback(playerAction, actionReport);
 				return;
 			})
