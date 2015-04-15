@@ -30,12 +30,12 @@ var Referee = function($http, partie, tools) {
 				actionReport = _validateAttack(playerAction);
 				break;
 			case PLAYER_ACTION_TYPE.END_OF_TURN:
-				actionReport =  { status: true };
+				actionReport =  { success: true };
 				break;
 			default:
 				console.log('Unknow playerAction: ' + JSON.stringify(playerAction));
 				actionReport = {
-					status: false, 
+					success: false, 
 					errorMessages: ['Erreur lors de l\'appel au serveur', 'Regardez les logs dans la console']
 				}
 				break;

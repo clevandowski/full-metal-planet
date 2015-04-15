@@ -56,7 +56,6 @@ var Partie = function(plateau, tools) {
 	 * Retourne le joueur de la pièce passée en paramètre
 	 */
 	this.getPlayer = function(piece) {
-		// return datas.players[datas.tourPlayer];
 		if (piece == null) {
 			return datas.players[datas.tourPlayer];
 		} else {
@@ -69,6 +68,7 @@ var Partie = function(plateau, tools) {
 		return datas.players;
 	}
 	this.getPlayerById = function(playerId) {
+		// TODO Jai honte mais je trouverais une solution plus tard
 		var playerTmp = {
 			playerId: playerId
 		}

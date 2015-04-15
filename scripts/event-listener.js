@@ -80,15 +80,17 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 	}
 
 	this.finDuTour = function() {
-		var playerAction = { actionType: PLAYER_ACTION_TYPE.END_OF_TURN	};
-		var actionReport = referee.validatePlayerAction(playerAction);
+		var playerActionDetected = { actionType: PLAYER_ACTION_TYPE.END_OF_TURN	};
+		var actionReport = referee.validatePlayerAction(playerActionDetected, callbackValidateFinDuTour);
+	}
+	var callbackValidateFinDuTour = function(playerActionDetected, actionReport) {
 		if (actionReport.success) {
-			var partieHashcode = engine.applyPlayerAction(playerAction);
+			var partieHashcode = engine.applyPlayerAction(playerActionDetected);
 			displayService.centerPlateau();
 			displayService.clearError();
 		} else {
 			displayService.setError({
-				actionType: playerAction.actionType,
+				actionType: playerActionDetected.actionType,
 				errorMessages: actionReport.errorMessages,
 				showErrorPopup: true
 			});
