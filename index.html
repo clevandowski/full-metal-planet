@@ -28,9 +28,9 @@
 			</div>
 			<div id="soute" class="soute">
 				<div 
-					ng-repeat="piece in display.getContenuSelectedPiece()" 
-					ng-class="display.getCssPieceSoute(piece)" 
-					ng-click="listener.onClickSoute(piece)">
+					ng-repeat="pieceId in display.getContenuSoute()" 
+					ng-class="display.getCssPieceSoute(pieceId)" 
+					ng-click="listener.onClickSoute(pieceId)">
 				</div>
 			</div>
 			<div id="fin-tour" ng-click="listener.finDuTour()">

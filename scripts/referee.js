@@ -78,8 +78,8 @@ var Referee = function($http, partie, tools) {
 			});
 	}
 	var _validateLoad = function(playerAction) {
-		var pieceTransporter = playerAction.pieceTransporter;
-		var pieceACharger = playerAction.pieceACharger;
+		var pieceTransporter = partie.getPieceById(playerAction.pieceTransporterId);
+		var pieceACharger = partie.getPieceById(playerAction.pieceAChargerId);
 
 		var errorMessages = [];
 		var validationStatus = true;
@@ -117,8 +117,8 @@ var Referee = function($http, partie, tools) {
 	}
 
 	var _validateUnload = function(playerAction) {
-		var pieceTransporter = playerAction.pieceTransporter;
-		var pieceADecharger = playerAction.pieceADecharger;
+		var pieceTransporter = partie.getPieceById(playerAction.pieceTransporterId);
+		var pieceADecharger = partie.getPieceById(playerAction.pieceADechargerId);
 		var targetCase = playerAction.targetCase;
 
 		var errorMessages = [];
@@ -156,7 +156,7 @@ var Referee = function($http, partie, tools) {
 	}
 
 	var _validateAttack = function(playerAction) {
-		var targetPiece = playerAction.targetPiece;
+		var targetPiece = partie.getPieceById(playerAction.targetPieceId);
 		var piecesAttacking = 
 			partie.getEnemiesThatCanAttackInRange(targetPiece.x, targetPiece.y, targetPiece.playerId);
 
@@ -185,12 +185,13 @@ var Referee = function($http, partie, tools) {
 
 		return {
 			success: validationStatus,
+			attackCoords: { x: targetPiece.x, y: targetPiece.y }, 
 			errorMessages: errorMessages
 		}
 	}
 
 	var _validateMove = function(playerAction) {
-		var targetPiece = playerAction.targetPiece
+		var targetPiece = partie.getPieceById(playerAction.targetPieceId);
 		var targetCase = playerAction.targetCase;
 
 		var errorMessages = [];
@@ -301,14 +302,15 @@ var Referee = function($http, partie, tools) {
 	****************************/
 	var _getTransportCapaciteRestante = function(pieceTransporter) {
 		var capaciteRestante = pieceTransporter.pieceType.transportCapacite;
-		var contenu = pieceTransporter.getContenu();
+		var contenu = pieceTransporter.contenu;
 
 		if (contenu != null 
 			&& contenu.length > 0) {
 
-			for (var piece in contenu) {
-				capaciteRestante -= contenu[piece].pieceType.encombrement;
-			}
+			contenu.forEach(function(pieceId) {
+				var piece = partie.getPieceById(pieceId)
+				capaciteRestante -= piece.pieceType.encombrement;
+			});
 		}
 		return capaciteRestante;
 	}
@@ -331,8 +333,7 @@ var Referee = function($http, partie, tools) {
 	}
 	var _isRemainingAmmoOnPiecesAttacking = function(piecesAttacking) {
 		for (var i in piecesAttacking) {
-			if (piecesAttacking[i].contenu == null
-				|| piecesAttacking[i].contenu.length == 0) {
+			if (piecesAttacking[i].nbAmmos <= 0) {
 				return false;
 			}
 		}

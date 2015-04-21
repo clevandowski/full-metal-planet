@@ -124,9 +124,9 @@ var Tools = function() {
 	}
 
 	this.areAdjacent = function(pieceOrCase1, pieceOrCase2) {
-		if (pieceOrCase1 instanceof Piece
+		if (pieceOrCase1.pieceType != null
 			&& pieceOrCase1.pieceType == PIECE_TYPE.BARGE) {
-			if (pieceOrCase2 instanceof Piece
+			if (pieceOrCase2.pieceType != null
 				&& pieceOrCase2.pieceType == PIECE_TYPE.BARGE) {
 				// Les 2 pieces sont des barges
 				var caseAvantBarge1Coords = this.getCoordsCaseAvantBarge(pieceOrCase1, pieceOrCase1.orientation);
@@ -143,7 +143,7 @@ var Tools = function() {
 					|| this.areCoordinatesAdjacent(caseAvantBarge1Coords.x, caseAvantBarge1Coords.y, pieceOrCase2.x, pieceOrCase2.y);
 			}
 		} else {
-			if (pieceOrCase2 instanceof Piece
+			if (pieceOrCase2.pieceType != null
 				&& pieceOrCase2.pieceType == PIECE_TYPE.BARGE) {
 				// La piece2 est une barge mais pas la piece1
 				var caseAvantBarge2Coords = this.getCoordsCaseAvantBarge(pieceOrCase2, pieceOrCase2.orientation);

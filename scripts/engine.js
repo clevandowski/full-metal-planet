@@ -8,27 +8,27 @@ var Engine = function(partie, tools) {
 		switch(playerAction.actionType) {
 			case PLAYER_ACTION_TYPE.MOVE:
 				var targetCase = playerAction.targetCase;
-				var targetPiece = playerAction.targetPiece;
+				var targetPieceId = playerAction.targetPieceId;
 				console.log('Déplacement');
-				_movePieceToCase(targetPiece, targetCase);
+				_movePieceToCase(targetPieceId, targetCase);
 				break;
 			case PLAYER_ACTION_TYPE.LOAD:
-				var pieceTransporter = playerAction.pieceTransporter;
-				var pieceACharger = playerAction.pieceACharger;
+				var pieceTransporterId = playerAction.pieceTransporterId;
+				var pieceAChargerId = playerAction.pieceAChargerId;
 				console.log('Chargement');
-				_chargePiece(pieceTransporter, pieceACharger)
+				_chargePiece(pieceTransporterId, pieceAChargerId)
 				break;
 			case PLAYER_ACTION_TYPE.UNLOAD:
-				var pieceTransporter = playerAction.pieceTransporter;
-				var pieceADecharger = playerAction.pieceADecharger;
+				var pieceTransporterId = playerAction.pieceTransporterId;
+				var pieceADechargerId = playerAction.pieceADechargerId;
 				var targetCase = playerAction.targetCase;
 				console.log('Déchargement');
-				_dechargePiece(pieceTransporter, pieceADecharger, targetCase);
+				_dechargePiece(pieceTransporterId, pieceADechargerId, targetCase);
 				break;
 			case PLAYER_ACTION_TYPE.ATTACK:
-				var targetPiece = playerAction.targetPiece;
+				var targetPieceId = playerAction.targetPieceId;
 				console.log('Attaque');
-				_attack(targetPiece);
+				_attack(targetPieceId);
 				break;
 			case PLAYER_ACTION_TYPE.END_OF_TURN:
 				partie.setTourToNextPlayer();
@@ -43,57 +43,61 @@ var Engine = function(partie, tools) {
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	var _movePieceToCase = function(piece, targetCase) {
+	var _movePieceToCase = function(pieceId, targetCase) {
+		var piece = partie.getPieceById(pieceId);
+		var nextOrientation;
+		var coords;
 		if (piece.pieceType == PIECE_TYPE.BARGE) {
 			// Si c'est une case adjacente à l'arriere de la barge, on tourne, 
 			// ATTENTION on ne peux pas utiliser this.arePieceAndTargetAdjacent 
 			// car il tient compte du fait que c'est une barge alors qu'on cherche 
 			// juste à savoir si c'est la base de la barge qui est adjacente à la case ici
 			if (tools.areCoordinatesAdjacent(piece.x, piece.y, targetCase.x, targetCase.y)) {
-				piece.orientation = tools.getOrientation(piece, targetCase);
+				nextOrientation = tools.getOrientation(piece, targetCase);
+				coords = {x: piece.x, y: piece.y};
 			} else {
 				// Sinon on avance.
 				// La case cible et la case avant de la barge sont forcément adjacentes ici
-				var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(piece);
-				var nextOrientation = tools.getOrientation(caseAvantBargeCoords, targetCase);
-				_setPieceToCase(piece, caseAvantBargeCoords);
-				piece.orientation = nextOrientation;
+				coords = tools.getCoordsCaseAvantBarge(piece);
+				nextOrientation = tools.getOrientation(coords, targetCase);
+				// partie.setPieceToCase(pieceId, coords, nextOrientation);
+				// piece.orientation = nextOrientation;
 			}
 		} else {
-			piece.orientation = tools.getOrientation(piece, targetCase);
-			_setPieceToCase(piece, targetCase);
+			nextOrientation = tools.getOrientation(piece, targetCase);
+			coords = {x: targetCase.x, y: targetCase.y};
+			// partie.setPieceToCase(pieceId, targetCase, nextOrientation);
 		}
+		partie.setPieceToCase(pieceId, coords, nextOrientation);
 		partie.removeToursPoints(1);
 	}
 	/*
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	var _chargePiece = function(pieceTransporter, pieceACharger) {
-		console.log('Chargement de ' + pieceACharger.pieceType.name + ' dans ' + pieceTransporter.pieceType.name);
+	var _chargePiece = function(pieceTransporterId, pieceAChargerId) {
+		// console.log('Chargement de ' + pieceACharger.pieceType.name + ' dans ' + pieceTransporter.pieceType.name);
 
-		// On déplace le tank du plateau de la partie au contenu du transporteur
-		pieceTransporter.addContenu(pieceACharger);
-		var indexInPieces = partie.getPieces().indexOf(pieceACharger);
-		partie.getPieces().splice(indexInPieces, 1);
+		partie.chargePiece(pieceTransporterId, pieceAChargerId);
 		partie.removeToursPoints(1);
 	}
 	/*
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	var _dechargePiece = function(pieceTransporter, pieceADecharger, targetCase) {
-		if (pieceTransporter.getContenu() == null) {
-			throw 'Impossible de décharger car le ' + pieceTransporter.pieceType.name + ' est vide.';
-		}
-		var index = pieceTransporter.getContenu().indexOf(pieceADecharger);
-		if (index == -1) {
-			throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
-		} else {
-			partie.getPieces().push(pieceADecharger);
-			pieceTransporter.getContenu().splice(index, 1);
-			_setPieceToCase(pieceADecharger, targetCase);
-		}
+	var _dechargePiece = function(pieceTransporterId, pieceADechargerId, targetCase) {
+		// if (pieceTransporter.getContenu() == null) {
+		// 	throw 'Impossible de décharger car le ' + pieceTransporter.pieceType.name + ' est vide.';
+		// }
+		// var index = pieceTransporter.getContenu().indexOf(pieceADecharger);
+		// if (index == -1) {
+		// 	throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
+		// } else {
+		// 	partie.getPieces().push(pieceADecharger);
+		// 	pieceTransporter.getContenu().splice(index, 1);
+		// 	_setPieceToCase(pieceADecharger, targetCase);
+		// }
+		partie.dechargePiece(pieceTransporterId, pieceADechargerId, targetCase);
 		partie.removeToursPoints(1);
 	}
 
@@ -101,26 +105,28 @@ var Engine = function(partie, tools) {
 	 * @ActionService
 	 * @dependsOn(@PartieService)
 	 */
-	var _attack = function(piece) {
+	var _attack = function(pieceId) {
+		var piece = partie.getPieceById(pieceId);
 		var targetCase = partie.getCasePiece(piece);
 		var piecesAttacking = partie.getEnemiesThatCanAttackInRange(targetCase.x, targetCase.y, piece.playerId);
 		// Deduction d'une munition
 		// TODO Si plus de 2 destroyers, comment faire interagir le joueur
 		// TODO ATTENTION actuellement si + de 2 attaquants possibles tt le monde perd une munition
 		piecesAttacking.forEach(function(pieceAttacking) {
-			pieceAttacking.getContenu().splice(0,1);
+			pieceAttacking.nbAmmos--;
 		});
 
-		partie.removePiece(piece);
+		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + partie.getPlayer(piece.id).name + ' par ' + partie.getPlayer().name);
+		partie.removePiece(pieceId);
 		partie.removeToursPoints(2);
-		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + partie.getPlayer(piece).name + ' par ' + partie.getPlayer().name);
 	}
 
 	/*
 	 * @EngineService
 	 */
 	var _setPieceToCase = function(piece, hexagonalCase) {
-		piece.x = hexagonalCase.x;
-		piece.y = hexagonalCase.y;
+		// piece.x = hexagonalCase.x;
+		// piece.y = hexagonalCase.y;
+		partie.setPieceToCase(piece.id, hexagonalCase);
 	}
 }

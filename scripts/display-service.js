@@ -8,8 +8,8 @@ var DisplayService = function(partie) {
 		for (var i in players) {
 			localContext.playersContext.push({
 				playerId: players[i].id,
-				selectedPiece: null, 
-				selectedPieceSoute: null
+				selectedPieceId: -1, 
+				selectedPieceSouteId: -1
 			});
 		}
 	}
@@ -26,21 +26,21 @@ var DisplayService = function(partie) {
 	this.setError = function(error) {
 		this.error = error;
 	}
-	this.getSelectedPiece = function () {
+	this.getSelectedPieceId = function () {
 		var playerLocalContext = _getPlayerLocalContext();
-		return playerLocalContext.selectedPiece;
+		return playerLocalContext.selectedPieceId;
 	}
-	this.getSelectedPieceSoute = function () {
+	this.getSelectedPieceIdSoute = function () {
 		var playerLocalContext = _getPlayerLocalContext();
-		return playerLocalContext.selectedPieceSoute;
+		return playerLocalContext.selectedPieceIdSoute;
 	}
-	this.setSelectedPiece = function(piece) {
+	this.setSelectedPieceId = function(pieceId) {
 		var playerLocalContext = _getPlayerLocalContext();
-		playerLocalContext.selectedPiece = piece;
+		playerLocalContext.selectedPieceId = pieceId;
 	}
-	this.setSelectedPieceSoute = function(piece) {
+	this.setSelectedPieceIdSoute = function(pieceId) {
 		var playerLocalContext = _getPlayerLocalContext();
-		playerLocalContext.selectedPieceSoute = piece;
+		playerLocalContext.selectedPieceIdSoute = pieceId;
 	}
 	this.getRefereeRuntimeMode = function() {
 		return partie.getRefereeRuntimeMode();
@@ -63,18 +63,38 @@ var DisplayService = function(partie) {
 	this.getNextMareeName = function() {
 		return partie.getNextMaree().name;
 	}
-	this.getContenuSelectedPiece = function () {
-		if (this.getSelectedPiece() != null) {
-			return this.getSelectedPiece().contenu;
+	this.getContenuSoute = function () {
+		var selectedPiece = partie.getPieceById(this.getSelectedPieceId());
+		if (selectedPiece != null) {
+			if (selectedPiece.pieceType.transporter) {
+				return selectedPiece.contenu;
+			} else if (selectedPiece.pieceType.destroyer) {
+				// On s'en fout c une copie locale
+				selectedPiece.contenu = [];
+				for (var i = 0; i < selectedPiece.nbAmmos; i++) {
+					selectedPiece.contenu.push(-(1 + i));
+				}
+				return selectedPiece.contenu;
+			}
 		}
 	}
 	this.getPlateau = function() {
 		return partie.plateau;
 	}
-	this.getCssPieceSoute = function(piece) {
+	this.getCssPieceSoute = function(pieceId) {
+		var piece;
+		// console.log('Piece soute : ' + pieceId);
+		if (pieceId >= 0) {
+			piece = partie.getPieceById(pieceId);
+		} else {
+			// Munition
+			piece = { id: -1, pieceType: PIECE_TYPE.MUNITION };
+		}
+		// console.log('pieceId: ' + JSON.stringify(pieceId));
+		// var piece = _getPieceById(pieceId);
 		return 'soute-container piece ' 
 			+ piece.pieceType.cssName
-			+ this._cssSelectedPieceSoute(piece);
+			+ this._cssSelectedPieceSoute(pieceId);
 	}
 	this.noActionPointAnymore = function() {
 		return partie.getTourPoints() <= 0;
@@ -104,22 +124,22 @@ var DisplayService = function(partie) {
 	 * @dependsOn(@UtilService, centerPlateauOnCoordinates)
 	 */
 	this.centerPlateau = function() {
-		if (this.getSelectedPiece() != null) {
-			_centerPlateauOnCoordinates(this.getSelectedPiece().x, this.getSelectedPiece().y);
+		var selectedPiece = partie.getPieceById(this.getSelectedPieceId());
+		if (selectedPiece != null) {
+			_centerPlateauOnCoordinates(selectedPiece.x, selectedPiece.y);
 		} else {
 			var player = partie.getPlayer();
-			var barge = partie.getPieces().filter(
-				function(piece) {
-					return piece.playerId == player.id && piece.pieceType == PIECE_TYPE.BARGE
-				}
-			)
+			var barge = partie.getPieces().filter(function(piece) {
+				return piece.playerId == player.id 
+					&& piece.pieceType == PIECE_TYPE.BARGE;
+			});
 			if (barge.length >= 1) {
 		 		_centerPlateauOnCoordinates(barge[0].x, barge[0].y);
 			}
 		}
 	}
-	this.exploseOnCase = function(targetCase) {
-		// TODO Déplacer dans DisplayService
+	this.exploseOnCase = function(coords) {
+		var targetCase = partie.getCase(coords.x, coords.y);
 		targetCase.explose = true;
 		// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
 		// l'explosion qui disparait en CSS
@@ -134,9 +154,10 @@ var DisplayService = function(partie) {
 	// Obligé de déclarer dans this car on utilise des fonctions de this...
 	// TODO A nettoyer
 	this._cssSelectedPiece = function(targetCase) {
-	 	if (this.getSelectedPiece() != null
-	 		&& targetCase.x == this.getSelectedPiece().x
-	 		&& targetCase.y == this.getSelectedPiece().y) {
+		var selectedPiece = partie.getPieceById(this.getSelectedPieceId());
+	 	if (selectedPiece != null
+	 		&& targetCase.x == selectedPiece.x
+	 		&& targetCase.y == selectedPiece.y) {
  			return ' selectedPiece';
  		} else {
  			return '';
@@ -159,12 +180,14 @@ var DisplayService = function(partie) {
 	 */
 	// Obligé de déclarer dans this car on utilise des fonctions de this...
 	// TODO A nettoyer
-	this._cssSelectedPieceSoute = function(piece) {
-	 	if (this.getSelectedPieceSoute() == piece) {
- 			return ' selectedPiece';
-	 	} else {
-	 		return '';
-	 	}
+	this._cssSelectedPieceSoute = function(pieceId) {
+		// Si c'est une piece déchargeable (pas comme les munitions)
+		if (pieceId >= 0) {
+			if (this.getSelectedPieceIdSoute() == pieceId) {
+	 			return ' selectedPiece';
+			}
+		}
+		return '';
 	}
 
 	/*
@@ -184,5 +207,9 @@ var DisplayService = function(partie) {
 			// console.log('playerContext: ' + JSON.stringify(playerContext) + ', this.id: ' + this.id);
 			return playerContext.playerId == this.id;
 		}, player)[0];
+	}
+
+	var _getPieceById = function(pieceId) {
+		return partie.getPieceById(pieceId);
 	}
 }

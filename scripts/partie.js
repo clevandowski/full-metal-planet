@@ -1,6 +1,6 @@
 var Partie = function(plateau, tools) {
 	var refereeRuntimeMode;
-	console.log('window.location:' + window.location.protocol);
+	// console.log('window.location:' + window.location.protocol);
 	if (window.location.protocol == 'file:') {
 		refereeRuntimeMode = REFEREE_RUNTIME_MODE.LOCAL;
 	} else {
@@ -19,16 +19,18 @@ var Partie = function(plateau, tools) {
 			// C'est très important que l'id des joueurs suive l'ordre de 
 			// l'index du tableau car on les indexe par l'id ensuite
 			// TODO N'utiliser que l'id comme identifiant
-			new Player('Damien', 0),
-			new Player('Noémie', 1)
+			new Player(0, 'Damien'),
+			new Player(1, 'Noémie')
 		],
 		pieces: [
 			new Piece(1, PIECE_TYPE.TANK, 2, 9), 
 			new Piece(1, PIECE_TYPE.TANK, 3, 9), 
-			// new Piece(1, PIECE_TYPE.TANK, 2, 8), 
+			// new Piece(2, 1, PIECE_TYPE.TANK, 2, 8), 
 			new Piece(0, PIECE_TYPE.TANK, 5, 9), 
 			new Piece(0, PIECE_TYPE.TANK, 6, 9), 
+			new Piece(0, PIECE_TYPE.TANK, 6, 8), 
 			new Piece(0, PIECE_TYPE.TANK, 7, 8),
+			new Piece(0, PIECE_TYPE.TANK, 7, 7),
 			new Piece(1, PIECE_TYPE.TANK, 33, 11),
 			new Piece(1, PIECE_TYPE.TANK, 34, 12), 
 			new Piece(1, PIECE_TYPE.TANK, 34, 13),
@@ -36,6 +38,7 @@ var Partie = function(plateau, tools) {
 			new Piece(1, PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
 		]
 	}
+	// console.log('datas.pieces: ' + JSON.stringify(datas.pieces));
 
 	this.plateau = plateau;
 
@@ -55,27 +58,24 @@ var Partie = function(plateau, tools) {
 	 * Retourne le joueur courant si aucune pièce n'est pas passée en paramètre.
 	 * Retourne le joueur de la pièce passée en paramètre
 	 */
-	this.getPlayer = function(piece) {
-		if (piece == null) {
+	this.getPlayer = function(pieceId) {
+		if (pieceId == null) {
 			return datas.players[datas.tourPlayer];
 		} else {
-			return datas.players.filter(function(player) { 
-				return player.id == this.playerId;
-			}, piece)[0]; 
+			return this.getPlayerById(_getPieceById(pieceId).playerId);
 		}
 	}
 	this.getPlayers = function() {
 		return datas.players;
 	}
 	this.getPlayerById = function(playerId) {
-		// TODO Jai honte mais je trouverais une solution plus tard
-		var playerTmp = {
-			playerId: playerId
-		}
-		// console.log(JSON.stringify(playerTmp));
-		return datas.players.filter(function(player) { 
+		var player = datas.players.filter(function(player) { 
 			return player.id == this.playerId;
-		}, playerTmp)[0]; 
+		}, {playerId: playerId})[0];
+		if (player == null) {
+			console.log('Pas de player #' + playerId + ' dans la partie.');
+		}
+		return player;
 	}
 
 	this.countPlayers = function() {
@@ -87,8 +87,70 @@ var Partie = function(plateau, tools) {
 	this.getTourPlayer = function() {
 		return datas.tourPlayer;
 	}
+	this.getPieceById = function(pieceId) {
+		var piece = datas.pieces.filter(function(piece) {
+			return piece.id == this.pieceId;
+		}, {pieceId: pieceId} )[0];
+		if (piece == null) {
+			// console.log('Pas de piece #' + pieceId + ' dans la partie.');
+			return null;
+		}
+		return {
+			id: piece.id,
+			pieceType: piece.pieceType,
+			x: piece.x,
+			y: piece.y,
+			orientation: piece.orientation,
+			contenu: piece.contenu,			
+			nbAmmos: piece.nbAmmos
+		};
+	}
+	var _getPieceById = function(pieceId) {
+		var piece = datas.pieces.filter(function(piece) {
+			return piece.id == this.pieceId;
+		}, {pieceId: pieceId} )[0];
+		if (piece == null) {
+			console.log('Pas de piece #' + pieceId + ' dans la partie.');
+		}
+		return piece;
+	}
+	this.setPieceToCase = function(pieceId, coords, orientation) {
+		var piece = _getPieceById(pieceId);
+		piece.x = coords.x;
+		piece.y = coords.y;
+		if (orientation != null) {
+			piece.orientation = orientation;
+		}
+	}
+	var _setPieceToCase = function(piece, coords, orientation) {
+		piece.x = coords.x;
+		piece.y = coords.y;
+		if (orientation != null) {
+			piece.orientation = orientation;
+		}
+	}
+	/*
+	 * Retourne la piece posee sur l'instance de la case en fonction de la partie.
+	 * Retourne null s'il n'y a pas de piece sur la case
+	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
+	 */
+	this.getPieceIfAvailable = function(targetCase) {
+		var pieces = datas.pieces;
+		for (var id in pieces) {
+			var piece = pieces[id];
+			// Match !
+			if (targetCase.x == piece.x 
+				&& targetCase.y == piece.y) {
+				return piece;
+			}
+		}
+		return null;
+	}
 	this.getPieces = function() {
 		return datas.pieces;
+	}
+	this.isPieceOwnedByCurrentPlayer = function(pieceId) {
+		return _getPieceById(pieceId).playerId == this.getPlayer().id;
 	}
 	this.getCurrentMaree = function() {
 		return datas.currentMaree;
@@ -125,45 +187,29 @@ var Partie = function(plateau, tools) {
 			return piece.pieceType.destroyer;
 		})
 		.forEach(function(destroyer) {
-			destroyer.contenu = [
-				new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1),
-				new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1)
-			]
+			// destroyer.contenu = [
+			// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1),
+			// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1)
+			// ]
+			destroyer.nbAmmos = 2;
 		});
 		
-		// Destroyer contenues dans des transporteurs
+		// Destroyers contenus dans des transporteurs
 		datas.pieces.filter(function(piece) {
 			return piece.pieceType.transporter
 		})
 		.forEach(function(transporter) {
-			transporter.contenu.filter(function(piece) {
-				return piece.pieceType.destroyer;
+			transporter.contenu.filter(function(pieceId) {
+				return _getPieceById(pieceId).pieceType.destroyer;
 			})
 			.forEach(function(destroyer) {
-				destroyer.contenu = [
-					new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1),
-					new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1)
-				]
+				// destroyer.contenu = [
+				// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1),
+				// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1)
+				// ]
+				destroyer.nbAmmos = 2;
 			});
 		});
-	}
-	/*
-	 * @PartieService
-	 * Retourne la piece posee sur l'instance de la case en fonction de la partie.
-	 * Retourne null s'il n'y a pas de piece sur la case
-	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
-	 */
-	this.getPieceIfAvailable = function(targetCase) {
-		var pieces = datas.pieces;
-		for (var id in pieces) {
-			var piece = pieces[id];
-			// Match !
-			if (targetCase.x == piece.x 
-				&& targetCase.y == piece.y) {
-				return piece;
-			}
-		}
-		return null;
 	}
 	/*
 	 * @PartieService
@@ -298,8 +344,32 @@ var Partie = function(plateau, tools) {
 	this.removeToursPoints = function(nbPointsToRemove) {
 		datas.tourPoints -= nbPointsToRemove;
 	}
-	this.removePiece = function(piece) {
+	this.removePiece = function(pieceId) {
+		var piece = _getPieceById(pieceId);
 		var index = datas.pieces.indexOf(piece);
 		datas.pieces.splice(index, 1);
+	}
+	this.chargePiece = function(pieceTransporterId, pieceAChargerId) {
+		var pieceTransporter = _getPieceById(pieceTransporterId);
+		var pieceACharger = _getPieceById(pieceAChargerId);
+		// On déplace le tank du plateau de la partie au contenu du transporteur
+		pieceTransporter.addContenu(pieceACharger.id);
+		// var indexInPieces = partie.getPieces().indexOf(pieceACharger);
+		// partie.getPieces().splice(indexInPieces, 1);
+		_setPieceToCase(pieceACharger, {x: -1, y: -1});
+	}
+
+	this.dechargePiece = function(pieceTransporterId, pieceADechargerId, targetCase) {
+		var pieceTransporter = _getPieceById(pieceTransporterId);
+		var pieceADecharger = _getPieceById(pieceADechargerId);
+		var index = pieceTransporter.getContenu().indexOf(pieceADechargerId);
+		if (index == -1) {
+			throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
+		} else {
+			// this.getPieces().push(pieceADecharger);
+			pieceTransporter.getContenu().splice(index, 1);
+			_setPieceToCase(pieceADecharger, targetCase);
+		}
+
 	}
 }
