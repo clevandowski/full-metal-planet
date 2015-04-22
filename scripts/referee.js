@@ -157,7 +157,7 @@ var Referee = function($http, partie, tools) {
 
 	var _validateAttack = function(playerAction) {
 		var targetPiece = partie.getPieceById(playerAction.targetPieceId);
-		var piecesAttacking = 
+		var piecesIdAttacking = 
 			partie.getEnemiesThatCanAttackInRange(targetPiece.x, targetPiece.y, targetPiece.playerId);
 
 		var errorMessages = [];
@@ -168,10 +168,10 @@ var Referee = function($http, partie, tools) {
 			errorMessages.push(
 				'Pas de réserve de point suffisant pour attaquer');
 		}
-		if (piecesAttacking.length > 2) {
+		if (piecesIdAttacking.length > 2) {
 			console.log('TODO: Pouvoir choisir les attaquants');
 		}
-		if (! _isRemainingAmmoOnPiecesAttacking(piecesAttacking)) {
+		if (! _isRemainingAmmoOnPiecesIdAttacking(piecesIdAttacking)) {
 			validationStatus = false;
 			errorMessages.push(
 				'Pas assez de munitions pour attaquer');
@@ -331,9 +331,10 @@ var Referee = function($http, partie, tools) {
 		}
 		return true;
 	}
-	var _isRemainingAmmoOnPiecesAttacking = function(piecesAttacking) {
-		for (var i in piecesAttacking) {
-			if (piecesAttacking[i].nbAmmos <= 0) {
+	// Là c'est moyen car si ya plus de 2 attaquants la règles est fausse
+	var _isRemainingAmmoOnPiecesIdAttacking = function(piecesIdAttacking) {
+		for (var i in piecesIdAttacking) {
+			if (partie.getPieceById(piecesIdAttacking[i]).nbAmmos <= 0) {
 				return false;
 			}
 		}

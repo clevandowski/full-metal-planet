@@ -2,6 +2,8 @@ var DisplayService = function(partie) {
 	var localContext = {
 		playersContext: []
 	}
+	var plateau;
+
 	this.init = function() {
 		this.clearError();
 		var players = partie.getPlayers();
@@ -12,6 +14,7 @@ var DisplayService = function(partie) {
 				selectedPieceSouteId: -1
 			});
 		}
+		plateau = partie.getPlateau();
 	}
 	this.clearError = function() {
 		this.error = {
@@ -79,7 +82,10 @@ var DisplayService = function(partie) {
 		}
 	}
 	this.getPlateau = function() {
-		return partie.plateau;
+		return plateau;
+	}
+	var _getCase = function(x, y) {
+		return plateau[y][x];
 	}
 	this.getCssPieceSoute = function(pieceId) {
 		var piece;
@@ -139,7 +145,7 @@ var DisplayService = function(partie) {
 		}
 	}
 	this.exploseOnCase = function(coords) {
-		var targetCase = partie.getCase(coords.x, coords.y);
+		var targetCase = _getCase(coords.x, coords.y);
 		targetCase.explose = true;
 		// C'est pas elegant mais ça sert à attendre les 4s de l'animation de 
 		// l'explosion qui disparait en CSS

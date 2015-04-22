@@ -171,13 +171,9 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			errorMessages.push(
 				'Cette pièce ne vous appartient pas');
 		}
-
 		return { 
 			success: validationStatus,
 			errorMessages: errorMessages
 		}
-	}
-	var _getPieceById = function(pieceId) {
-		return partie.getPieceById(pieceId);
 	}
 }

@@ -40,7 +40,17 @@ var Partie = function(plateau, tools) {
 	}
 	// console.log('datas.pieces: ' + JSON.stringify(datas.pieces));
 
-	this.plateau = plateau;
+	this.getPlateau = function() {
+		var plateauCopy = [];
+		plateau.forEach(function(ligne) {
+			var ligneCopy = [];
+			ligne.forEach(function (aCase) {
+				this.push(new FMPCase(aCase.caseType, aCase.x, aCase.y));
+			}, ligneCopy);
+			this.push(ligneCopy);
+		}, plateauCopy);
+		return plateauCopy;
+	}
 
 	this.init = function() {
 		var randomMaree = Math.floor((Math.random() * 3));
@@ -59,6 +69,19 @@ var Partie = function(plateau, tools) {
 	 * Retourne le joueur de la pièce passée en paramètre
 	 */
 	this.getPlayer = function(pieceId) {
+		var player;
+		if (pieceId == null) {
+			player = datas.players[datas.tourPlayer];
+		} else {
+			player = this.getPlayerById(_getPieceById(pieceId).playerId);
+		}
+		return {
+			id: player.id,
+			name: player.name,
+			pointsEconomise: player.pointsEconomise
+		};
+	}
+	var _getPlayer = function(pieceId) {
 		if (pieceId == null) {
 			return datas.players[datas.tourPlayer];
 		} else {
@@ -66,18 +89,26 @@ var Partie = function(plateau, tools) {
 		}
 	}
 	this.getPlayers = function() {
-		return datas.players;
+		var playersCopy = [];
+		datas.players.forEach(function(player) {
+			this.push({
+				id: player.id,
+				name: player.name,
+				pointsEconomise: player.pointsEconomise
+			});
+		}, playersCopy);
+		return playersCopy;
 	}
 	this.getPlayerById = function(playerId) {
-		var player = datas.players.filter(function(player) { 
+		var player = datas.players.filter(function(player) {
 			return player.id == this.playerId;
 		}, {playerId: playerId})[0];
-		if (player == null) {
-			console.log('Pas de player #' + playerId + ' dans la partie.');
+		return {
+			id: player.id,
+			name: player.name,
+			pointsEconomise: player.pointsEconomise
 		}
-		return player;
 	}
-
 	this.countPlayers = function() {
 		return datas.players.length;
 	}
@@ -92,11 +123,11 @@ var Partie = function(plateau, tools) {
 			return piece.id == this.pieceId;
 		}, {pieceId: pieceId} )[0];
 		if (piece == null) {
-			// console.log('Pas de piece #' + pieceId + ' dans la partie.');
 			return null;
 		}
 		return {
 			id: piece.id,
+			playerId: piece.playerId,
 			pieceType: piece.pieceType,
 			x: piece.x,
 			y: piece.y,
@@ -139,9 +170,18 @@ var Partie = function(plateau, tools) {
 		for (var id in pieces) {
 			var piece = pieces[id];
 			// Match !
-			if (targetCase.x == piece.x 
+			if (targetCase.x == piece.x
 				&& targetCase.y == piece.y) {
-				return piece;
+				return {
+					id: piece.id,
+					playerId: piece.playerId,
+					pieceType: piece.pieceType,
+					x: piece.x,
+					y: piece.y,
+					orientation: piece.orientation,
+					contenu: piece.contenu,
+					nbAmmos: piece.nbAmmos
+				};
 			}
 		}
 		return null;
@@ -150,22 +190,22 @@ var Partie = function(plateau, tools) {
 		return datas.pieces;
 	}
 	this.isPieceOwnedByCurrentPlayer = function(pieceId) {
-		return _getPieceById(pieceId).playerId == this.getPlayer().id;
+		return _getPieceById(pieceId).playerId == _getPlayer().id;
 	}
 	this.getCurrentMaree = function() {
 		return datas.currentMaree;
 	}
 	this.getNextMaree = function() {
 		return datas.nextMaree;
-	}	
+	}
 	this.setTourToNextPlayer = function() {
 		// Avant de changer de tour, on récupère les points économisés du player
 		if (datas.tourPoints >= 10) {
-			this.getPlayer().pointsEconomise = 10;
+			_getPlayer().pointsEconomise = 10;
 		} else if (datas.tourPoints >= 5 && datas.tourPoints < 10) {
-			this.getPlayer().pointsEconomise = 5;
+			_getPlayer().pointsEconomise = 5;
 		} else {
-			this.getPlayer().pointsEconomise = 0;
+			_getPlayer().pointsEconomise = 0;
 		}
 
 		// Joueur suivant
@@ -179,7 +219,7 @@ var Partie = function(plateau, tools) {
 			// Chargement des munitions de toutes les pieces de type destroyer
 			this.reloadMunitionOnDestroyers();
 		}
-		datas.tourPoints = 15 + this.getPlayer().pointsEconomise;
+		datas.tourPoints = 15 + _getPlayer().pointsEconomise;
 	}
 
 	this.reloadMunitionOnDestroyers = function() {
@@ -187,10 +227,6 @@ var Partie = function(plateau, tools) {
 			return piece.pieceType.destroyer;
 		})
 		.forEach(function(destroyer) {
-			// destroyer.contenu = [
-			// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1),
-			// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1)
-			// ]
 			destroyer.nbAmmos = 2;
 		});
 		
@@ -203,10 +239,6 @@ var Partie = function(plateau, tools) {
 				return _getPieceById(pieceId).pieceType.destroyer;
 			})
 			.forEach(function(destroyer) {
-				// destroyer.contenu = [
-				// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1),
-				// 	new Piece(destroyer.playerId, PIECE_TYPE.MUNITION, -1, -1)
-				// ]
 				destroyer.nbAmmos = 2;
 			});
 		});
@@ -215,14 +247,19 @@ var Partie = function(plateau, tools) {
 	 * @PartieService
 	 */
 	this.getCase = function(x, y) {
-		return this.plateau[y][x];
+		var aCase = plateau[y][x];
+		return new FMPCase(aCase.caseType, aCase.x, aCase.y);
+	}
+	var _getCase = function(x, y) {
+		return plateau[y][x];
 	}
 	/*
 	 * @PartieService
 	 * Retoune la case (type FMPCase) sur laquelle la piece est posee.
 	 */
 	this.getCasePiece = function(piece) {
-		return this.plateau[piece.y][piece.x];
+		var aCase = plateau[piece.y][piece.x];
+		return new FMPCase(aCase.caseType, aCase.x, aCase.y);
 	}
 	/*
 	 * @PartieService car utilise getCase et getPieceIfAvailable
@@ -245,7 +282,7 @@ var Partie = function(plateau, tools) {
 				}
 				if (currentY >= 0
 					&& currentY < PLATEAU_HEIGHT) {
-					var caseToCheck = this.getCase(currentX, currentY);
+					var caseToCheck = _getCase(currentX, currentY);
 					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
 					
 					if (pieceToCheck != null 
@@ -260,7 +297,7 @@ var Partie = function(plateau, tools) {
 
 						if (portee >= relativeCase.distance) {
 							// console.log('destructeur ennemi detecte en x: ' + pieceToCheck.x + ', y: ' + pieceToCheck.y);
-							enemiesInRange.push(pieceToCheck);
+							enemiesInRange.push(pieceToCheck.id);
 						}
 					}
 				}
@@ -269,65 +306,18 @@ var Partie = function(plateau, tools) {
 		}
 		return enemiesInRange;
 	}
-	/*
-	 * @PartieService car utilise getCase et getPieceIfAvailable
-	 */
-	this.countEnemiesThatCanAttackInRange = function(x, y, playerId) {
-		var parite = x & 1;
-		var nbDestructeurEnnemisDansZone = 0;
-
-		for (var i = 0; i < ZONE_VERIFICATION_MENACE_TIR.length; i++) {
-			var relativeCase = ZONE_VERIFICATION_MENACE_TIR[i];
-			var currentX = x + relativeCase.x;;
-
-			if (currentX >= 0
-				&& currentX < PLATEAU_WIDTH) {
-				var currentY;
-				if (parite == 0) {
-					currentY = y + relativeCase.y;
-				} else {
-					currentY = y - relativeCase.y;						
-				}
-				if (currentY >= 0
-					&& currentY < PLATEAU_HEIGHT) {
-					var caseToCheck = this.getCase(currentX, currentY);
-					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
-					
-					if (pieceToCheck != null 
-						&& pieceToCheck.playerId != playerId
-						&& pieceToCheck.pieceType.destroyer) {
-
-						var portee = pieceToCheck.pieceType.attackRange;
-						if (caseToCheck.caseType == CASE_TYPE.MONTAGNE
-							&& pieceToCheck.pieceType == PIECE_TYPE.TANK) {
-							portee++;
-						}
-
-						if (portee >= relativeCase.distance) {
-							// console.log('destructeur ennemi detecte en x: ' + pieceToCheck.x + ', y: ' + pieceToCheck.y);
-							nbDestructeurEnnemisDansZone++;
-
-						}
-					}
-				}
-				// Sinon la case à checker est hors de la map on passe à la suite
-			}
-		}
-		return nbDestructeurEnnemisDansZone;
-	}
-	// console.log(JSON.stringify(this));
 	this.isFreeFromEnemyFire = function(pieceOrCase) {
-		var playerId = this.getPlayer().id;
+		var playerId = _getPlayer().id;
 
-		if (pieceOrCase instanceof Piece) {
+		if (pieceOrCase.playerId != null) {
 			playerId = pieceOrCase.playerId;
 		}
 
-		if (this.countEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, playerId) < 2) {
+		if (this.getEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, playerId).length < 2) {
 			// Fo vérifier au cas ou ce n'est pas une barge, la case avant est concernée aussi
-			if (pieceOrCase instanceof Piece && pieceOrCase.pieceType == PIECE_TYPE.BARGE) {
+			if (pieceOrCase.pieceType != null && pieceOrCase.pieceType == PIECE_TYPE.BARGE) {
 				var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(pieceOrCase);
-				if (this.countEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, playerId) < 2) {
+				if (this.getEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, playerId).length < 2) {
 					return true;
 				} else {
 					// console.log('L\'avant de la barge est sous le feu ennemi');
@@ -358,7 +348,6 @@ var Partie = function(plateau, tools) {
 		// partie.getPieces().splice(indexInPieces, 1);
 		_setPieceToCase(pieceACharger, {x: -1, y: -1});
 	}
-
 	this.dechargePiece = function(pieceTransporterId, pieceADechargerId, targetCase) {
 		var pieceTransporter = _getPieceById(pieceTransporterId);
 		var pieceADecharger = _getPieceById(pieceADechargerId);
@@ -370,6 +359,9 @@ var Partie = function(plateau, tools) {
 			pieceTransporter.getContenu().splice(index, 1);
 			_setPieceToCase(pieceADecharger, targetCase);
 		}
-
+	}
+	this.removeAmmo = function(pieceId) {
+		var piece = _getPieceById(pieceId);
+		piece.nbAmmos--;
 	}
 }

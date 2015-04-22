@@ -5,7 +5,6 @@ var FMPCase = function(caseType, x, y) {
 	this.caseType = caseType;
 	this.x = x;
 	this.y = y;
-	this.explose = false;
 
 	this.getCaseTypeMaree = function(maree) {
 		return CASE_TYPE_MAREE.filter(function(caseTypeMaree) {

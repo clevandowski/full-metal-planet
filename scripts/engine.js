@@ -60,13 +60,10 @@ var Engine = function(partie, tools) {
 				// La case cible et la case avant de la barge sont forcément adjacentes ici
 				coords = tools.getCoordsCaseAvantBarge(piece);
 				nextOrientation = tools.getOrientation(coords, targetCase);
-				// partie.setPieceToCase(pieceId, coords, nextOrientation);
-				// piece.orientation = nextOrientation;
 			}
 		} else {
 			nextOrientation = tools.getOrientation(piece, targetCase);
 			coords = {x: targetCase.x, y: targetCase.y};
-			// partie.setPieceToCase(pieceId, targetCase, nextOrientation);
 		}
 		partie.setPieceToCase(pieceId, coords, nextOrientation);
 		partie.removeToursPoints(1);
@@ -76,8 +73,6 @@ var Engine = function(partie, tools) {
 	 * @dependsOn(@PartieService)
 	 */
 	var _chargePiece = function(pieceTransporterId, pieceAChargerId) {
-		// console.log('Chargement de ' + pieceACharger.pieceType.name + ' dans ' + pieceTransporter.pieceType.name);
-
 		partie.chargePiece(pieceTransporterId, pieceAChargerId);
 		partie.removeToursPoints(1);
 	}
@@ -86,17 +81,6 @@ var Engine = function(partie, tools) {
 	 * @dependsOn(@PartieService)
 	 */
 	var _dechargePiece = function(pieceTransporterId, pieceADechargerId, targetCase) {
-		// if (pieceTransporter.getContenu() == null) {
-		// 	throw 'Impossible de décharger car le ' + pieceTransporter.pieceType.name + ' est vide.';
-		// }
-		// var index = pieceTransporter.getContenu().indexOf(pieceADecharger);
-		// if (index == -1) {
-		// 	throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
-		// } else {
-		// 	partie.getPieces().push(pieceADecharger);
-		// 	pieceTransporter.getContenu().splice(index, 1);
-		// 	_setPieceToCase(pieceADecharger, targetCase);
-		// }
 		partie.dechargePiece(pieceTransporterId, pieceADechargerId, targetCase);
 		partie.removeToursPoints(1);
 	}
@@ -108,14 +92,13 @@ var Engine = function(partie, tools) {
 	var _attack = function(pieceId) {
 		var piece = partie.getPieceById(pieceId);
 		var targetCase = partie.getCasePiece(piece);
-		var piecesAttacking = partie.getEnemiesThatCanAttackInRange(targetCase.x, targetCase.y, piece.playerId);
+		var piecesIdAttacking = partie.getEnemiesThatCanAttackInRange(targetCase.x, targetCase.y, piece.playerId);
 		// Deduction d'une munition
 		// TODO Si plus de 2 destroyers, comment faire interagir le joueur
 		// TODO ATTENTION actuellement si + de 2 attaquants possibles tt le monde perd une munition
-		piecesAttacking.forEach(function(pieceAttacking) {
-			pieceAttacking.nbAmmos--;
+		piecesIdAttacking.forEach(function(pieceIdAttacking) {
+			partie.removeAmmo(pieceIdAttacking);
 		});
-
 		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + partie.getPlayer(piece.id).name + ' par ' + partie.getPlayer().name);
 		partie.removePiece(pieceId);
 		partie.removeToursPoints(2);
@@ -125,8 +108,6 @@ var Engine = function(partie, tools) {
 	 * @EngineService
 	 */
 	var _setPieceToCase = function(piece, hexagonalCase) {
-		// piece.x = hexagonalCase.x;
-		// piece.y = hexagonalCase.y;
 		partie.setPieceToCase(piece.id, hexagonalCase);
 	}
 }
