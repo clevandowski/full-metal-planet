@@ -4,7 +4,6 @@
 
 var PLATEAU_WIDTH = 37;
 var PLATEAU_HEIGHT = 23;
-
 /* 
  * enums & static arrays
  */

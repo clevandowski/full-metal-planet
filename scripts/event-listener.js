@@ -27,7 +27,12 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.SELECT) {
 			var localActionReport = _validateSelect(playerActionDetected);
 			if (localActionReport.success) {
-				displayService.setSelectedPieceId(playerActionDetected.targetPieceId);
+				// Désélection si on sélectionne la pièce sélectionnée
+				if (displayService.getSelectedPieceId() == playerActionDetected.targetPieceId) {
+					displayService.setSelectedPieceId(-1);
+				} else {
+					displayService.setSelectedPieceId(playerActionDetected.targetPieceId);
+				}
 				displayService.setSelectedPieceIdSoute(-1);
 			} else {
 				displayService.setError({
@@ -89,14 +94,17 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		var playerActionDetected = { actionType: PLAYER_ACTION_TYPE.END_OF_TURN	};
 		var actionReport = referee.validatePlayerAction(playerActionDetected, callbackValidateFinDuTour);
 	}
-	var callbackValidateFinDuTour = function(playerActionDetected, actionReport) {
+	var callbackValidateFinDuTour = function(playerAction, actionReport) {
+		console.log('actionReport: ' + JSON.stringify(actionReport));
 		if (actionReport.success) {
-			var partieHashcode = engine.applyPlayerAction(playerActionDetected);
+			console.log('Success');
+			var partieHashcode = engine.applyPlayerAction(playerAction);
 			displayService.centerPlateau();
 			displayService.clearError();
 		} else {
+			console.log('Error');
 			displayService.setError({
-				actionType: playerActionDetected.actionType,
+				actionType: playerAction.actionType,
 				errorMessages: actionReport.errorMessages,
 				showErrorPopup: true
 			});
@@ -140,7 +148,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 				}
 			} else if (targetPiece.pieceType.transporter
 				&& selectedPiece != null
-				&& selectedPiece != targetPiece
+				&& selectedPiece.id != targetPiece.id
 				&& tools.areAdjacent(targetPiece, selectedPiece)) {
 				// Chargement
 				return {

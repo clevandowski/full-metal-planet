@@ -69,23 +69,32 @@ var Partie = function(plateau, tools) {
 	 * Retourne le joueur de la pièce passée en paramètre
 	 */
 	this.getPlayer = function(pieceId) {
-		var player;
-		if (pieceId == null) {
-			player = datas.players[datas.tourPlayer];
-		} else {
-			player = this.getPlayerById(_getPieceById(pieceId).playerId);
-		}
+		var player = _getPlayer(pieceId);
 		return {
 			id: player.id,
 			name: player.name,
 			pointsEconomise: player.pointsEconomise
 		};
 	}
+	var _getPlayerById = function(playerId) {
+		return datas.players.filter(function(player) {
+			return player.id == this.playerId;
+		}, {playerId: playerId})[0];
+	}
+	this.getPlayerById = function(playerId) {
+		var player = _getPlayerById(playerId);
+		return {
+			id: player.id,
+			name: player.name,
+			pointsEconomise: player.pointsEconomise
+		}
+	}
 	var _getPlayer = function(pieceId) {
 		if (pieceId == null) {
 			return datas.players[datas.tourPlayer];
 		} else {
-			return this.getPlayerById(_getPieceById(pieceId).playerId);
+			var piece = _getPieceById(pieceId);
+			return _getPlayerById(piece.playerId);
 		}
 	}
 	this.getPlayers = function() {
@@ -99,16 +108,6 @@ var Partie = function(plateau, tools) {
 		}, playersCopy);
 		return playersCopy;
 	}
-	this.getPlayerById = function(playerId) {
-		var player = datas.players.filter(function(player) {
-			return player.id == this.playerId;
-		}, {playerId: playerId})[0];
-		return {
-			id: player.id,
-			name: player.name,
-			pointsEconomise: player.pointsEconomise
-		}
-	}
 	this.countPlayers = function() {
 		return datas.players.length;
 	}
@@ -119,9 +118,7 @@ var Partie = function(plateau, tools) {
 		return datas.tourPlayer;
 	}
 	this.getPieceById = function(pieceId) {
-		var piece = datas.pieces.filter(function(piece) {
-			return piece.id == this.pieceId;
-		}, {pieceId: pieceId} )[0];
+		var piece = _getPieceById(pieceId);
 		if (piece == null) {
 			return null;
 		}
@@ -140,18 +137,14 @@ var Partie = function(plateau, tools) {
 		var piece = datas.pieces.filter(function(piece) {
 			return piece.id == this.pieceId;
 		}, {pieceId: pieceId} )[0];
-		if (piece == null) {
-			console.log('Pas de piece #' + pieceId + ' dans la partie.');
-		}
+		// if (piece == null) {
+		// 	console.log('Pas de piece #' + pieceId + ' dans la partie.');
+		// }
 		return piece;
 	}
 	this.setPieceToCase = function(pieceId, coords, orientation) {
 		var piece = _getPieceById(pieceId);
-		piece.x = coords.x;
-		piece.y = coords.y;
-		if (orientation != null) {
-			piece.orientation = orientation;
-		}
+		_setPieceToCase(piece, coords, orientation);
 	}
 	var _setPieceToCase = function(piece, coords, orientation) {
 		piece.x = coords.x;
@@ -247,7 +240,7 @@ var Partie = function(plateau, tools) {
 	 * @PartieService
 	 */
 	this.getCase = function(x, y) {
-		var aCase = plateau[y][x];
+		var aCase = _getCase(x, y);
 		return new FMPCase(aCase.caseType, aCase.x, aCase.y);
 	}
 	var _getCase = function(x, y) {
@@ -257,7 +250,8 @@ var Partie = function(plateau, tools) {
 	 * @PartieService
 	 * Retoune la case (type FMPCase) sur laquelle la piece est posee.
 	 */
-	this.getCasePiece = function(piece) {
+	this.getCasePieceId = function(pieceId) {
+		var piece = _getPieceById(pieceId);
 		var aCase = plateau[piece.y][piece.x];
 		return new FMPCase(aCase.caseType, aCase.x, aCase.y);
 	}

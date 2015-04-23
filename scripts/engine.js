@@ -91,7 +91,7 @@ var Engine = function(partie, tools) {
 	 */
 	var _attack = function(pieceId) {
 		var piece = partie.getPieceById(pieceId);
-		var targetCase = partie.getCasePiece(piece);
+		var targetCase = partie.getCasePieceId(pieceId);
 		var piecesIdAttacking = partie.getEnemiesThatCanAttackInRange(targetCase.x, targetCase.y, piece.playerId);
 		// Deduction d'une munition
 		// TODO Si plus de 2 destroyers, comment faire interagir le joueur

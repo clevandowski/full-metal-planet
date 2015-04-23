@@ -57,10 +57,12 @@ var Referee = function($http, partie, tools) {
 			// data: {id: 0, name: partie.getPlayer().name}
 			data: playerAction
 		}
+		console.log('playerAction sent: ' + JSON.stringify(playerAction));
+
 		$http(httpRequest)
 			.success(function(data, status, headers, config) {
-				actionReport = data;
-				console.log('actionReport received from server: ' + JSON.stringify(actionReport));
+				var actionReport = data;
+				console.log('actionReport received: ' + JSON.stringify(actionReport));
 				callback(playerAction, actionReport);
 				return;
 			})
@@ -77,6 +79,18 @@ var Referee = function($http, partie, tools) {
 				return;
 			});
 	}
+
+	// ***************************************************************************************
+	// ***************************************************************************************
+	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+	//
+	// Début code commun avec le projet server full-metal-planet-server/node_modules/referee.js
+	// Les modifications doivent être répliquées.
+	// TODO A factoriser.
+	//
+	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+	// ***************************************************************************************
+	// ***************************************************************************************
 	var _validateLoad = function(playerAction) {
 		var pieceTransporter = partie.getPieceById(playerAction.pieceTransporterId);
 		var pieceACharger = partie.getPieceById(playerAction.pieceAChargerId);
@@ -115,7 +129,6 @@ var Referee = function($http, partie, tools) {
 			errorMessages: errorMessages
 		}
 	}
-
 	var _validateUnload = function(playerAction) {
 		var pieceTransporter = partie.getPieceById(playerAction.pieceTransporterId);
 		var pieceADecharger = partie.getPieceById(playerAction.pieceADechargerId);
@@ -154,7 +167,6 @@ var Referee = function($http, partie, tools) {
 			errorMessages: errorMessages
 		}
 	}
-
 	var _validateAttack = function(playerAction) {
 		var targetPiece = partie.getPieceById(playerAction.targetPieceId);
 		var piecesIdAttacking = 
@@ -189,7 +201,6 @@ var Referee = function($http, partie, tools) {
 			errorMessages: errorMessages
 		}
 	}
-
 	var _validateMove = function(playerAction) {
 		var targetPiece = partie.getPieceById(playerAction.targetPieceId);
 		var targetCase = playerAction.targetCase;
@@ -252,7 +263,7 @@ var Referee = function($http, partie, tools) {
 	}
 	var _isPieceBoggedDown = function(piece) {
 		var maree = partie.getCurrentMaree();
-		var casePiece = partie.getCasePiece(piece);
+		var casePiece = partie.getCasePieceId(piece.id);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (piece.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
 			// console.log('Impossible de deplacer un ' + piece.pieceType.name + ' de type ' + piece.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
@@ -323,7 +334,7 @@ var Referee = function($http, partie, tools) {
 	}
 	var _isPieceLoadable = function(pieceACharger) {
 		var maree = partie.getCurrentMaree();
-		var casePiece = partie.getCasePiece(pieceACharger);
+		var casePiece = partie.getCasePieceId(pieceACharger.id);
 		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
 		if (pieceACharger.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
 			// console.log('Impossible de deplacer un ' + pieceACharger.pieceType.name + ' de type ' + pieceACharger.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
@@ -340,4 +351,13 @@ var Referee = function($http, partie, tools) {
 		}
 		return true;
 	}
+	// ***************************************************************************************
+	// ***************************************************************************************
+	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+	//
+	// Fin code commun avec le projet server full-metal-planet-server/node_modules/referee.js
+	//
+	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+	// ***************************************************************************************
+	// ***************************************************************************************
 }

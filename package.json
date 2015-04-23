@@ -1,11 +1,7 @@
 {
   "name": "full-metal-planet",
-  "description": "Full Metal Planet perso :D",
-  "version": "1.0.0",
+  "description": "=~Full Metal Planet~=",
+  "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "express": "3.x",
-    "mongodb": "*",
-    "mongoose": "*"
-  }
+  "dependencies": {}
 }
