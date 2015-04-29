@@ -1,45 +1,5 @@
-var Partie = function(plateau, tools) {
-	var refereeRuntimeMode;
-	// console.log('window.location:' + window.location.protocol);
-	if (window.location.protocol == 'file:') {
-		refereeRuntimeMode = REFEREE_RUNTIME_MODE.LOCAL;
-	} else {
-		refereeRuntimeMode = REFEREE_RUNTIME_MODE.REMOTE;
-	}
-	// var refereeRuntimeMode = REFEREE_RUNTIME_MODE.REMOTE;
-	var randomCurrentMaree = Math.floor((Math.random() * 3));
-	var randomNextMaree = Math.floor((Math.random() * 3));
-	var datas = {
-		tour: 0,
-		tourPlayer: 0,
-		tourPoints: 15,
-		currentMaree: MAREES[randomCurrentMaree],
-		nextMaree: MAREES[randomNextMaree],
-		players: [
-			// C'est très important que l'id des joueurs suive l'ordre de 
-			// l'index du tableau car on les indexe par l'id ensuite
-			// TODO N'utiliser que l'id comme identifiant
-			new Player(0, 'Damien'),
-			new Player(1, 'Noémie')
-		],
-		pieces: [
-			new Piece(1, PIECE_TYPE.TANK, 2, 9), 
-			new Piece(1, PIECE_TYPE.TANK, 3, 9), 
-			// new Piece(2, 1, PIECE_TYPE.TANK, 2, 8), 
-			new Piece(0, PIECE_TYPE.TANK, 5, 9), 
-			new Piece(0, PIECE_TYPE.TANK, 6, 9), 
-			new Piece(0, PIECE_TYPE.TANK, 6, 8), 
-			new Piece(0, PIECE_TYPE.TANK, 7, 8),
-			new Piece(0, PIECE_TYPE.TANK, 7, 7),
-			new Piece(1, PIECE_TYPE.TANK, 33, 11),
-			new Piece(1, PIECE_TYPE.TANK, 34, 12), 
-			new Piece(1, PIECE_TYPE.TANK, 34, 13),
-			new Piece(0, PIECE_TYPE.BARGE, 7, 9, ORIENTATION.SO),
-			new Piece(1, PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
-		]
-	}
+var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 	// console.log('datas.pieces: ' + JSON.stringify(datas.pieces));
-
 	this.getPlateau = function() {
 		var plateauCopy = [];
 		plateau.forEach(function(ligne) {
@@ -51,16 +11,6 @@ var Partie = function(plateau, tools) {
 		}, plateauCopy);
 		return plateauCopy;
 	}
-
-	this.init = function() {
-		var randomMaree = Math.floor((Math.random() * 3));
-		datas.currentMaree = MAREES[randomMaree];
-		randomMaree = Math.floor((Math.random() * 3));
-		datas.nextMaree = MAREES[randomMaree];
-		this.reloadMunitionOnDestroyers();
-		datas.tourPoints = 15;
-	}
-
 	this.getRefereeRuntimeMode = function() {
 		return refereeRuntimeMode;
 	}
@@ -284,8 +234,8 @@ var Partie = function(plateau, tools) {
 						&& pieceToCheck.pieceType.destroyer) {
 
 						var portee = pieceToCheck.pieceType.attackRange;
-						if (caseToCheck.caseType == CASE_TYPE.MONTAGNE
-							&& pieceToCheck.pieceType == PIECE_TYPE.TANK) {
+						if (caseToCheck.caseType.value == CASE_TYPE.MONTAGNE.value
+							&& pieceToCheck.pieceType.value == PIECE_TYPE.TANK.value) {
 							portee++;
 						}
 
@@ -309,7 +259,7 @@ var Partie = function(plateau, tools) {
 
 		if (this.getEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, playerId).length < 2) {
 			// Fo vérifier au cas ou ce n'est pas une barge, la case avant est concernée aussi
-			if (pieceOrCase.pieceType != null && pieceOrCase.pieceType == PIECE_TYPE.BARGE) {
+			if (pieceOrCase.pieceType != null && pieceOrCase.pieceType.value == PIECE_TYPE.BARGE.value) {
 				var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(pieceOrCase);
 				if (this.getEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, playerId).length < 2) {
 					return true;

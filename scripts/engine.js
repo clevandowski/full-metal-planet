@@ -5,32 +5,32 @@ var Engine = function(partie, tools) {
 
 	// Retourne le hashcode de la partie après exécution de l'action
 	this.applyPlayerAction = function(playerAction) {
-		switch(playerAction.actionType) {
-			case PLAYER_ACTION_TYPE.MOVE:
+		switch(playerAction.actionType.value) {
+			case PLAYER_ACTION_TYPE.MOVE.value:
 				var targetCase = playerAction.targetCase;
 				var targetPieceId = playerAction.targetPieceId;
 				console.log('Déplacement');
 				_movePieceToCase(targetPieceId, targetCase);
 				break;
-			case PLAYER_ACTION_TYPE.LOAD:
+			case PLAYER_ACTION_TYPE.LOAD.value:
 				var pieceTransporterId = playerAction.pieceTransporterId;
 				var pieceAChargerId = playerAction.pieceAChargerId;
 				console.log('Chargement');
 				_chargePiece(pieceTransporterId, pieceAChargerId)
 				break;
-			case PLAYER_ACTION_TYPE.UNLOAD:
+			case PLAYER_ACTION_TYPE.UNLOAD.value:
 				var pieceTransporterId = playerAction.pieceTransporterId;
 				var pieceADechargerId = playerAction.pieceADechargerId;
 				var targetCase = playerAction.targetCase;
 				console.log('Déchargement');
 				_dechargePiece(pieceTransporterId, pieceADechargerId, targetCase);
 				break;
-			case PLAYER_ACTION_TYPE.ATTACK:
+			case PLAYER_ACTION_TYPE.ATTACK.value:
 				var targetPieceId = playerAction.targetPieceId;
 				console.log('Attaque');
 				_attack(targetPieceId);
 				break;
-			case PLAYER_ACTION_TYPE.END_OF_TURN:
+			case PLAYER_ACTION_TYPE.END_OF_TURN.value:
 				partie.setTourToNextPlayer();
 				break;
 			default:
@@ -47,7 +47,7 @@ var Engine = function(partie, tools) {
 		var piece = partie.getPieceById(pieceId);
 		var nextOrientation;
 		var coords;
-		if (piece.pieceType == PIECE_TYPE.BARGE) {
+		if (piece.pieceType.value == PIECE_TYPE.BARGE.value) {
 			// Si c'est une case adjacente à l'arriere de la barge, on tourne, 
 			// ATTENTION on ne peux pas utiliser this.arePieceAndTargetAdjacent 
 			// car il tient compte du fait que c'est une barge alors qu'on cherche 

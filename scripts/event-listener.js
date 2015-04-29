@@ -24,7 +24,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		}
 		
 		// Actions locales, pas besoin de partager
-		if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.SELECT) {
+		if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.SELECT.value) {
 			var localActionReport = _validateSelect(playerActionDetected);
 			if (localActionReport.success) {
 				// Désélection si on sélectionne la pièce sélectionnée
@@ -55,18 +55,18 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			// if (actionReport.partieHashcode != partieHashcode) {
 			// 	throw 'Error on party checksum ! Reload the party !!!';
 			// }
-			if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.MOVE) {
+			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.MOVE.value) {
 				displayService.setSelectedPieceId(playerActionDetected.targetPieceId);
 				displayService.setSelectedPieceIdSoute(-1);
 			}
-			if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.LOAD) {
+			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.LOAD.value) {
 				displayService.setSelectedPieceId(playerActionDetected.pieceTransporterId);
 				displayService.setSelectedPieceIdSoute(-1);
 			}
-			if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.UNLOAD) {
+			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.UNLOAD.value) {
 				displayService.setSelectedPieceIdSoute(-1);
 			}
-			if (playerActionDetected.actionType == PLAYER_ACTION_TYPE.ATTACK) {
+			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.ATTACK.value) {
 				displayService.exploseOnCase(actionReport.attackCoords);
 			}
 			// TODO sur PLAYER_ACTION_TYPE.ATTACK, déselectionner la piece qui vient 
@@ -95,14 +95,11 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		var actionReport = referee.validatePlayerAction(playerActionDetected, callbackValidateFinDuTour);
 	}
 	var callbackValidateFinDuTour = function(playerAction, actionReport) {
-		console.log('actionReport: ' + JSON.stringify(actionReport));
 		if (actionReport.success) {
-			console.log('Success');
 			var partieHashcode = engine.applyPlayerAction(playerAction);
 			displayService.centerPlateau();
 			displayService.clearError();
 		} else {
-			console.log('Error');
 			displayService.setError({
 				actionType: playerAction.actionType,
 				errorMessages: actionReport.errorMessages,

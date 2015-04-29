@@ -16,20 +16,20 @@ var Referee = function($http, partie, tools) {
 
 	var _localValidatePlayerAction = function(playerAction, callback) {
 		var actionReport;
-		switch (playerAction.actionType) {
-			case PLAYER_ACTION_TYPE.MOVE:
+		switch (playerAction.actionType.value) {
+			case PLAYER_ACTION_TYPE.MOVE.value:
 				actionReport = _validateMove(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.LOAD:
+			case PLAYER_ACTION_TYPE.LOAD.value:
 				actionReport = _validateLoad(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.UNLOAD:
+			case PLAYER_ACTION_TYPE.UNLOAD.value:
 				actionReport = _validateUnload(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.ATTACK:
+			case PLAYER_ACTION_TYPE.ATTACK.value:
 				actionReport = _validateAttack(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.END_OF_TURN:
+			case PLAYER_ACTION_TYPE.END_OF_TURN.value:
 				actionReport =  { success: true };
 				break;
 			default:
@@ -50,7 +50,7 @@ var Referee = function($http, partie, tools) {
 			method: 'POST',
 			// Nécessite un reverse proxy
 			// cf /etc/apache2/sites-enabled/000-default.conf
-			url: '/full-metal-planet-server/',
+			url: '/full-metal-planet-server/validate',
 			// headers: {
 			// 	Origin: 'http://cyrille-zenika/full-metal-planet/'
 			// },
@@ -269,7 +269,7 @@ var Referee = function($http, partie, tools) {
 			// console.log('Impossible de deplacer un ' + piece.pieceType.name + ' de type ' + piece.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
 			return true;
 		}
-		if (piece.pieceType == PIECE_TYPE.BARGE) {
+		if (piece.pieceType.value == PIECE_TYPE.BARGE.value) {
 			var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(piece);
 			var caseAvantBarge = partie.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
 			var caseAvantBargeMaree = caseAvantBarge.getCaseTypeMaree(maree);
@@ -292,8 +292,8 @@ var Referee = function($http, partie, tools) {
 			// Exception : On peut obliger une unité à aller sur un endroit
 			// qui la neutralise mais obligatoirement sur un type qui peut changer
 			// selon la marée, donc on exclut toutes les cases non marecage ou recif
-			if (targetCase.caseType != CASE_TYPE.MARECAGE
-				&& targetCase.caseType != CASE_TYPE.RECIF) {
+			if (targetCase.caseType.value != CASE_TYPE.MARECAGE.value
+				&& targetCase.caseType.value != CASE_TYPE.RECIF.value) {
 				return false;
 			}
 		}

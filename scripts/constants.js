@@ -14,48 +14,48 @@ var MAREES = [
 ];
 
 var CASE_TYPE = {
-	PLAINE: { name: 'plaine' },
-	MONTAGNE: { name: 'montagne' },
-	MARECAGE: { name: 'marecage' },
-	RECIF: { name: 'recif' },
-	MER: { name: 'mer' }
+	PLAINE: { value: 'PLAINE', name: 'plaine' },
+	MONTAGNE: { value: 'MONTAGNE', name: 'montagne' },
+	MARECAGE: { value: 'MARECAGE', name: 'marecage' },
+	RECIF: { value: 'RECIF', name: 'recif' },
+	MER: { value: 'MER', name: 'mer' }
 };
 
 var CASE_TYPE_MAREE = [
-	{ name: 'plaine', cssName: 'plaine', caseType: CASE_TYPE.PLAINE, marees: [ 'B', 'N', 'H' ], modeDeplacement: 'terrestre' },
-	{ name: 'montagne', cssName: 'montagne', caseType: CASE_TYPE.MONTAGNE, marees: [ 'B', 'N', 'H' ], modeDeplacement: 'terrestre' },
-	{ name: 'marecage-sec', cssName: 'marecage-sec', caseType: CASE_TYPE.MARECAGE, marees: [ 'B', 'N' ], modeDeplacement: 'terrestre' },
-	{ name: 'marecage-inonde', cssName: 'marecage-inonde', caseType: CASE_TYPE.MARECAGE, marees: [ 'H' ], modeDeplacement: 'maritime' },
-	{ name: 'recif-sec', cssName: 'recif-sec', caseType: CASE_TYPE.RECIF, marees: [ 'B' ], modeDeplacement: 'terrestre' },
-	{ name: 'recif-inonde', cssName: 'recif-inonde', caseType: CASE_TYPE.RECIF, marees: [ 'N', 'H' ], modeDeplacement: 'maritime' },
-	{ name: 'mer', cssName: 'mer', caseType: CASE_TYPE.MER, marees: [ 'B', 'N', 'H' ], modeDeplacement: 'maritime' }
+	{ value: 'PLAINE', name: 'plaine', cssName: 'plaine', caseType: CASE_TYPE.PLAINE, marees: [ 'B', 'N', 'H' ], modeDeplacement: 'terrestre' },
+	{ value: 'MONTAGNE', name: 'montagne', cssName: 'montagne', caseType: CASE_TYPE.MONTAGNE, marees: [ 'B', 'N', 'H' ], modeDeplacement: 'terrestre' },
+	{ value: 'MARECAGE_SEC', name: 'marecage-sec', cssName: 'marecage-sec', caseType: CASE_TYPE.MARECAGE, marees: [ 'B', 'N' ], modeDeplacement: 'terrestre' },
+	{ value: 'MARECAGE_INONDE', name: 'marecage-inonde', cssName: 'marecage-inonde', caseType: CASE_TYPE.MARECAGE, marees: [ 'H' ], modeDeplacement: 'maritime' },
+	{ value: 'RECIF_SEC', name: 'recif-sec', cssName: 'recif-sec', caseType: CASE_TYPE.RECIF, marees: [ 'B' ], modeDeplacement: 'terrestre' },
+	{ value: 'RECIF_INONDE', name: 'recif-inonde', cssName: 'recif-inonde', caseType: CASE_TYPE.RECIF, marees: [ 'N', 'H' ], modeDeplacement: 'maritime' },
+	{ value: 'MER', name: 'mer', cssName: 'mer', caseType: CASE_TYPE.MER, marees: [ 'B', 'N', 'H' ], modeDeplacement: 'maritime' }
 ];
 
 
 // encombrement = nb de place prise sur un crabe ou une barge
 var PIECE_TYPE = {
-	MUNITION: {name: 'munition', cssName: 'munition', mobile: false, modeDeplacement: 'none', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: false, attackRange: -1},
-	TANK: { name: 'tank', cssName: 'tank', mobile: true, modeDeplacement: 'terrestre', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: true, attackRange: 2 },
-	BARGE: { name: 'barge', cssName: 'barge', mobile: true, modeDeplacement: 'maritime', encombrement: 4, transporter: true, transportCapacite: 4, destroyer: false, attackRange: -1 }
+	MUNITION: { value: 'MUNITION', name: 'munition', cssName: 'munition', mobile: false, modeDeplacement: 'none', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: false, attackRange: -1},
+	TANK: { value: 'TANK', name: 'tank', cssName: 'tank', mobile: true, modeDeplacement: 'terrestre', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: true, attackRange: 2 },
+	BARGE: { value: 'BARGE', name: 'barge', cssName: 'barge', mobile: true, modeDeplacement: 'maritime', encombrement: 4, transporter: true, transportCapacite: 4, destroyer: false, attackRange: -1 }
 }
 
 var ORIENTATION = {
-	N: { name: 'nord', cssName: 'orientation-nord', next: 'NE', previous: 'NO' },
-	NE: { name: 'nord-est', cssName: 'orientation-nord-est', next: 'SE', previous: 'N' },
-	SE: { name: 'sud-est', cssName: 'orientation-sud-est', next: 'S', previous: 'NE' },
-	S: { name: 'sud', cssName: 'orientation-sud', next: 'SO', previous: 'SE' },
-	SO: { name: 'sud-ouest', cssName: 'orientation-sud-ouest', next: 'NO', previous: 'S' },
-	NO: { name: 'nord-ouest', cssName: 'orientation-nord-ouest', next: 'N', previous: 'SO' }
+	N: { value: 'N', name: 'nord', cssName: 'orientation-nord', next: 'NE', previous: 'NO' },
+	NE: { value: 'NE', name: 'nord-est', cssName: 'orientation-nord-est', next: 'SE', previous: 'N' },
+	SE: { value: 'SE', name: 'sud-est', cssName: 'orientation-sud-est', next: 'S', previous: 'NE' },
+	S: { value: 'S', name: 'sud', cssName: 'orientation-sud', next: 'SO', previous: 'SE' },
+	SO: { value: 'SO', name: 'sud-ouest', cssName: 'orientation-sud-ouest', next: 'NO', previous: 'S' },
+	NO: { value: 'NO', name: 'nord-ouest', cssName: 'orientation-nord-ouest', next: 'N', previous: 'SO' }
 }
 
 var PLAYER_ACTION_TYPE = {
-	SELECT: { name: 'sélection' },
+	SELECT: { value: 'SELECT', name: 'sélection' },
 	// SELECT_SOUTE: { name: 'select-soute' },
-	MOVE: { name: 'déplacement'},
-	LOAD: { name: 'chargement'},
-	UNLOAD: { name: 'déchargement'},
-	ATTACK: { name: 'attaque'},
-	END_OF_TURN: { name: 'fin du tour' }
+	MOVE: { value: 'MOVE', name: 'déplacement'},
+	LOAD: { value: 'LOAD', name: 'chargement'},
+	UNLOAD: { value: 'UNLOAD', name: 'déchargement'},
+	ATTACK: { value: 'ATTACK', name: 'attaque'},
+	END_OF_TURN: { value: 'END_OF_TURN', name: 'fin du tour' }
 }
 // Pair
 //

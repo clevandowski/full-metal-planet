@@ -64,48 +64,113 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			var app = angular.module('myApp', []);
+var app = angular.module('myApp', []);
 
-			app.factory('PlateauService', [ function() {
-				var plateau = new Plateau();
-				return {
-					getPlateau: function() {
-      					return plateau.cases;
-    				}
+app.factory('PlateauService', [ function() {
+	var plateau = new Plateau();
+	return {
+		getPlateau: function() {
+			return plateau.cases;
+		}
+	}
+}]);
+app.factory('Tools', [ function() {
+	return new Tools();
+}]);
+
+app.factory('PartieLoader', ['$http', '$q', function($http, $q) {
+	var deferred = $q.defer();
+	if (window.location.protocol == 'file:') {
+		var randomCurrentMaree = Math.floor((Math.random() * 3));
+		var randomNextMaree = Math.floor((Math.random() * 3));
+		partieDatas = {
+			tour: 0,
+			tourPlayer: 0,
+			tourPoints: 15,
+			currentMaree: MAREES[randomCurrentMaree],
+			nextMaree: MAREES[randomNextMaree],
+			players: [
+				// C'est très important que l'id des joueurs suive l'ordre de 
+				// l'index du tableau car on les indexe par l'id ensuite
+				// TODO N'utiliser que l'id comme identifiant
+				new Player(0, 'Damien'),
+				new Player(1, 'Noémie')
+			],
+			pieces: [
+				new Piece(1, PIECE_TYPE.TANK, 2, 9), 
+				new Piece(1, PIECE_TYPE.TANK, 3, 9), 
+				// new Piece(2, 1, PIECE_TYPE.TANK, 2, 8), 
+				new Piece(0, PIECE_TYPE.TANK, 5, 9), 
+				new Piece(0, PIECE_TYPE.TANK, 6, 9), 
+				new Piece(0, PIECE_TYPE.TANK, 6, 8), 
+				new Piece(0, PIECE_TYPE.TANK, 7, 8),
+				new Piece(0, PIECE_TYPE.TANK, 7, 7),
+				new Piece(1, PIECE_TYPE.TANK, 33, 11),
+				new Piece(1, PIECE_TYPE.TANK, 34, 12), 
+				new Piece(1, PIECE_TYPE.TANK, 34, 13),
+				new Piece(0, PIECE_TYPE.BARGE, 7, 9, ORIENTATION.SO),
+				new Piece(1, PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
+			]
+		};
+		deferred.resolve(partieDatas);
+	} else {
+		var httpRequest = {
+			method: 'POST',
+			// Nécessite un reverse proxy
+			// cf /etc/apache2/sites-enabled/000-default.conf
+			url: '/full-metal-planet-server/init',
+			// headers: {
+			// 	Origin: 'http://cyrille-zenika/full-metal-planet/'
+			// },
+			// data: {id: 0, name: partie.getPlayer().name}
+			data: {}
+		};
+		console.log('init request to server:' + JSON.stringify(httpRequest));
+
+		// var deferred = $q.defer();
+		$http(httpRequest)
+			.success(function(data, status, headers, config) {
+				partieDatas = data,
+				deferred.resolve(partieDatas);
+			})
+			.error(function(data, status, headers, config) {
+				console.log('error: HttpResponse.status: ' + JSON.stringify(status));
+				console.log('error: HttpResponse.data: ' + JSON.stringify(data));
+				console.log('error: HttpResponse.headers: ' + JSON.stringify(headers));
+				console.log('error: HttpResponse.config: ' + JSON.stringify(config));
+				actionReport = {
+					status: false,
+					errorMessages: ['Erreur lors de l\'appel au serveur', 'Regardez les logs dans la console']
 				}
-			}]);
-			app.factory('Tools', [ function() {
-				return new Tools();
-			}]);
-			app.factory('PartieService', [ 'PlateauService', 'Tools', function(PlateauService, Tools) {
-				var partie = new Partie(PlateauService.getPlateau(), Tools);
-				partie.init();
-				// console.log(JSON.stringify(partie.datas));
-				return partie;
-			}]);
-			app.factory('Referee', [ '$http', 'PartieService', 'Tools', function($http, PartieService, Tools) {
-				return new Referee($http, PartieService, Tools);
-			}]);
-			app.factory('Engine', [ 'PartieService', 'Tools', function(PartieService, Tools) {
-				return new Engine(PartieService, Tools);
-			}]);
-			app.factory('DisplayService', [ 'PartieService', function(PartieService) {
-				var displayService = new DisplayService(PartieService);
-				displayService.init();
-				return displayService;
-			}]);
-			app.factory('EventListener', [ 'PartieService', 'Referee', 'Engine', 'Tools', 'DisplayService', function($http, PartieService, Referee, Engine, Tools, DisplayService) {
-				return new EventListener($http, PartieService, Referee, Engine, Tools, DisplayService);
-			}]);
+				deferred.reject(actionReport);
+			})
+	}
+	return deferred.promise;
+}]);
+app.controller('myCtrl', ['$scope', '$http', 'PartieLoader', 'PlateauService', 'Tools', function($scope, $http, PartieLoader, PlateauService, Tools) {
 
-			app.controller('myCtrl', ['$scope', 'EventListener', 'DisplayService', function($scope, EventListener, DisplayService) {
+	PartieLoader.then(function(partieDatas) {
+		var refereeRuntimeMode;
+		if (window.location.protocol == 'file:') {
+			refereeRuntimeMode = REFEREE_RUNTIME_MODE.LOCAL;
+		} else {
+			refereeRuntimeMode = REFEREE_RUNTIME_MODE.REMOTE;
+		}
+		var partie = new Partie(refereeRuntimeMode, partieDatas, PlateauService.getPlateau(), Tools);
+		var referee = new Referee($http, partie, Tools);
+		var engine = new Engine(partie, Tools);
+		var displayService = new DisplayService(partie);
+		displayService.init();
+		var eventListener = new EventListener(partie, referee, engine, Tools, displayService);
 
-				$scope.listener = EventListener;
-				$scope.display = DisplayService;
+		$scope.listener = eventListener;
+		$scope.display = displayService;
 
-				// Initialisation plateau
-				$scope.display.centerPlateau();
-			}]);
+		// Initialisation plateau
+		$scope.display.centerPlateau();
+	})
+}]);
+// }
 		</script>
 	</body>
 </html>

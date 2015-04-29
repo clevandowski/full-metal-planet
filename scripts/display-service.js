@@ -137,7 +137,7 @@ var DisplayService = function(partie) {
 			var player = partie.getPlayer();
 			var barge = partie.getPieces().filter(function(piece) {
 				return piece.playerId == player.id 
-					&& piece.pieceType == PIECE_TYPE.BARGE;
+					&& piece.pieceType.value == PIECE_TYPE.BARGE.value;
 			});
 			if (barge.length >= 1) {
 		 		_centerPlateauOnCoordinates(barge[0].x, barge[0].y);
