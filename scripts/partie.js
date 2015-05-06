@@ -1,18 +1,15 @@
-var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
+var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 	// console.log('datas.pieces: ' + JSON.stringify(datas.pieces));
 	this.getPlateau = function() {
 		var plateauCopy = [];
 		plateau.forEach(function(ligne) {
 			var ligneCopy = [];
 			ligne.forEach(function (aCase) {
-				this.push(new FMPCase(aCase.caseType, aCase.x, aCase.y));
+				this.push(FMPCaseService.createCase(aCase.caseType, aCase.x, aCase.y));
 			}, ligneCopy);
 			this.push(ligneCopy);
 		}, plateauCopy);
 		return plateauCopy;
-	}
-	this.getRefereeRuntimeMode = function() {
-		return refereeRuntimeMode;
 	}
 	/**
 	 * Retourne le joueur courant si aucune pièce n'est pas passée en paramètre.
@@ -158,7 +155,7 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 			// Changement de marée et détermination de la marée suivante
 			var randomMaree = Math.floor((Math.random() * 3));
 			datas.currentMaree = datas.nextMaree;
-			datas.nextMaree = MAREES[randomMaree];
+			datas.nextMaree = fmpConstants.MAREES[randomMaree];
 			// Chargement des munitions de toutes les pieces de type destroyer
 			this.reloadMunitionOnDestroyers();
 		}
@@ -191,7 +188,7 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 	 */
 	this.getCase = function(x, y) {
 		var aCase = _getCase(x, y);
-		return new FMPCase(aCase.caseType, aCase.x, aCase.y);
+		return FMPCaseService.createCase(aCase.caseType, aCase.x, aCase.y);
 	}
 	var _getCase = function(x, y) {
 		return plateau[y][x];
@@ -203,7 +200,7 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 	this.getCasePieceId = function(pieceId) {
 		var piece = _getPieceById(pieceId);
 		var aCase = plateau[piece.y][piece.x];
-		return new FMPCase(aCase.caseType, aCase.x, aCase.y);
+		return FMPCaseService.createCase(aCase.caseType, aCase.x, aCase.y);
 	}
 	/*
 	 * @PartieService car utilise getCase et getPieceIfAvailable
@@ -212,12 +209,12 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 		var enemiesInRange = [];
 		var parite = x & 1;
 
-		for (var i = 0; i < ZONE_VERIFICATION_MENACE_TIR.length; i++) {
-			var relativeCase = ZONE_VERIFICATION_MENACE_TIR[i];
+		for (var i = 0; i < fmpConstants.ZONE_VERIFICATION_MENACE_TIR.length; i++) {
+			var relativeCase = fmpConstants.ZONE_VERIFICATION_MENACE_TIR[i];
 			var currentX = x + relativeCase.x;;
 
 			if (currentX >= 0
-				&& currentX < PLATEAU_WIDTH) {
+				&& currentX < fmpConstants.PLATEAU_WIDTH) {
 				var currentY;
 				if (parite == 0) {
 					currentY = y + relativeCase.y;
@@ -225,7 +222,7 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 					currentY = y - relativeCase.y;						
 				}
 				if (currentY >= 0
-					&& currentY < PLATEAU_HEIGHT) {
+					&& currentY < fmpConstants.PLATEAU_HEIGHT) {
 					var caseToCheck = _getCase(currentX, currentY);
 					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
 					
@@ -234,8 +231,8 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 						&& pieceToCheck.pieceType.destroyer) {
 
 						var portee = pieceToCheck.pieceType.attackRange;
-						if (caseToCheck.caseType.value == CASE_TYPE.MONTAGNE.value
-							&& pieceToCheck.pieceType.value == PIECE_TYPE.TANK.value) {
+						if (caseToCheck.caseType.value == fmpConstants.CASE_TYPE.MONTAGNE.value
+							&& pieceToCheck.pieceType.value == fmpConstants.PIECE_TYPE.TANK.value) {
 							portee++;
 						}
 
@@ -259,7 +256,7 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 
 		if (this.getEnemiesThatCanAttackInRange(pieceOrCase.x, pieceOrCase.y, playerId).length < 2) {
 			// Fo vérifier au cas ou ce n'est pas une barge, la case avant est concernée aussi
-			if (pieceOrCase.pieceType != null && pieceOrCase.pieceType.value == PIECE_TYPE.BARGE.value) {
+			if (pieceOrCase.pieceType != null && pieceOrCase.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value) {
 				var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(pieceOrCase);
 				if (this.getEnemiesThatCanAttackInRange(caseAvantBargeCoords.x, caseAvantBargeCoords.y, playerId).length < 2) {
 					return true;
@@ -287,20 +284,21 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 		var pieceTransporter = _getPieceById(pieceTransporterId);
 		var pieceACharger = _getPieceById(pieceAChargerId);
 		// On déplace le tank du plateau de la partie au contenu du transporteur
-		pieceTransporter.addContenu(pieceACharger.id);
-		// var indexInPieces = partie.getPieces().indexOf(pieceACharger);
-		// partie.getPieces().splice(indexInPieces, 1);
+		// TODO A Remettre d'équerre j'ai un pb sur le client à cette ligne en mode remote !!!
+		// pieceTransporter.addContenu(pieceACharger.id);
+		pieceTransporter.contenu.push(pieceACharger.id);
+
 		_setPieceToCase(pieceACharger, {x: -1, y: -1});
 	}
 	this.dechargePiece = function(pieceTransporterId, pieceADechargerId, targetCase) {
 		var pieceTransporter = _getPieceById(pieceTransporterId);
 		var pieceADecharger = _getPieceById(pieceADechargerId);
-		var index = pieceTransporter.getContenu().indexOf(pieceADechargerId);
+		var index = pieceTransporter.contenu.indexOf(pieceADechargerId);
 		if (index == -1) {
 			throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
 		} else {
 			// this.getPieces().push(pieceADecharger);
-			pieceTransporter.getContenu().splice(index, 1);
+			pieceTransporter.contenu.splice(index, 1);
 			_setPieceToCase(pieceADecharger, targetCase);
 		}
 	}
@@ -308,4 +306,9 @@ var Partie = function(refereeRuntimeMode, datas, plateau, tools) {
 		var piece = _getPieceById(pieceId);
 		piece.nbAmmos--;
 	}
+}
+
+// node.js ?
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports.Partie = Partie;
 }

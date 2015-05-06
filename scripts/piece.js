@@ -16,7 +16,9 @@ var Piece = function(playerId, pieceType, x, y, orientation) {
 	}
 
 	if (orientation == null) {
-		this.orientation = ORIENTATION.S;
+		// ORIENTATION.S;
+		// TODO A Remplacer par la valeur 'S' lorsque je referais tous les stockage des enums par id et non plus par référence.
+		this.orientation = { value: 'S', name: 'sud', cssName: 'orientation-sud', next: 'SO', previous: 'SE' }
 	} else {
 		this.orientation = orientation;
 	}

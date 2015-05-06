@@ -1,4 +1,4 @@
-var EventListener = function(partie, referee, engine, tools, displayService) {
+var EventListener = function(fmpConstants, partie, referee, engine, tools, displayService) {
 	
 	// this.init()
 
@@ -24,7 +24,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 		}
 		
 		// Actions locales, pas besoin de partager
-		if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.SELECT.value) {
+		if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.SELECT.value) {
 			var localActionReport = _validateSelect(playerActionDetected);
 			if (localActionReport.success) {
 				// Désélection si on sélectionne la pièce sélectionnée
@@ -55,18 +55,18 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			// if (actionReport.partieHashcode != partieHashcode) {
 			// 	throw 'Error on party checksum ! Reload the party !!!';
 			// }
-			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.MOVE.value) {
+			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.MOVE.value) {
 				displayService.setSelectedPieceId(playerActionDetected.targetPieceId);
 				displayService.setSelectedPieceIdSoute(-1);
 			}
-			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.LOAD.value) {
+			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.LOAD.value) {
 				displayService.setSelectedPieceId(playerActionDetected.pieceTransporterId);
 				displayService.setSelectedPieceIdSoute(-1);
 			}
-			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.UNLOAD.value) {
+			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.UNLOAD.value) {
 				displayService.setSelectedPieceIdSoute(-1);
 			}
-			if (playerActionDetected.actionType.value == PLAYER_ACTION_TYPE.ATTACK.value) {
+			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value) {
 				displayService.exploseOnCase(actionReport.attackCoords);
 			}
 			// TODO sur PLAYER_ACTION_TYPE.ATTACK, déselectionner la piece qui vient 
@@ -91,7 +91,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 	}
 
 	this.finDuTour = function() {
-		var playerActionDetected = { actionType: PLAYER_ACTION_TYPE.END_OF_TURN	};
+		var playerActionDetected = { actionType: fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN };
 		var actionReport = referee.validatePlayerAction(playerActionDetected, callbackValidateFinDuTour);
 	}
 	var callbackValidateFinDuTour = function(playerAction, actionReport) {
@@ -122,14 +122,14 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 				// Note : si selectedPieceSoute est != null c'est que selectedPiece est != null
 				if (selectedPieceSoute != null) {
 					return {
-						actionType: PLAYER_ACTION_TYPE.UNLOAD,
+						actionType: fmpConstants.PLAYER_ACTION_TYPE.UNLOAD,
 						pieceADechargerId: selectedPieceSoute.id,
 						pieceTransporterId: selectedPiece.id,
 						targetCase: targetCase
 					}
 				} else if (selectedPiece != null) {
 					return {
-						actionType: PLAYER_ACTION_TYPE.MOVE,
+						actionType: fmpConstants.PLAYER_ACTION_TYPE.MOVE,
 						targetPieceId: selectedPiece.id,
 						targetCase: targetCase
 					}
@@ -137,10 +137,11 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 			}
 		} else {
 			if (targetPiece.playerId != partie.getPlayer().id
-				&& ! partie.isFreeFromEnemyFire(targetPiece)) {
+				&& ! partie.isFreeFromEnemyFire(targetPiece)
+				&& window.confirm('Attaquer l\'unité ?')) {
 				// Attaque
 				return {
-					actionType: PLAYER_ACTION_TYPE.ATTACK,
+					actionType: fmpConstants.PLAYER_ACTION_TYPE.ATTACK,
 					targetPieceId: targetPiece.id
 				}
 			} else if (targetPiece.pieceType.transporter
@@ -149,7 +150,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 				&& tools.areAdjacent(targetPiece, selectedPiece)) {
 				// Chargement
 				return {
-					actionType: PLAYER_ACTION_TYPE.LOAD,
+					actionType: fmpConstants.PLAYER_ACTION_TYPE.LOAD,
 					pieceAChargerId: selectedPiece.id,
 					pieceTransporterId: targetPiece.id
 				}
@@ -159,7 +160,7 @@ var EventListener = function(partie, referee, engine, tools, displayService) {
 				 * (S'il ya une pièce amie sur la case cliquée et qu'aucune pièce n'est sélectionnée)
 				 */
 				return {
-					actionType: PLAYER_ACTION_TYPE.SELECT,
+					actionType: fmpConstants.PLAYER_ACTION_TYPE.SELECT,
 					targetPieceId: targetPiece.id
 				}
 			}

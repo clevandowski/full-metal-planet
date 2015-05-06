@@ -5,7 +5,7 @@
 		<link rel="stylesheet" href="css/styles.css?v=1.0">
 		<script type="text/javascript" src="scripts/jquery-2.1.3.js"></script>
 		<script type="text/javascript" src="scripts/angular.js"></script>
-		<script type="text/javascript" src="scripts/constants.js"></script>
+		<script type="text/javascript" src="scripts/fmp-constants.js"></script>
 		<script type="text/javascript" src="scripts/tools.js"></script>
 		<script type="text/javascript" src="scripts/case.js"></script>
 		<script type="text/javascript" src="scripts/plateau.js"></script>
@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="scripts/player.js"></script>
 		<script type="text/javascript" src="scripts/partie.js"></script>
 		<script type="text/javascript" src="scripts/referee.js"></script>
+		<script type="text/javascript" src="scripts/referee-proxy-client.js"></script>
 		<script type="text/javascript" src="scripts/engine.js"></script>
 		<script type="text/javascript" src="scripts/display-service.js"></script>
 		<script type="text/javascript" src="scripts/event-listener.js"></script>
@@ -20,7 +21,7 @@
 	<body style="overflow: hidden">
 		<div ng-app="myApp" ng-controller="myCtrl">
 			<div id="info-partie">
-				<span class="info">TYPE PARTIE: {{display.getRefereeRuntimeMode()}}</span><br/>
+				<span class="info">TYPE PARTIE: {{runtimeMode}}</span><br/>
 				<span class="info">JOUEUR: {{display.getCurrentPlayerName()}}</span><br/>
 				<span class="info">POINTS: {{display.getCurrentPlayerTourPoint()}}</span><span ng-show="display.showCurrentPlayerPointsEconomise()"> (+{{display.getCurrentPlayerPointsEconomise()}})</span><br/>
 				<span class="info">MAR&Eacute;E: {{display.getCurrentMareeName()}}</span><br/>
@@ -66,19 +67,29 @@
 		<script type="text/javascript">
 var app = angular.module('myApp', []);
 
-app.factory('PlateauService', [ function() {
-	var plateau = new Plateau();
+app.factory('FMPConstants', [ function() {
+	console.log('Constants loading...');
+	var fmpConstants = FMPConstants.getConstants();
+	console.log('Constants loaded: ' + JSON.stringify(fmpConstants));
+	return fmpConstants;
+}]);
+app.factory('FMPCaseService',  [ function() {
+	var fmpCaseService = new FMPCaseService();
+	return fmpCaseService;
+}]);
+app.factory('PlateauService', [ 'FMPConstants', 'FMPCaseService', function(FMPConstants, FMPCaseService) {
+	var plateauService = new FMPPlateauService(FMPConstants, FMPCaseService);
 	return {
 		getPlateau: function() {
-			return plateau.cases;
+			return plateauService.getPlateau();
 		}
 	}
 }]);
-app.factory('Tools', [ function() {
-	return new Tools();
+app.factory('Tools', [ 'FMPConstants', function(FMPConstants) {
+	return new Tools(FMPConstants);
 }]);
 
-app.factory('PartieLoader', ['$http', '$q', function($http, $q) {
+app.factory('PartieLoader', ['$http', '$q', 'FMPConstants', function($http, $q, FMPConstants) {
 	var deferred = $q.defer();
 	if (window.location.protocol == 'file:') {
 		var randomCurrentMaree = Math.floor((Math.random() * 3));
@@ -87,8 +98,8 @@ app.factory('PartieLoader', ['$http', '$q', function($http, $q) {
 			tour: 0,
 			tourPlayer: 0,
 			tourPoints: 15,
-			currentMaree: MAREES[randomCurrentMaree],
-			nextMaree: MAREES[randomNextMaree],
+			currentMaree: FMPConstants.MAREES[randomCurrentMaree],
+			nextMaree: FMPConstants.MAREES[randomNextMaree],
 			players: [
 				// C'est très important que l'id des joueurs suive l'ordre de 
 				// l'index du tableau car on les indexe par l'id ensuite
@@ -97,19 +108,19 @@ app.factory('PartieLoader', ['$http', '$q', function($http, $q) {
 				new Player(1, 'Noémie')
 			],
 			pieces: [
-				new Piece(1, PIECE_TYPE.TANK, 2, 9), 
-				new Piece(1, PIECE_TYPE.TANK, 3, 9), 
+				new Piece(1, FMPConstants.PIECE_TYPE.TANK, 2, 9), 
+				new Piece(1, FMPConstants.PIECE_TYPE.TANK, 3, 9), 
 				// new Piece(2, 1, PIECE_TYPE.TANK, 2, 8), 
-				new Piece(0, PIECE_TYPE.TANK, 5, 9), 
-				new Piece(0, PIECE_TYPE.TANK, 6, 9), 
-				new Piece(0, PIECE_TYPE.TANK, 6, 8), 
-				new Piece(0, PIECE_TYPE.TANK, 7, 8),
-				new Piece(0, PIECE_TYPE.TANK, 7, 7),
-				new Piece(1, PIECE_TYPE.TANK, 33, 11),
-				new Piece(1, PIECE_TYPE.TANK, 34, 12), 
-				new Piece(1, PIECE_TYPE.TANK, 34, 13),
-				new Piece(0, PIECE_TYPE.BARGE, 7, 9, ORIENTATION.SO),
-				new Piece(1, PIECE_TYPE.BARGE, 33, 12, ORIENTATION.SO)
+				new Piece(0, FMPConstants.PIECE_TYPE.TANK, 5, 9), 
+				new Piece(0, FMPConstants.PIECE_TYPE.TANK, 6, 9), 
+				new Piece(0, FMPConstants.PIECE_TYPE.TANK, 6, 8), 
+				new Piece(0, FMPConstants.PIECE_TYPE.TANK, 7, 8),
+				new Piece(0, FMPConstants.PIECE_TYPE.TANK, 7, 7),
+				new Piece(1, FMPConstants.PIECE_TYPE.TANK, 33, 11),
+				new Piece(1, FMPConstants.PIECE_TYPE.TANK, 34, 12), 
+				new Piece(1, FMPConstants.PIECE_TYPE.TANK, 34, 13),
+				new Piece(0, FMPConstants.PIECE_TYPE.BARGE, 7, 9, FMPConstants.ORIENTATION.SO),
+				new Piece(1, FMPConstants.PIECE_TYPE.BARGE, 33, 12, FMPConstants.ORIENTATION.SO)
 			]
 		};
 		deferred.resolve(partieDatas);
@@ -147,24 +158,29 @@ app.factory('PartieLoader', ['$http', '$q', function($http, $q) {
 	}
 	return deferred.promise;
 }]);
-app.controller('myCtrl', ['$scope', '$http', 'PartieLoader', 'PlateauService', 'Tools', function($scope, $http, PartieLoader, PlateauService, Tools) {
+app.controller('myCtrl', ['$scope', '$http', 'PartieLoader', 'PlateauService', 'Tools', 'FMPConstants', 'FMPCaseService', function($scope, $http, PartieLoader, PlateauService, Tools, FMPConstants, FMPCaseService) {
 
 	PartieLoader.then(function(partieDatas) {
 		var refereeRuntimeMode;
 		if (window.location.protocol == 'file:') {
-			refereeRuntimeMode = REFEREE_RUNTIME_MODE.LOCAL;
+			refereeRuntimeMode = FMPConstants.REFEREE_RUNTIME_MODE.LOCAL;
 		} else {
-			refereeRuntimeMode = REFEREE_RUNTIME_MODE.REMOTE;
+			refereeRuntimeMode = FMPConstants.REFEREE_RUNTIME_MODE.REMOTE;
 		}
-		var partie = new Partie(refereeRuntimeMode, partieDatas, PlateauService.getPlateau(), Tools);
-		var referee = new Referee($http, partie, Tools);
-		var engine = new Engine(partie, Tools);
-		var displayService = new DisplayService(partie);
-		displayService.init();
-		var eventListener = new EventListener(partie, referee, engine, Tools, displayService);
+		var partie = new Partie(FMPConstants, partieDatas, PlateauService.getPlateau(), Tools, FMPCaseService);
+		var referee = null;
+		if (refereeRuntimeMode == FMPConstants.REFEREE_RUNTIME_MODE.LOCAL) {
+			referee = new Referee(FMPConstants, partie, Tools);
+		} else {
+			referee = new RefereeProxyClient(FMPConstants, $http, partie, Tools);
+		}
+		var engine = new Engine(FMPConstants, partie, Tools);
+		var displayService = new DisplayService(FMPConstants, partie, Tools);
+		var eventListener = new EventListener(FMPConstants, partie, referee, engine, Tools, displayService);
 
 		$scope.listener = eventListener;
 		$scope.display = displayService;
+		$scope.runtimeMode = refereeRuntimeMode;
 
 		// Initialisation plateau
 		$scope.display.centerPlateau();

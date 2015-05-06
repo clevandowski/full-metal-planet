@@ -1,11 +1,22 @@
-var DisplayService = function(partie) {
+var DisplayService = function(fmpConstants, partie, tools) {
 	var localContext = {
 		playersContext: []
 	}
 	var plateau;
 
+	this.clearError = function() {
+		this.error = {
+			showErrorPopup: false,
+			actionType: null,
+			errorMessages: []
+		}
+	}
 	this.init = function() {
-		this.clearError();
+		this.error = {
+			showErrorPopup: true,
+			actionType: null,
+			errorMessages: [ 'Sélectionnez une pièce du joueur ' + partie.getPlayer().name ]
+		};
 		var players = partie.getPlayers();
 		for (var i in players) {
 			localContext.playersContext.push({
@@ -16,13 +27,8 @@ var DisplayService = function(partie) {
 		}
 		plateau = partie.getPlateau();
 	}
-	this.clearError = function() {
-		this.error = {
-			showErrorPopup: false,
-			actionType: null,
-			errorMessages: []
-		}
-	}
+	this.init();
+	
 	this.getError = function() {
 		return this.error;
 	}
@@ -45,9 +51,9 @@ var DisplayService = function(partie) {
 		var playerLocalContext = _getPlayerLocalContext();
 		playerLocalContext.selectedPieceIdSoute = pieceId;
 	}
-	this.getRefereeRuntimeMode = function() {
-		return partie.getRefereeRuntimeMode();
-	}
+	// this.getRefereeRuntimeMode = function() {
+	// 	return partie.getRefereeRuntimeMode();
+	// }
 	this.getCurrentPlayerName = function() {
 		return partie.getPlayer().name;
 	}
@@ -94,7 +100,7 @@ var DisplayService = function(partie) {
 			piece = partie.getPieceById(pieceId);
 		} else {
 			// Munition
-			piece = { id: -1, pieceType: PIECE_TYPE.MUNITION };
+			piece = { id: -1, pieceType: fmpConstants.PIECE_TYPE.MUNITION };
 		}
 		// console.log('pieceId: ' + JSON.stringify(pieceId));
 		// var piece = _getPieceById(pieceId);
@@ -106,8 +112,11 @@ var DisplayService = function(partie) {
 		return partie.getTourPoints() <= 0;
 	}
 	this.getCssCase = function(targetCase) {
+		// return 'hexagon-case '
+		// 	+ targetCase.getCaseTypeMaree(partie.getCurrentMaree()).cssName
+		// 	+ this._cssSelectedPiece(targetCase);
 		return 'hexagon-case '
-			+ targetCase.getCaseTypeMaree(partie.getCurrentMaree()).cssName
+			+ tools.getCaseTypeMaree(targetCase, partie.getCurrentMaree()).cssName
 			+ this._cssSelectedPiece(targetCase);
 	}
 	this.isPieceOnCase = function(targetCase) {
@@ -137,7 +146,7 @@ var DisplayService = function(partie) {
 			var player = partie.getPlayer();
 			var barge = partie.getPieces().filter(function(piece) {
 				return piece.playerId == player.id 
-					&& piece.pieceType.value == PIECE_TYPE.BARGE.value;
+					&& piece.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value;
 			});
 			if (barge.length >= 1) {
 		 		_centerPlateauOnCoordinates(barge[0].x, barge[0].y);

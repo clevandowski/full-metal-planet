@@ -1,36 +1,36 @@
 /* 
  * Engine
  */
-var Engine = function(partie, tools) {
+var Engine = function(fmpConstants, partie, tools) {
 
 	// Retourne le hashcode de la partie après exécution de l'action
 	this.applyPlayerAction = function(playerAction) {
 		switch(playerAction.actionType.value) {
-			case PLAYER_ACTION_TYPE.MOVE.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.MOVE.value:
 				var targetCase = playerAction.targetCase;
 				var targetPieceId = playerAction.targetPieceId;
 				console.log('Déplacement');
 				_movePieceToCase(targetPieceId, targetCase);
 				break;
-			case PLAYER_ACTION_TYPE.LOAD.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.LOAD.value:
 				var pieceTransporterId = playerAction.pieceTransporterId;
 				var pieceAChargerId = playerAction.pieceAChargerId;
 				console.log('Chargement');
-				_chargePiece(pieceTransporterId, pieceAChargerId)
+				_chargePiece(pieceTransporterId, pieceAChargerId);
 				break;
-			case PLAYER_ACTION_TYPE.UNLOAD.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.UNLOAD.value:
 				var pieceTransporterId = playerAction.pieceTransporterId;
 				var pieceADechargerId = playerAction.pieceADechargerId;
 				var targetCase = playerAction.targetCase;
 				console.log('Déchargement');
 				_dechargePiece(pieceTransporterId, pieceADechargerId, targetCase);
 				break;
-			case PLAYER_ACTION_TYPE.ATTACK.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value:
 				var targetPieceId = playerAction.targetPieceId;
 				console.log('Attaque');
 				_attack(targetPieceId);
 				break;
-			case PLAYER_ACTION_TYPE.END_OF_TURN.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN.value:
 				partie.setTourToNextPlayer();
 				break;
 			default:
@@ -47,14 +47,14 @@ var Engine = function(partie, tools) {
 		var piece = partie.getPieceById(pieceId);
 		var nextOrientation;
 		var coords;
-		if (piece.pieceType.value == PIECE_TYPE.BARGE.value) {
+		if (piece.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value) {
 			// Si c'est une case adjacente à l'arriere de la barge, on tourne, 
 			// ATTENTION on ne peux pas utiliser this.arePieceAndTargetAdjacent 
 			// car il tient compte du fait que c'est une barge alors qu'on cherche 
 			// juste à savoir si c'est la base de la barge qui est adjacente à la case ici
 			if (tools.areCoordinatesAdjacent(piece.x, piece.y, targetCase.x, targetCase.y)) {
 				nextOrientation = tools.getOrientation(piece, targetCase);
-				coords = {x: piece.x, y: piece.y};
+				coords = { x: piece.x, y: piece.y };
 			} else {
 				// Sinon on avance.
 				// La case cible et la case avant de la barge sont forcément adjacentes ici
@@ -110,4 +110,9 @@ var Engine = function(partie, tools) {
 	var _setPieceToCase = function(piece, hexagonalCase) {
 		partie.setPieceToCase(piece.id, hexagonalCase);
 	}
+}
+
+// node.js ?
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports.Engine = Engine;
 }

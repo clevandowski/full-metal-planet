@@ -1,4 +1,4 @@
-var Tools = function() {
+var Tools = function(fmpConstants) {
 	/*
 	 * @UtilService
 	 */
@@ -45,26 +45,26 @@ var Tools = function() {
 
 		var parite = startCase.x & 1;
 
-		switch(orientation) {
-			case ORIENTATION.N:
+		switch(orientation.value) {
+			case fmpConstants.ORIENTATION.N.value:
 				targetY = targetY - 1;
 				break;
-			case ORIENTATION.NE:
+			case fmpConstants.ORIENTATION.NE.value:
 				targetX = targetX + 1;
 				targetY = targetY - (1 - parite);
 				break;
-			case ORIENTATION.SE:
+			case fmpConstants.ORIENTATION.SE.value:
 				targetX = targetX + 1;
 				targetY = targetY + parite;
 				break;
-			case ORIENTATION.S:
+			case fmpConstants.ORIENTATION.S.value:
 				targetY = targetY + 1;
 				break;
-			case ORIENTATION.SO:
+			case fmpConstants.ORIENTATION.SO.value:
 				targetX = targetX - 1;
 				targetY = targetY + parite;
 				break;
-			case ORIENTATION.NO:
+			case fmpConstants.ORIENTATION.NO.value:
 				targetX = targetX - 1;
 				targetY = targetY - (1 - parite);
 				break;
@@ -85,38 +85,38 @@ var Tools = function() {
 
 		if (deltaX == 0) {
 			if (deltaY > 0) {
-				return ORIENTATION.S;
+				return fmpConstants.ORIENTATION.S;
 			} else {
-				return ORIENTATION.N;
+				return fmpConstants.ORIENTATION.N;
 			}
 		} else {
 			var pariteX = startCase.x & 1;
 			if (pariteX == 0) {
 				if (deltaY == 0) {
 					if (deltaX > 0) {
-						return ORIENTATION.SE;
+						return fmpConstants.ORIENTATION.SE;
 					} else {
-						return ORIENTATION.SO;
+						return fmpConstants.ORIENTATION.SO;
 					}
 				} else {
 					if (deltaX > 0) {
-						return ORIENTATION.NE;
+						return fmpConstants.ORIENTATION.NE;
 					} else {
-						return ORIENTATION.NO;
+						return fmpConstants.ORIENTATION.NO;
 					}
 				}
 			} else {
 				if (deltaY == 0) {
 					if (deltaX > 0) {
-						return ORIENTATION.NE;
+						return fmpConstants.ORIENTATION.NE;
 					} else {
-						return ORIENTATION.NO;
+						return fmpConstants.ORIENTATION.NO;
 					}
 				} else {
 					if (deltaX > 0) {
-						return ORIENTATION.SE;
+						return fmpConstants.ORIENTATION.SE;
 					} else {
-						return ORIENTATION.SO;
+						return fmpConstants.ORIENTATION.SO;
 					}
 				}
 			}
@@ -125,9 +125,9 @@ var Tools = function() {
 
 	this.areAdjacent = function(pieceOrCase1, pieceOrCase2) {
 		if (pieceOrCase1.pieceType != null
-			&& pieceOrCase1.pieceType.value == PIECE_TYPE.BARGE.value) {
+			&& pieceOrCase1.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value) {
 			if (pieceOrCase2.pieceType != null
-				&& pieceOrCase2.pieceType.value == PIECE_TYPE.BARGE.value) {
+				&& pieceOrCase2.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value) {
 				// Les 2 pieces sont des barges
 				var caseAvantBarge1Coords = this.getCoordsCaseAvantBarge(pieceOrCase1, pieceOrCase1.orientation);
 				var caseAvantBarge2Coords = this.getCoordsCaseAvantBarge(pieceOrCase2, pieceOrCase2.orientation);
@@ -144,7 +144,7 @@ var Tools = function() {
 			}
 		} else {
 			if (pieceOrCase2.pieceType != null
-				&& pieceOrCase2.pieceType.value == PIECE_TYPE.BARGE.value) {
+				&& pieceOrCase2.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value) {
 				// La piece2 est une barge mais pas la piece1
 				var caseAvantBarge2Coords = this.getCoordsCaseAvantBarge(pieceOrCase2, pieceOrCase2.orientation);
 				return this.areCoordinatesAdjacent(pieceOrCase1.x, pieceOrCase1.y, pieceOrCase2.x, pieceOrCase2.y)
@@ -159,4 +159,18 @@ var Tools = function() {
 	this.getCoordsCaseAvantBarge = function(barge) {
 		return this.getCaseCoordsInOrientation(barge, barge.orientation);
 	}
+	this.getCaseTypeMaree = function(targetCase, maree) {
+		return fmpConstants.CASE_TYPE_MAREE.filter(function(caseTypeMaree) {
+				return caseTypeMaree.caseType.value == targetCase.caseType.value;
+			}).filter(function(caseTypeMaree) {
+				return caseTypeMaree.marees.indexOf(maree.value) > -1;
+			})[0];
+	}
+}
+
+// node.js ?
+if (typeof module !== 'undefined' && module.exports) {
+	var fmpConstants = require('./fmp-constants').fmpConstants;
+
+	module.exports.tools = new Tools(fmpConstants);
 }

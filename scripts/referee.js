@@ -1,35 +1,20 @@
-var Referee = function($http, partie, tools) {
-
-	// callback(playerAction, actionReport);
-	// var actionReport = { validationStatus: Boolean, errorMessages: [''] }
+var Referee = function(fmpConstants, partie, tools) {
 	this.validatePlayerAction = function(playerAction, callback) {
-		var refereeRuntimeMode = partie.getRefereeRuntimeMode();
-
-		if (refereeRuntimeMode == REFEREE_RUNTIME_MODE.LOCAL) {
-			_localValidatePlayerAction(playerAction, callback);
-		} else if (refereeRuntimeMode == REFEREE_RUNTIME_MODE.REMOTE) {
-			_remoteValidatePlayerAction($http, playerAction, callback);
-		} else {
-			throw 'WTF is this referee runtime mode ??????: ' + JSON.stringify(refereeRuntimeMode);
-		}
-	}
-
-	var _localValidatePlayerAction = function(playerAction, callback) {
 		var actionReport;
 		switch (playerAction.actionType.value) {
-			case PLAYER_ACTION_TYPE.MOVE.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.MOVE.value:
 				actionReport = _validateMove(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.LOAD.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.LOAD.value:
 				actionReport = _validateLoad(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.UNLOAD.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.UNLOAD.value:
 				actionReport = _validateUnload(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.ATTACK.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value:
 				actionReport = _validateAttack(playerAction);
 				break;
-			case PLAYER_ACTION_TYPE.END_OF_TURN.value:
+			case fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN.value:
 				actionReport =  { success: true };
 				break;
 			default:
@@ -40,57 +25,11 @@ var Referee = function($http, partie, tools) {
 				}
 				break;
 		}
-		callback(playerAction, actionReport);
-		return;
-	}
-	var _remoteValidatePlayerAction = function($http, playerAction, callback) {
-		// Actions globales En mode multiplayer
-		// In progress
-		var httpRequest = {
-			method: 'POST',
-			// Nécessite un reverse proxy
-			// cf /etc/apache2/sites-enabled/000-default.conf
-			url: '/full-metal-planet-server/validate',
-			// headers: {
-			// 	Origin: 'http://cyrille-zenika/full-metal-planet/'
-			// },
-			// data: {id: 0, name: partie.getPlayer().name}
-			data: playerAction
+		if (callback != null) {
+			callback(playerAction, actionReport);
 		}
-		console.log('playerAction sent: ' + JSON.stringify(playerAction));
-
-		$http(httpRequest)
-			.success(function(data, status, headers, config) {
-				var actionReport = data;
-				console.log('actionReport received: ' + JSON.stringify(actionReport));
-				callback(playerAction, actionReport);
-				return;
-			})
-			.error(function(data, status, headers, config) {
-				console.log('error: HttpResponse.status: ' + JSON.stringify(status));
-				console.log('error: HttpResponse.data: ' + JSON.stringify(data));
-				console.log('error: HttpResponse.headers: ' + JSON.stringify(headers));
-				console.log('error: HttpResponse.config: ' + JSON.stringify(config));
-				actionReport = {
-					status: false,
-					errorMessages: ['Erreur lors de l\'appel au serveur', 'Regardez les logs dans la console']
-				}
-				callback(playerAction, actionReport);
-				return;
-			});
+		return actionReport;
 	}
-
-	// ***************************************************************************************
-	// ***************************************************************************************
-	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
-	//
-	// Début code commun avec le projet server full-metal-planet-server/node_modules/referee.js
-	// Les modifications doivent être répliquées.
-	// TODO A factoriser.
-	//
-	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
-	// ***************************************************************************************
-	// ***************************************************************************************
 	var _validateLoad = function(playerAction) {
 		var pieceTransporter = partie.getPieceById(playerAction.pieceTransporterId);
 		var pieceACharger = partie.getPieceById(playerAction.pieceAChargerId);
@@ -147,7 +86,7 @@ var Referee = function($http, partie, tools) {
 			errorMessages.push(
 				'Il faut décharger sur une case adjacente au transporteur');
 		}
-		if (targetCase.caseType == CASE_TYPE.MER) {
+		if (targetCase.caseType.value == fmpConstants.CASE_TYPE.MER.value) {
 			validationStatus = false;
 			errorMessages.push(
 				'Le déchargement en mer est interdit');			
@@ -188,12 +127,6 @@ var Referee = function($http, partie, tools) {
 			errorMessages.push(
 				'Pas assez de munitions pour attaquer');
 		}
-		// Attaque !
-		if (! window.confirm('Attaquer l\'unité ?')) {
-			validationStatus = false;
-			errorMessages.push(
-				'Le joueur a annulé l\'attaque');
-		}
 
 		return {
 			success: validationStatus,
@@ -218,7 +151,7 @@ var Referee = function($http, partie, tools) {
 			errorMessages.push(
 				'La pièce sélectionnée ne se déplace pas');
 		}
-		// Si la pièce est enlisé en fonction de la marée
+		// Si la pièce est enlisée en fonction de la marée
 		if (_isPieceBoggedDown(targetPiece)) {
 			validationStatus = false;
 			errorMessages.push(
@@ -264,15 +197,15 @@ var Referee = function($http, partie, tools) {
 	var _isPieceBoggedDown = function(piece) {
 		var maree = partie.getCurrentMaree();
 		var casePiece = partie.getCasePieceId(piece.id);
-		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
+		var casePieceMaree = tools.getCaseTypeMaree(casePiece, maree);
 		if (piece.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
 			// console.log('Impossible de deplacer un ' + piece.pieceType.name + ' de type ' + piece.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
 			return true;
 		}
-		if (piece.pieceType.value == PIECE_TYPE.BARGE.value) {
+		if (piece.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value) {
 			var caseAvantBargeCoords = tools.getCoordsCaseAvantBarge(piece);
 			var caseAvantBarge = partie.getCase(caseAvantBargeCoords.x, caseAvantBargeCoords.y);
-			var caseAvantBargeMaree = caseAvantBarge.getCaseTypeMaree(maree);
+			var caseAvantBargeMaree = tools.getCaseTypeMaree(caseAvantBarge, maree);
 			if (piece.pieceType.modeDeplacement != caseAvantBargeMaree.modeDeplacement) {
 				// console.log('Impossible de deplacer un ' + piece.pieceType.name + ' de type ' + piece.pieceType.modeDeplacement +  ' sur une case ' + caseAvantBargeMaree.name);
 				return true;
@@ -287,13 +220,13 @@ var Referee = function($http, partie, tools) {
 	// - Les gros tas ne peuvent pas aller sur les cases type MER et MONTAGNE
 	var _isPieceMovableOnCase = function(piece, targetCase) {
 		var maree = partie.getCurrentMaree();
-		var targetCaseMaree = targetCase.getCaseTypeMaree(maree);
+		var targetCaseMaree = tools.getCaseTypeMaree(targetCase, maree);
 		if (piece.pieceType.modeDeplacement != targetCaseMaree.modeDeplacement) {
 			// Exception : On peut obliger une unité à aller sur un endroit
 			// qui la neutralise mais obligatoirement sur un type qui peut changer
 			// selon la marée, donc on exclut toutes les cases non marecage ou recif
-			if (targetCase.caseType.value != CASE_TYPE.MARECAGE.value
-				&& targetCase.caseType.value != CASE_TYPE.RECIF.value) {
+			if (targetCase.caseType.value != fmpConstants.CASE_TYPE.MARECAGE.value
+				&& targetCase.caseType.value != fmpConstants.CASE_TYPE.RECIF.value) {
 				return false;
 			}
 		}
@@ -335,7 +268,7 @@ var Referee = function($http, partie, tools) {
 	var _isPieceLoadable = function(pieceACharger) {
 		var maree = partie.getCurrentMaree();
 		var casePiece = partie.getCasePieceId(pieceACharger.id);
-		var casePieceMaree = casePiece.getCaseTypeMaree(maree);
+		var casePieceMaree = tools.getCaseTypeMaree(casePiece, maree);
 		if (pieceACharger.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
 			// console.log('Impossible de deplacer un ' + pieceACharger.pieceType.name + ' de type ' + pieceACharger.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
 			return false;
@@ -351,13 +284,9 @@ var Referee = function($http, partie, tools) {
 		}
 		return true;
 	}
-	// ***************************************************************************************
-	// ***************************************************************************************
-	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
-	//
-	// Fin code commun avec le projet server full-metal-planet-server/node_modules/referee.js
-	//
-	// !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
-	// ***************************************************************************************
-	// ***************************************************************************************
+}
+
+// node.js ?
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports.Referee = Referee;
 }
