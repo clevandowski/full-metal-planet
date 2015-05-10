@@ -1,33 +1,45 @@
 var Referee = function(fmpConstants, partie, tools) {
 	this.validatePlayerAction = function(playerAction, callback) {
 		var actionReport;
-		switch (playerAction.actionType.value) {
-			case fmpConstants.PLAYER_ACTION_TYPE.MOVE.value:
-				actionReport = _validateMove(playerAction);
-				break;
-			case fmpConstants.PLAYER_ACTION_TYPE.LOAD.value:
-				actionReport = _validateLoad(playerAction);
-				break;
-			case fmpConstants.PLAYER_ACTION_TYPE.UNLOAD.value:
-				actionReport = _validateUnload(playerAction);
-				break;
-			case fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value:
-				actionReport = _validateAttack(playerAction);
-				break;
-			case fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN.value:
-				actionReport =  { success: true };
-				break;
-			default:
-				console.log('Unknow playerAction: ' + JSON.stringify(playerAction));
-				actionReport = {
-					success: false, 
-					errorMessages: ['Erreur lors de l\'appel au serveur', 'Regardez les logs dans la console']
-				}
-				break;
+
+		if (partie.getTourPoints() <= 0
+			&& playerAction.actionType.value != fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN.value) {
+			actionReport = {
+				success: false, 
+				errorMessages: ['Plus aucun point d\'action disponible !', 'Cliquez sur le bouton FIN DU TOUR svp']
+			}
+		} else {
+			switch (playerAction.actionType.value) {
+				case fmpConstants.PLAYER_ACTION_TYPE.MOVE.value:
+					actionReport = _validateMove(playerAction);
+					break;
+				case fmpConstants.PLAYER_ACTION_TYPE.LOAD.value:
+					actionReport = _validateLoad(playerAction);
+					break;
+				case fmpConstants.PLAYER_ACTION_TYPE.UNLOAD.value:
+					actionReport = _validateUnload(playerAction);
+					break;
+				case fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value:
+					actionReport = _validateAttack(playerAction);
+					break;
+				case fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN.value:
+					actionReport =  { success: true };
+					break;
+				default:
+					console.log('Unknow playerAction: ' + JSON.stringify(playerAction));
+					actionReport = {
+						success: false, 
+						errorMessages: ['Erreur lors de l\'appel au serveur', 'Regardez les logs dans la console']
+					}
+					break;
+			}
 		}
+		// TODO Faire une seule sortie commune angular.js / node.js
+		// Asynchrone, angularjs
 		if (callback != null) {
 			callback(playerAction, actionReport);
 		}
+		// Synchrone, node.js
 		return actionReport;
 	}
 	var _validateLoad = function(playerAction) {
@@ -37,11 +49,6 @@ var Referee = function(fmpConstants, partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.getTourPoints() == 0) {
-			validationStatus = false;
-			errorMessages.push(
-				'Pas de réserve de point suffisant pour attaquer');
-		}
 		if (! _canTransporterChargePiece(pieceTransporter, pieceACharger)) {
 			validationStatus = false;
 			errorMessages.push(
@@ -76,11 +83,6 @@ var Referee = function(fmpConstants, partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.getTourPoints() == 0) {
-			validationStatus = false;
-			errorMessages.push(
-				'Pas de réserve de point suffisant pour attaquer');
-		}
 		if (! tools.areAdjacent(pieceTransporter, targetCase)) {
 			validationStatus = false;
 			errorMessages.push(
@@ -89,7 +91,7 @@ var Referee = function(fmpConstants, partie, tools) {
 		if (targetCase.caseType.value == fmpConstants.CASE_TYPE.MER.value) {
 			validationStatus = false;
 			errorMessages.push(
-				'Le déchargement en mer est interdit');			
+				'Le déchargement en mer est interdit');
 		}
 		if (! partie.isFreeFromEnemyFire(pieceTransporter)) {
 			validationStatus = false;
@@ -114,11 +116,6 @@ var Referee = function(fmpConstants, partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.getTourPoints() < 2) {
-			validationStatus = false;
-			errorMessages.push(
-				'Pas de réserve de point suffisant pour attaquer');
-		}
 		if (piecesIdAttacking.length > 2) {
 			console.log('TODO: Pouvoir choisir les attaquants');
 		}
@@ -141,11 +138,6 @@ var Referee = function(fmpConstants, partie, tools) {
 		var errorMessages = [];
 		var validationStatus = true;
 
-		if (partie.getTourPoints() == 0) {
-			validationStatus = false;
-			errorMessages.push(
-				'Pas de réserve de point suffisant pour attaquer');
-		}
 		if (! targetPiece.pieceType.mobile) {
 			validationStatus = false;
 			errorMessages.push(

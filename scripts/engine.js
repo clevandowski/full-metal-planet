@@ -1,10 +1,10 @@
 /* 
  * Engine
  */
-var Engine = function(fmpConstants, partie, tools) {
+var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 
 	// Retourne le hashcode de la partie après exécution de l'action
-	this.applyPlayerAction = function(playerAction) {
+	this.applyPlayerAction = function(playerAction, actionReport) {
 		switch(playerAction.actionType.value) {
 			case fmpConstants.PLAYER_ACTION_TYPE.MOVE.value:
 				var targetCase = playerAction.targetCase;
@@ -31,12 +31,37 @@ var Engine = function(fmpConstants, partie, tools) {
 				_attack(targetPieceId);
 				break;
 			case fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN.value:
-				partie.setTourToNextPlayer();
+				// TODO Pour le moment c léger mais ici il y aura sans doute qques
+				// Infos de partie à synchroniser sur le changement de tour et 
+				// d'autre sur le changement de joueur
+				// Là la marée fo la vérifier sur changement du tour en principe
+				// Mais c pas très grave de la réinjecter à chaque changement de
+				// joueur pour le moment
+				var nextMaree = null;
+
+				if (refereeRuntimeMode == fmpConstants.REFEREE_RUNTIME_MODE.REMOTE) {
+					// Récupération de la marée suivante dans l'actionReport 
+					// et injection dans la partie
+					// si on est le client en mode remote
+					nextMaree = actionReport.nextMaree;
+					console.log('Engine.applyPlayerAction - partie.getNextMaree(): ' + partie.getNextMaree());
+				} else {
+					// Sinon si on est en local ou sur le serveur, 
+					// c'est la partie locale qui décide
+					// et qui injecte la nouvelle marée pour le client si
+					// on est le serveur
+					var randomMaree = Math.floor((Math.random() * 3));
+					nextMaree = fmpConstants.MAREES[randomMaree];
+					actionReport.nextMaree = nextMaree;
+				}
+				partie.setTourToNextPlayer(nextMaree);
 				break;
 			default:
 				throw "Unknow playerAction: " + JSON.stringify(playerAction);
 				break;
 		}
+
+		return partie.getDatasHashcode();
 	}
 
 	/*
@@ -63,7 +88,7 @@ var Engine = function(fmpConstants, partie, tools) {
 			}
 		} else {
 			nextOrientation = tools.getOrientation(piece, targetCase);
-			coords = {x: targetCase.x, y: targetCase.y};
+			coords = { x: targetCase.x, y: targetCase.y };
 		}
 		partie.setPieceToCase(pieceId, coords, nextOrientation);
 		partie.removeToursPoints(1);

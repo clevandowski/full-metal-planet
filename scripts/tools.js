@@ -166,6 +166,23 @@ var Tools = function(fmpConstants) {
 				return caseTypeMaree.marees.indexOf(maree.value) > -1;
 			})[0];
 	}
+	this.hashcode = function(string) {
+		if (string == null) {
+			console.log('Empty string !');
+			return -1;
+		} else {
+			// Code repompé sur http://stackoverflow.com/questions/194846/is-there-any-kind-of-hash-code-function-in-javascript
+			var hash = 0;
+		    if (string.length == 0) return hash;
+			for (var i = 0; i < string.length; i++) {
+				var character = string.charCodeAt(i);
+				hash = ((hash<<5)-hash)+character;
+				hash = hash & hash; // Convert to 32bit integer
+			}
+			console.log('hashcode: ' + hash);
+			return hash;
+		}
+	}
 }
 
 // node.js ?

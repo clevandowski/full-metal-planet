@@ -22,19 +22,14 @@ var Piece = function(playerId, pieceType, x, y, orientation) {
 	} else {
 		this.orientation = orientation;
 	}
-	this.addContenu = function(pieceId) {
-		if (pieceId == null) {
-			throw 'Piece vide !';
-		} else {
-			this.contenu.push(pieceId);
-		}
-	}
-	this.getContenu = function() {
-		return this.contenu;
-	}
 }
 
 Piece.sequenceId = 0;
 Piece.sequence = function() {
 	return Piece.sequenceId++;
+}
+
+// node.js ?
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports.Piece = Piece;
 }

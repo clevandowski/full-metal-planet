@@ -1,5 +1,6 @@
 .hexagon-case {
     float: left;
+    /*position: relative;*/
     margin-right: -15px;
     margin-left: -15px;
     margin-bottom: -53px;
@@ -7,6 +8,7 @@
     height: 104px;
     text-align: center;
     background-image: url('../img/hexagon-case.png');
+    z-index: 10;
 }
 
 .hexagon-case:hover {
@@ -20,7 +22,8 @@
 */}
 
 .selectedPiece {
-    -webkit-filter: brightness(1.5);;
+    -webkit-filter: brightness(1.5);
+    z-index: 10;
 }
 
 .hexagon-row {
@@ -225,10 +228,40 @@
 /*}*/
 
 .piece {
+    position: absolute;
     width: 120px;
     height: 104px;
     text-align: center;
     position: relative;
+}
+
+.player-red {
+    position: absolute;
+    width: 120px;
+    height: 104px;
+    background-image: url('../img/player-red.png');
+    z-index: 20;
+}
+.player-blue {
+    position: absolute;
+    width: 120px;
+    height: 104px;
+    background-image: url('../img/player-blue.png');
+    z-index: 20;
+}
+.player-green {
+    position: absolute;
+    width: 120px;
+    height: 104px;
+    background-image: url('../img/player-green.png');
+    z-index: 20;
+}
+.player-yellow {
+    position: absolute;
+    width: 120px;
+    height: 104px;
+    background-image: url('../img/player-yelllow.png');
+    z-index: 20;
 }
 
 /*.piece:hover {

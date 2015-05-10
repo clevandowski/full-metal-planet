@@ -20,20 +20,22 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		return {
 			id: player.id,
 			name: player.name,
-			pointsEconomise: player.pointsEconomise
+			pointsEconomise: player.pointsEconomise,
+			color: player.color
 		};
 	}
 	var _getPlayerById = function(playerId) {
 		return datas.players.filter(function(player) {
 			return player.id == this.playerId;
-		}, {playerId: playerId})[0];
+		}, { playerId: playerId })[0];
 	}
 	this.getPlayerById = function(playerId) {
 		var player = _getPlayerById(playerId);
 		return {
 			id: player.id,
 			name: player.name,
-			pointsEconomise: player.pointsEconomise
+			pointsEconomise: player.pointsEconomise,
+			color: player.color
 		}
 	}
 	var _getPlayer = function(pieceId) {
@@ -138,7 +140,7 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 	this.getNextMaree = function() {
 		return datas.nextMaree;
 	}
-	this.setTourToNextPlayer = function() {
+	this.setTourToNextPlayer = function(nextMaree) {
 		// Avant de changer de tour, on récupère les points économisés du player
 		if (datas.tourPoints >= 10) {
 			_getPlayer().pointsEconomise = 10;
@@ -152,10 +154,9 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		datas.tourPlayer = (datas.tourPlayer + 1) % datas.players.length;
 		if (datas.tourPlayer == 0) {
 			datas.tour ++;
-			// Changement de marée et détermination de la marée suivante
-			var randomMaree = Math.floor((Math.random() * 3));
+			// Changement de marée
 			datas.currentMaree = datas.nextMaree;
-			datas.nextMaree = fmpConstants.MAREES[randomMaree];
+			datas.nextMaree = nextMaree;
 			// Chargement des munitions de toutes les pieces de type destroyer
 			this.reloadMunitionOnDestroyers();
 		}
@@ -305,6 +306,10 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 	this.removeAmmo = function(pieceId) {
 		var piece = _getPieceById(pieceId);
 		piece.nbAmmos--;
+	}
+	this.getDatasHashcode = function() {
+		var strDatas = JSON.stringify(datas);
+		return tools.hashcode(strDatas);
 	}
 }
 

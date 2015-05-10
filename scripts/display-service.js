@@ -13,6 +13,7 @@ var DisplayService = function(fmpConstants, partie, tools) {
 	}
 	this.init = function() {
 		this.error = {
+			errorType: 'info',
 			showErrorPopup: true,
 			actionType: null,
 			errorMessages: [ 'Sélectionnez une pièce du joueur ' + partie.getPlayer().name ]
@@ -35,6 +36,15 @@ var DisplayService = function(fmpConstants, partie, tools) {
 	this.setError = function(error) {
 		this.error = error;
 	}
+	this.getErrorTitre = function() {
+		if (this.error.showErrorPopup) {
+			if (this.error.errorType == 'info') {
+				return 'INFORMATION';
+			} else {
+				return 'ACTION ' + this.error.actionType.name.toUpperCase() + ' IMPOSSIBLE';
+			}
+		}
+	}
 	this.getSelectedPieceId = function () {
 		var playerLocalContext = _getPlayerLocalContext();
 		return playerLocalContext.selectedPieceId;
@@ -51,11 +61,8 @@ var DisplayService = function(fmpConstants, partie, tools) {
 		var playerLocalContext = _getPlayerLocalContext();
 		playerLocalContext.selectedPieceIdSoute = pieceId;
 	}
-	// this.getRefereeRuntimeMode = function() {
-	// 	return partie.getRefereeRuntimeMode();
-	// }
 	this.getCurrentPlayerName = function() {
-		return partie.getPlayer().name;
+		return partie.getPlayer().name + ' (' + partie.getPlayer().color + ')';
 	}
 	this.getCurrentPlayerTourPoint = function() {
 		return partie.getTourPoints();
@@ -130,7 +137,17 @@ var DisplayService = function(fmpConstants, partie, tools) {
 		} else {
 			return 'piece ' 
 			+ piece.pieceType.cssName + ' '
-			+ piece.orientation.cssName;
+			+ piece.orientation.cssName + ' '
+			+ 'background-color: #f00';
+		}
+	}
+	this.getCssPlayer = function(targetCase) {
+		var piece = partie.getPieceIfAvailable(targetCase);
+		if (piece != null) {
+			var playerColor = partie.getPlayerById(piece.playerId).color;
+			return 'player-' + playerColor;
+		} else {
+			return '';
 		}
 	}
 	/*

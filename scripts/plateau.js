@@ -23,7 +23,7 @@ var FMPPlateauService = function(fmpConstants, fmpCaseService) {
 			fmpConstants.CASE_TYPE.MER,
 			fmpConstants.CASE_TYPE.MONTAGNE,
 			fmpConstants.CASE_TYPE.MONTAGNE,
-			fmpConstants.CASE_TYPE.MONTAGNE,		
+			fmpConstants.CASE_TYPE.MONTAGNE,
 			fmpConstants.CASE_TYPE.MER,
 			fmpConstants.CASE_TYPE.MER,
 			fmpConstants.CASE_TYPE.PLAINE,

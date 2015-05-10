@@ -1,4 +1,4 @@
-var EventListener = function(fmpConstants, partie, referee, engine, tools, displayService) {
+var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, engine, tools, displayService) {
 	
 	// this.init()
 
@@ -8,14 +8,6 @@ var EventListener = function(fmpConstants, partie, referee, engine, tools, displ
 	this.onClick = function(targetCase) {
 		if (displayService.getError().showErrorPopup) {
 			displayService.clearError();
-		}
-		if (partie.getTourPoints() <= 0) {
-			displayService.setError({
-				actionType: null,
-				errorMessages: [ 'Plus aucun point d\'action restant pour le joueur ' + partie.getPlayer().name ],
-				showErrorPopup: true
-			});
-			return;
 		}
 		var playerActionDetected = _detectPlayerAction(targetCase);
 		if (playerActionDetected == null) {
@@ -45,16 +37,29 @@ var EventListener = function(fmpConstants, partie, referee, engine, tools, displ
 		}
 
 		// Actions globales
-		referee.validatePlayerAction(playerActionDetected, callbackValidatePlayerAction);
+		referee.validatePlayerAction(playerActionDetected, _callbackValidatePlayerAction);
 	}
 
-	var callbackValidatePlayerAction = function(playerActionDetected, actionReport) {
+	var _callbackValidatePlayerAction = function(playerActionDetected, actionReport) {
 		if (actionReport.success) {
-			var partieHashcode = engine.applyPlayerAction(playerActionDetected);
+			var partieHashcode = engine.applyPlayerAction(playerActionDetected, actionReport);
 			// Vérification
-			// if (actionReport.partieHashcode != partieHashcode) {
-			// 	throw 'Error on party checksum ! Reload the party !!!';
-			// }
+			// Sur retour partie remote, on s'amuse à vérifier que les 2 parties
+			// sont synchro
+			// En mode local, actionReport.partieHashcode n'est pas alimenté.
+			// On ne vérifie donc pas.
+			if (actionReport.hashcode != null) {
+				if (actionReport.hashcode == partieHashcode) {
+					console.log('Server synchro !');
+				} else {
+					displayService.setError({
+						actionType: playerActionDetected.actionType,
+						errorMessages: [ 'Partie désynchronisée avec le serveur !' ],
+						showErrorPopup: true
+					});
+					console.log('Partie désynchronisée avec le serveur !');
+				}
+			}
 			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.MOVE.value) {
 				displayService.setSelectedPieceId(playerActionDetected.targetPieceId);
 				displayService.setSelectedPieceIdSoute(-1);
@@ -96,9 +101,27 @@ var EventListener = function(fmpConstants, partie, referee, engine, tools, displ
 	}
 	var callbackValidateFinDuTour = function(playerAction, actionReport) {
 		if (actionReport.success) {
-			var partieHashcode = engine.applyPlayerAction(playerAction);
-			displayService.centerPlateau();
+			var partieHashcode = engine.applyPlayerAction(playerAction, actionReport);
 			displayService.clearError();
+
+			if (refereeRuntimeMode == fmpConstants.REFEREE_RUNTIME_MODE.REMOTE) {
+				if (actionReport.hashcode == partieHashcode) {
+					console.log('Server synchro !');
+				} else {
+					displayService.setError({
+						actionType: playerAction.actionType,
+						errorMessages: [ 'Partie désynchronisée avec le serveur !', 'Appuyer sur F5 pour réinitialiser la partie' ],
+						showErrorPopup: true
+					});
+				}
+			}
+			displayService.centerPlateau();
+			displayService.setError({
+				errorType: 'info',
+				showErrorPopup: true,
+				actionType: null,
+				errorMessages: [ 'Sélectionnez une pièce du joueur ' + partie.getPlayer().name ]
+			});
 		} else {
 			displayService.setError({
 				actionType: playerAction.actionType,

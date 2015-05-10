@@ -41,7 +41,7 @@
 			</div>
 			<div id="error-popup"
 				ng-show="display.getError().showErrorPopup">
-				<span class="titre1">ACTION {{display.getError().actionType.name.toUpperCase()}} IMPOSSIBLE</span><br/>
+				<span class="titre1">{{display.getErrorTitre()}}</span><br/>
 				<ul><li ng-repeat="errorMessage in display.getError().errorMessages">{{errorMessage}}</li></ul>
 			</div>
 			<!-- class pour le css, id pour jquery (méthode display.centerPlateau()) --> 
@@ -57,7 +57,9 @@
 							<div class="explosion" ng-show="hexagonalCase.explose"></div>
 							<div 
 								ng-show="display.isPieceOnCase(hexagonalCase)" 
-								ng-class="display.getCssPiece(hexagonalCase)">
+								ng-class="display.getCssPlayer(hexagonalCase)">
+								<div
+									ng-class="display.getCssPiece(hexagonalCase)"></div>
 							</div>
 						</div>
 					</div>
@@ -104,8 +106,8 @@ app.factory('PartieLoader', ['$http', '$q', 'FMPConstants', function($http, $q, 
 				// C'est très important que l'id des joueurs suive l'ordre de 
 				// l'index du tableau car on les indexe par l'id ensuite
 				// TODO N'utiliser que l'id comme identifiant
-				new Player(0, 'Damien'),
-				new Player(1, 'Noémie')
+				new Player(0, 'Damien', 'red'),
+				new Player(1, 'Noémie', 'blue')
 			],
 			pieces: [
 				new Piece(1, FMPConstants.PIECE_TYPE.TANK, 2, 9), 
@@ -174,9 +176,9 @@ app.controller('myCtrl', ['$scope', '$http', 'PartieLoader', 'PlateauService', '
 		} else {
 			referee = new RefereeProxyClient(FMPConstants, $http, partie, Tools);
 		}
-		var engine = new Engine(FMPConstants, partie, Tools);
+		var engine = new Engine(FMPConstants, refereeRuntimeMode, partie, Tools);
 		var displayService = new DisplayService(FMPConstants, partie, Tools);
-		var eventListener = new EventListener(FMPConstants, partie, referee, engine, Tools, displayService);
+		var eventListener = new EventListener(FMPConstants, refereeRuntimeMode, partie, referee, engine, Tools, displayService);
 
 		$scope.listener = eventListener;
 		$scope.display = displayService;
