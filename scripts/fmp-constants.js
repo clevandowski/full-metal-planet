@@ -34,7 +34,9 @@ var FMPConstants = function() {
 	this.PIECE_TYPE = {
 		MUNITION: { value: 'MUNITION', name: 'munition', cssName: 'munition', mobile: false, modeDeplacement: 'none', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: false, attackRange: -1},
 		TANK: { value: 'TANK', name: 'tank', cssName: 'tank', mobile: true, modeDeplacement: 'terrestre', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: true, attackRange: 2 },
-		BARGE: { value: 'BARGE', name: 'barge', cssName: 'barge', mobile: true, modeDeplacement: 'maritime', encombrement: 4, transporter: true, transportCapacite: 4, destroyer: false, attackRange: -1 }
+		BARGE: { value: 'BARGE', name: 'barge', cssName: 'barge', mobile: true, modeDeplacement: 'maritime', encombrement: 4, transporter: true, transportCapacite: 4, destroyer: false, attackRange: -1 },
+		BASE_CENTER: { value: 'BASE_CENTER', name: 'base centrale', cssName: 'base-center', mobile: false, modeDeplacement: 'none', encombrement: 10, transporter: true, transportCapacite: 99, destroyer: false, attackRange: -1 },
+		BASE_TURRET: { value: 'BASE_TURRET', name: 'tourelle', cssName: 'base-turret', mobile: false, modeDeplacement: 'none', encombrement: 10, transporter: true, transportCapacite: 99, destroyer: true, attackRange: 2}
 	}
 
 	this.ORIENTATION = {

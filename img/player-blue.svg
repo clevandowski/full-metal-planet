@@ -14,9 +14,20 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="player-red.svg">
+   sodipodi:docname="player-blue.svg">
   <defs
      id="defs4">
+    <linearGradient
+       id="linearGradient3862">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop3864" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="1"
+         id="stop3866" />
+    </linearGradient>
     <linearGradient
        id="linearGradient6655">
       <stop
@@ -36,9 +47,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.3299647"
-     inkscape:cx="128.91213"
-     inkscape:cy="7.1427547"
+     inkscape:zoom="12.24699"
+     inkscape:cx="34.349583"
+     inkscape:cy="47.798643"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -63,12 +74,15 @@
      inkscape:label="Calque 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <rect
-       style="fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-       id="rect3080"
-       width="7.9207921"
-       height="7.9207921"
-       x="32.058479"
-       y="953.6507" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.93078600000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-linejoin:miter"
+       id="path3092"
+       sodipodi:cx="38.335953"
+       sodipodi:cy="984.71289"
+       sodipodi:rx="6.8180022"
+       sodipodi:ry="6.7363491"
+       d="m 45.153955,984.71289 a 6.8180022,6.7363491 0 1 1 -13.636004,0 6.8180022,6.7363491 0 1 1 13.636004,0 z"
+       transform="matrix(1.0679081,0,0,1.0808525,19.060723,-63.967207)" />
   </g>
 </svg>

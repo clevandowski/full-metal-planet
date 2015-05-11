@@ -156,6 +156,7 @@ var Tools = function(fmpConstants) {
 		}
 	}
 
+	// return { x: bargeAvantX, y: bargeAvantY }
 	this.getCoordsCaseAvantBarge = function(barge) {
 		return this.getCaseCoordsInOrientation(barge, barge.orientation);
 	}

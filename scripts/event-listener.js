@@ -137,6 +137,7 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 		var selectedPieceSoute = partie.getPieceById(displayService.getSelectedPieceIdSoute());
 
 		// Si on cible une case vide
+		// Attention l'avant de la barge peut etre considéré case vide
 		if (targetPiece == null) {
 			if (selectedPiece == null
 				&& selectedPieceSoute == null) {
@@ -151,6 +152,16 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 						targetCase: targetCase
 					}
 				} else if (selectedPiece != null) {
+					// Cas à la con : si la barge est sélectionnée et que le joueur
+					// clique sur l'avant de la barge.
+					if (selectedPiece.pieceType.value == fmpConstants.PIECE_TYPE.BARGE.value) {
+						var coordsCaseAvantBarge = tools.getCoordsCaseAvantBarge(selectedPiece);
+						if (coordsCaseAvantBarge.x == targetCase.x
+							&& coordsCaseAvantBarge.y == targetCase.y ) {
+							console.log('Clic détecté sur l\'avant de la barge.');
+							return null;
+						}
+					}
 					return {
 						actionType: fmpConstants.PLAYER_ACTION_TYPE.MOVE,
 						targetPieceId: selectedPiece.id,

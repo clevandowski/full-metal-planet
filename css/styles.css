@@ -282,6 +282,15 @@
     z-index: 2;
 }
 
+.piece.base-center {
+    background-image: url('../img/unit-base-center.png');
+    z-index: 2;
+}
+.piece.base-turret {
+    background-image: url('../img/unit-base-turret.png');
+    z-index: 2;
+}
+
 .piece.barge {
     background-image: url('../img/unit-barge.png');
     width: 120;

@@ -181,7 +181,7 @@ var Referee = function(fmpConstants, partie, tools) {
 			errorMessages.push(
 				'La case ciblée est à portée de tir de l\'ennemi');
 		}
-		return { 
+		return {
 			success: validationStatus,
 			errorMessages: errorMessages
 		}
