@@ -88,10 +88,18 @@ var Referee = function(fmpConstants, partie, tools) {
 			errorMessages.push(
 				'Il faut décharger sur une case adjacente au transporteur');
 		}
-		if (targetCase.caseType.value == fmpConstants.CASE_TYPE.MER.value) {
+		if (targetCase.caseType.value == fmpConstants.CASE_TYPE.MER.value
+			&& pieceADecharger.pieceType.modeDeplacement != 'maritime') {
 			validationStatus = false;
 			errorMessages.push(
-				'Le déchargement en mer est interdit');
+				'Le déchargement en mer de pièce terrestre est interdit');
+		}
+		if ((targetCase.caseType.value == fmpConstants.CASE_TYPE.PLAINE.value
+			|| targetCase.caseType.value == fmpConstants.CASE_TYPE.MONTAGNE.value)
+			&& pieceADecharger.pieceType.modeDeplacement == 'maritime') {
+			validationStatus = false;
+			errorMessages.push(
+				'Le déchargement sur terre des pièce maritime est interdit');
 		}
 		if (! partie.isFreeFromEnemyFire(pieceTransporter)) {
 			validationStatus = false;
@@ -252,7 +260,6 @@ var Referee = function(fmpConstants, partie, tools) {
 	}
 	var _canTransporterChargePiece = function(pieceTransporter, pieceACharger) {
 		if (_getTransportCapaciteRestante(pieceTransporter) < pieceACharger.pieceType.encombrement) {
-			// console.log('Capacite de maximum de transport restante (' + _getTransportCapaciteRestante(pieceTransporter) + ') inférieure à l\'encombrement de la piece (' + pieceACharger.pieceType.encombrement + ')');
 			return false;
 		}
 		return true;
@@ -262,7 +269,6 @@ var Referee = function(fmpConstants, partie, tools) {
 		var casePiece = partie.getCasePieceId(pieceACharger.id);
 		var casePieceMaree = tools.getCaseTypeMaree(casePiece, maree);
 		if (pieceACharger.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
-			// console.log('Impossible de deplacer un ' + pieceACharger.pieceType.name + ' de type ' + pieceACharger.pieceType.modeDeplacement +  ' sur une case ' + casePieceMaree.name);
 			return false;
 		}
 		return true;

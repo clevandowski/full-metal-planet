@@ -1,10 +1,5 @@
 var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, engine, tools, displayService) {
 	
-	// this.init()
-
-	/*
-	 * TODO A finir pour le listener
-	 */
 	this.onClick = function(targetCase) {
 		if (displayService.getError().showErrorPopup) {
 			displayService.clearError();
@@ -39,16 +34,14 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 		// Actions globales
 		referee.validatePlayerAction(playerActionDetected, _callbackValidatePlayerAction);
 	}
-
 	var _callbackValidatePlayerAction = function(playerActionDetected, actionReport) {
 		if (actionReport.success) {
 			var partieHashcode = engine.applyPlayerAction(playerActionDetected, actionReport);
-			// Vérification
-			// Sur retour partie remote, on s'amuse à vérifier que les 2 parties
-			// sont synchro
-			// En mode local, actionReport.partieHashcode n'est pas alimenté.
-			// On ne vérifie donc pas.
-			if (actionReport.hashcode != null) {
+			// Vérification cohérence client/serveur
+			// Sur retour partie remote, on vérifie que les 2 parties sont synchro
+			// En mode local ou server, pas besoin de vérifier.
+			if (refereeRuntimeMode == fmpConstants.REFEREE_RUNTIME_MODE.REMOTE) {
+				console.log('local party hashcode: ' + partieHashcode)
 				if (actionReport.hashcode == partieHashcode) {
 					console.log('Server synchro !');
 				} else {
@@ -84,17 +77,12 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 			});
 		}
 	}
-	
-	/*
-	 * @ListenerService
-	 */
 	this.onClickSoute = function(pieceId) {
 		if (pieceId >= 0) {
 			console.log('Piece selectionnee dans la soute : ' + pieceId);
 			displayService.setSelectedPieceIdSoute(pieceId);
 		}
 	}
-
 	this.finDuTour = function() {
 		var playerActionDetected = { actionType: fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN };
 		var actionReport = referee.validatePlayerAction(playerActionDetected, callbackValidateFinDuTour);
@@ -105,6 +93,7 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 			displayService.clearError();
 
 			if (refereeRuntimeMode == fmpConstants.REFEREE_RUNTIME_MODE.REMOTE) {
+				console.log('local party hashcode: ' + partieHashcode)
 				if (actionReport.hashcode == partieHashcode) {
 					console.log('Server synchro !');
 				} else {
@@ -181,6 +170,7 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 			} else if (targetPiece.pieceType.transporter
 				&& selectedPiece != null
 				&& selectedPiece.id != targetPiece.id
+				&& selectedPiece.pieceType.mobile
 				&& tools.areAdjacent(targetPiece, selectedPiece)) {
 				// Chargement
 				return {

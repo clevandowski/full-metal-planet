@@ -83,6 +83,11 @@ var DisplayService = function(fmpConstants, partie, tools) {
 		var selectedPiece = partie.getPieceById(this.getSelectedPieceId());
 		if (selectedPiece != null) {
 			if (selectedPiece.pieceType.transporter) {
+				// Si une tourelle est sélectionnée, on affiche le contenu de
+				// de la pièce du centre de l'aéronef
+				if (selectedPiece.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value) {
+					selectedPiece = partie.getAeronefCore();
+				}
 				return selectedPiece.contenu;
 			} else if (selectedPiece.pieceType.destroyer) {
 				// On s'en fout c une copie locale
@@ -137,13 +142,14 @@ var DisplayService = function(fmpConstants, partie, tools) {
 		} else {
 			return 'piece ' 
 			+ piece.pieceType.cssName + ' '
-			+ piece.orientation.cssName + ' '
-			+ 'background-color: #f00';
+			+ piece.orientation.cssName;
 		}
 	}
 	this.getCssPlayer = function(targetCase) {
 		var piece = partie.getPieceIfAvailable(targetCase);
-		if (piece != null) {
+		// On affiche pas le marqueur du player sur les tourelles de l'aeronef
+		if (piece != null
+			&& piece.pieceType.value != fmpConstants.PIECE_TYPE.AERONEF_TURRET.value) {
 			var playerColor = partie.getPlayerById(piece.playerId).color;
 			return 'player-' + playerColor;
 		} else {

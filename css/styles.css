@@ -87,6 +87,19 @@
 .soute-container {
     /*clear: left;*/
     float: left;
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+
+.soute-container.piece {
+    width: 104px;
+    height: 120px;
+}
+.soute-container.piece.barge {
+    width: 208px;
 }
 
 #fin-tour {
@@ -282,19 +295,19 @@
     z-index: 2;
 }
 
-.piece.base-center {
-    background-image: url('../img/unit-base-center.png');
+.piece.aeronef-core {
+    background-image: url('../img/unit-aeronef-core.png');
     z-index: 2;
 }
-.piece.base-turret {
-    background-image: url('../img/unit-base-turret.png');
+.piece.aeronef-turret {
+    background-image: url('../img/unit-aeronef-turret.png');
     z-index: 2;
 }
 
 .piece.barge {
     background-image: url('../img/unit-barge.png');
     width: 120;
-    height: 204;
+    height: 208;
     z-index: 1;
     padding-bottom: 102px;
     transform-origin: 60px 51px;

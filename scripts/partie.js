@@ -13,7 +13,7 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 	}
 	/**
 	 * Retourne le joueur courant si aucune pièce n'est pas passée en paramètre.
-	 * Retourne le joueur de la pièce passée en paramètre
+	 * Retourne le joueur de la pièce passée en paramètre.
 	 */
 	this.getPlayer = function(pieceId) {
 		var player = _getPlayer(pieceId);
@@ -52,7 +52,8 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 			this.push({
 				id: player.id,
 				name: player.name,
-				pointsEconomise: player.pointsEconomise
+				pointsEconomise: player.pointsEconomise,
+				color: player.color
 			});
 		}, playersCopy);
 		return playersCopy;
@@ -78,7 +79,7 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 			x: piece.x,
 			y: piece.y,
 			orientation: piece.orientation,
-			contenu: piece.contenu,			
+			contenu: piece.contenu,
 			nbAmmos: piece.nbAmmos
 		};
 	}
@@ -86,9 +87,6 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		var piece = datas.pieces.filter(function(piece) {
 			return piece.id == this.pieceId;
 		}, {pieceId: pieceId} )[0];
-		// if (piece == null) {
-		// 	console.log('Pas de piece #' + pieceId + ' dans la partie.');
-		// }
 		return piece;
 	}
 	this.setPieceToCase = function(pieceId, coords, orientation) {
@@ -102,31 +100,46 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 			piece.orientation = orientation;
 		}
 	}
+	// TODO Quand on pourra capturer les aeronefs des autres joueurs,
+	// Il faudra reprendre cette fonction
+	this.getAeronefCore = function() {
+		var playerId = _getPlayer().id;
+		var aeronefCore = datas.pieces.filter(function(piece) {
+			return piece.playerId == this.playerId
+				&& piece.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_CORE.value
+		}, { playerId: playerId })[0];
+		return {
+			id: aeronefCore.id,
+			playerId: aeronefCore.playerId,
+			pieceType: aeronefCore.pieceType,
+			x: aeronefCore.x,
+			y: aeronefCore.y,
+			orientation: aeronefCore.orientation,
+			contenu: aeronefCore.contenu,
+			nbAmmos: aeronefCore.nbAmmos
+		}
+
+	}
 	/*
 	 * Retourne la piece posee sur l'instance de la case en fonction de la partie.
 	 * Retourne null s'il n'y a pas de piece sur la case
 	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
 	 */
 	this.getPieceIfAvailable = function(targetCase) {
-		var pieces = datas.pieces;
-		for (var id in pieces) {
-			var piece = pieces[id];
-			// Match !
-			if (targetCase.x == piece.x
-				&& targetCase.y == piece.y) {
-				return {
-					id: piece.id,
-					playerId: piece.playerId,
-					pieceType: piece.pieceType,
-					x: piece.x,
-					y: piece.y,
-					orientation: piece.orientation,
-					contenu: piece.contenu,
-					nbAmmos: piece.nbAmmos
-				};
-			}
+		var piece = datas.pieces.filter(function(piece) {
+				return this.x == piece.x
+					&& this.y == piece.y;
+			}, { x: targetCase.x, y: targetCase.y })[0];
+		return piece == null ? null : {
+			id: piece.id,
+			playerId: piece.playerId,
+			pieceType: piece.pieceType,
+			x: piece.x,
+			y: piece.y,
+			orientation: piece.orientation,
+			contenu: piece.contenu,
+			nbAmmos: piece.nbAmmos
 		}
-		return null;
 	}
 	this.getPieces = function() {
 		return datas.pieces;
@@ -184,9 +197,6 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 			});
 		});
 	}
-	/*
-	 * @PartieService
-	 */
 	this.getCase = function(x, y) {
 		var aCase = _getCase(x, y);
 		return FMPCaseService.createCase(aCase.caseType, aCase.x, aCase.y);
@@ -195,7 +205,6 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		return plateau[y][x];
 	}
 	/*
-	 * @PartieService
 	 * Retoune la case (type FMPCase) sur laquelle la piece est posee.
 	 */
 	this.getCasePieceId = function(pieceId) {
@@ -203,9 +212,6 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		var aCase = plateau[piece.y][piece.x];
 		return FMPCaseService.createCase(aCase.caseType, aCase.x, aCase.y);
 	}
-	/*
-	 * @PartieService car utilise getCase et getPieceIfAvailable
-	 */
 	this.getEnemiesThatCanAttackInRange = function(x, y, playerId) {
 		var enemiesInRange = [];
 		var parite = x & 1;
@@ -287,7 +293,7 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		// On déplace le tank du plateau de la partie au contenu du transporteur
 		// TODO A Remettre d'équerre j'ai un pb sur le client à cette ligne en mode remote !!!
 		// pieceTransporter.addContenu(pieceACharger.id);
-		pieceTransporter.contenu.push(pieceACharger.id);
+		pieceTransporter.contenu.push(pieceAChargerId);
 
 		_setPieceToCase(pieceACharger, {x: -1, y: -1});
 	}

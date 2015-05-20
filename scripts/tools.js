@@ -1,7 +1,4 @@
 var Tools = function(fmpConstants) {
-	/*
-	 * @UtilService
-	 */
 	var _areCoordinatesInRadius = function(x0, y0, x1, y1, radius) {
 		var deltaX = x1 - x0;
 		var deltaY = y1 - y0;
@@ -28,17 +25,10 @@ var Tools = function(fmpConstants) {
 		}
 	}
 	
-	/*
-	 * @UtilService
-	 */
 	this.areCoordinatesAdjacent = function(x0, y0, x1, y1) {
 		return _areCoordinatesInRadius(x0, y0, x1, y1, 1);
 	}
 
-	/*
-	 * @UtilService
-	 * @return Un objet { x, y } des coordonnées cible
-	 */
 	this.getCaseCoordsInOrientation = function(startCase, orientation) {
 		var targetX = startCase.x;
 		var targetY = startCase.y;
@@ -76,9 +66,7 @@ var Tools = function(fmpConstants) {
 		// return partie.getCase(targetX, targetY);
 		return { x: targetX, y: targetY };
 	}
-	/*
-	 * @UtilService
-	 */
+
 	this.getOrientation = function(startCase, targetCase) {
 		var deltaX = targetCase.x - startCase.x;
 		var deltaY = targetCase.y - startCase.y;
@@ -156,10 +144,10 @@ var Tools = function(fmpConstants) {
 		}
 	}
 
-	// return { x: bargeAvantX, y: bargeAvantY }
 	this.getCoordsCaseAvantBarge = function(barge) {
 		return this.getCaseCoordsInOrientation(barge, barge.orientation);
 	}
+
 	this.getCaseTypeMaree = function(targetCase, maree) {
 		return fmpConstants.CASE_TYPE_MAREE.filter(function(caseTypeMaree) {
 				return caseTypeMaree.caseType.value == targetCase.caseType.value;
@@ -167,9 +155,10 @@ var Tools = function(fmpConstants) {
 				return caseTypeMaree.marees.indexOf(maree.value) > -1;
 			})[0];
 	}
+	
 	this.hashcode = function(string) {
 		if (string == null) {
-			console.log('Empty string !');
+			console.log('warn: no string th hash !');
 			return -1;
 		} else {
 			// Code repompé sur http://stackoverflow.com/questions/194846/is-there-any-kind-of-hash-code-function-in-javascript
@@ -180,7 +169,6 @@ var Tools = function(fmpConstants) {
 				hash = ((hash<<5)-hash)+character;
 				hash = hash & hash; // Convert to 32bit integer
 			}
-			console.log('hashcode: ' + hash);
 			return hash;
 		}
 	}

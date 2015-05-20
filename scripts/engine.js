@@ -64,10 +64,6 @@ var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 		return partie.getDatasHashcode();
 	}
 
-	/*
-	 * @ActionService
-	 * @dependsOn(@PartieService)
-	 */
 	var _movePieceToCase = function(pieceId, targetCase) {
 		var piece = partie.getPieceById(pieceId);
 		var nextOrientation;
@@ -93,27 +89,25 @@ var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 		partie.setPieceToCase(pieceId, coords, nextOrientation);
 		partie.removeToursPoints(1);
 	}
-	/*
-	 * @ActionService
-	 * @dependsOn(@PartieService)
-	 */
+
 	var _chargePiece = function(pieceTransporterId, pieceAChargerId) {
+		var pieceTransporter = partie.getPieceById(pieceTransporterId);
+		if (pieceTransporter.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value) {
+			pieceTransporterId = partie.getAeronefCore().id;
+		}
 		partie.chargePiece(pieceTransporterId, pieceAChargerId);
 		partie.removeToursPoints(1);
 	}
-	/*
-	 * @ActionService
-	 * @dependsOn(@PartieService)
-	 */
+
 	var _dechargePiece = function(pieceTransporterId, pieceADechargerId, targetCase) {
+		var pieceTransporter = partie.getPieceById(pieceTransporterId);
+		if (pieceTransporter.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value) {
+			pieceTransporterId = partie.getAeronefCore().id;
+		}
 		partie.dechargePiece(pieceTransporterId, pieceADechargerId, targetCase);
 		partie.removeToursPoints(1);
 	}
 
-	/*
-	 * @ActionService
-	 * @dependsOn(@PartieService)
-	 */
 	var _attack = function(pieceId) {
 		var piece = partie.getPieceById(pieceId);
 		var targetCase = partie.getCasePieceId(pieceId);
@@ -129,9 +123,6 @@ var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 		partie.removeToursPoints(2);
 	}
 
-	/*
-	 * @EngineService
-	 */
 	var _setPieceToCase = function(piece, hexagonalCase) {
 		partie.setPieceToCase(piece.id, hexagonalCase);
 	}
