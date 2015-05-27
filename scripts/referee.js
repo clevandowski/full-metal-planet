@@ -19,6 +19,9 @@ var Referee = function(fmpConstants, partie, tools) {
 				case fmpConstants.PLAYER_ACTION_TYPE.UNLOAD.value:
 					actionReport = _validateUnload(playerAction);
 					break;
+				case fmpConstants.PLAYER_ACTION_TYPE.TRANSFERT.value:
+					actionReport = _validateTransfert(playerAction);
+					break;
 				case fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value:
 					actionReport = _validateAttack(playerAction);
 					break;
@@ -42,6 +45,11 @@ var Referee = function(fmpConstants, partie, tools) {
 		// Synchrone, node.js
 		return actionReport;
 	}
+	// playerAction: {
+	// 	actionType: fmpConstants.PLAYER_ACTION_TYPE.LOAD,
+	// 	pieceAChargerId: Number,
+	// 	pieceTransporterId: Number
+	// }
 	var _validateLoad = function(playerAction) {
 		var pieceTransporter = partie.getPieceById(playerAction.pieceTransporterId);
 		var pieceACharger = partie.getPieceById(playerAction.pieceAChargerId);
@@ -75,14 +83,27 @@ var Referee = function(fmpConstants, partie, tools) {
 			errorMessages: errorMessages
 		}
 	}
+	// playerAction: {
+	// 	actionType: fmpConstants.PLAYER_ACTION_TYPE.UNLOAD,
+	// 	pieceADechargerId: Number,
+	// 	pieceTransporterId: Number,
+	// 	targetCase: FMPCase
+	// }
 	var _validateUnload = function(playerAction) {
 		var pieceTransporter = partie.getPieceById(playerAction.pieceTransporterId);
 		var pieceADecharger = partie.getPieceById(playerAction.pieceADechargerId);
 		var targetCase = playerAction.targetCase;
+		var pieceTarget = partie.getPieceOnCoord(targetCase);
 
 		var errorMessages = [];
 		var validationStatus = true;
 
+		if (pieceTarget != null
+			&& pieceTarget.pieceType.transporter == false) {
+			validationStatus = false;
+			errorMessages.push(
+				'La case cible est déjà occupée par une pièce');
+		}
 		if (! tools.areAdjacent(pieceTransporter, targetCase)) {
 			validationStatus = false;
 			errorMessages.push(
@@ -116,6 +137,35 @@ var Referee = function(fmpConstants, partie, tools) {
 			errorMessages: errorMessages
 		}
 	}
+
+	// playerAction: {
+	// 	actionType: fmpConstants.PLAYER_ACTION_TYPE.TRANSFERT,
+	// 	pieceATransfererId: Number,
+	// 	pieceTransporterToUnloadId: Number,
+	// 	pieceTransporterToLoadId: Number
+	// }
+	var _validateTransfert = function(playerAction) {
+		var unloadPlayerAction = {
+			actionType: fmpConstants.PLAYER_ACTION_TYPE.UNLOAD,
+			pieceADechargerId: playerAction.pieceATransfererId,
+			pieceTransporterId: playerAction.pieceTransporterToUnloadId,
+			targetCase: partie.getCasePieceId(playerAction.pieceTransporterToLoadId)
+		}
+		var actionReport = _validateUnload(unloadPlayerAction);
+		if (actionReport.success) {
+			var loadPlayerAction = {
+				actionType: fmpConstants.PLAYER_ACTION_TYPE.LOAD,
+				pieceAChargerId: playerAction.pieceATransfererId,
+				pieceTransporterId: playerAction.pieceTransporterToLoadId
+			}
+			actionReport = _validateLoad(loadPlayerAction);
+		}
+		return actionReport;
+	}
+	// playerAction: {
+	// 	actionType: fmpConstants.PLAYER_ACTION_TYPE.ATTACK,
+	// 	targetPieceId: Number
+	// }
 	var _validateAttack = function(playerAction) {
 		var targetPiece = partie.getPieceById(playerAction.targetPieceId);
 		var piecesIdAttacking = 
@@ -126,6 +176,11 @@ var Referee = function(fmpConstants, partie, tools) {
 
 		if (piecesIdAttacking.length > 2) {
 			console.log('TODO: Pouvoir choisir les attaquants');
+		}
+		if (targetPiece.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET_DESTROYED) {
+			validationStatus = false;
+			errorMessages.push(
+				'La tourelle ciblée est déjà détruite');			
 		}
 		if (! _isRemainingAmmoOnPiecesIdAttacking(piecesIdAttacking)) {
 			validationStatus = false;
@@ -139,6 +194,11 @@ var Referee = function(fmpConstants, partie, tools) {
 			errorMessages: errorMessages
 		}
 	}
+	// playerAction: {
+	// 	actionType: fmpConstants.PLAYER_ACTION_TYPE.MOVE,
+	// 	targetPieceId: Number,
+	// 	targetCase: FMPCase
+	// }
 	var _validateMove = function(playerAction) {
 		var targetPiece = partie.getPieceById(playerAction.targetPieceId);
 		var targetCase = playerAction.targetCase;
@@ -234,7 +294,7 @@ var Referee = function(fmpConstants, partie, tools) {
 		return true;
 	}
 	var _isCaseFree = function(targetCase) {
-		if (partie.getPieceIfAvailable(targetCase) == null) {
+		if (partie.getPieceOnCoord(targetCase) == null) {
 			return true;
 		}
 		console.log('La case (x: ' + targetCase.x + ', y: ' + targetCase.y + ') contient deja une piece');
@@ -250,7 +310,6 @@ var Referee = function(fmpConstants, partie, tools) {
 
 		if (contenu != null 
 			&& contenu.length > 0) {
-
 			contenu.forEach(function(pieceId) {
 				var piece = partie.getPieceById(pieceId)
 				capaciteRestante -= piece.pieceType.encombrement;
@@ -267,6 +326,12 @@ var Referee = function(fmpConstants, partie, tools) {
 	var _isPieceLoadable = function(pieceACharger) {
 		var maree = partie.getCurrentMaree();
 		var casePiece = partie.getCasePieceId(pieceACharger.id);
+		// Lorsque la pièce à charger est en court de transfert à partir d'un 
+		// autre transporteur.
+		// TODO trouver une condition plus propre
+		if (casePiece == null) {
+			return true;
+		}
 		var casePieceMaree = tools.getCaseTypeMaree(casePiece, maree);
 		if (pieceACharger.pieceType.modeDeplacement != casePieceMaree.modeDeplacement) {
 			return false;

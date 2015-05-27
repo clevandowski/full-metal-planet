@@ -100,6 +100,10 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 			piece.orientation = orientation;
 		}
 	}
+	this.setPieceType = function(pieceId, pieceType) {
+		var piece = _getPieceById(pieceId);
+		piece.pieceType = pieceType;
+	}
 	// TODO Quand on pourra capturer les aeronefs des autres joueurs,
 	// Il faudra reprendre cette fonction
 	this.getAeronefCore = function() {
@@ -125,11 +129,11 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 	 * Retourne null s'il n'y a pas de piece sur la case
 	 * TODO Supprimer en liant la piece a la case dans le model (supprimer les coordonnées x/y des pieces)
 	 */
-	this.getPieceIfAvailable = function(targetCase) {
+	this.getPieceOnCoord = function(coord) {
 		var piece = datas.pieces.filter(function(piece) {
 				return this.x == piece.x
 					&& this.y == piece.y;
-			}, { x: targetCase.x, y: targetCase.y })[0];
+			}, { x: coord.x, y: coord.y })[0];
 		return piece == null ? null : {
 			id: piece.id,
 			playerId: piece.playerId,
@@ -205,10 +209,13 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		return plateau[y][x];
 	}
 	/*
-	 * Retoune la case (type FMPCase) sur laquelle la piece est posee.
+	 * Retourne la case (type FMPCase) sur laquelle la piece est posee.
 	 */
 	this.getCasePieceId = function(pieceId) {
 		var piece = _getPieceById(pieceId);
+		if (piece.x == -1 && piece.y == -1) {
+			return null;
+		}
 		var aCase = plateau[piece.y][piece.x];
 		return FMPCaseService.createCase(aCase.caseType, aCase.x, aCase.y);
 	}
@@ -231,7 +238,7 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 				if (currentY >= 0
 					&& currentY < fmpConstants.PLATEAU_HEIGHT) {
 					var caseToCheck = _getCase(currentX, currentY);
-					var pieceToCheck = this.getPieceIfAvailable(caseToCheck);
+					var pieceToCheck = this.getPieceOnCoord(caseToCheck);
 					
 					if (pieceToCheck != null 
 						&& pieceToCheck.playerId != playerId
@@ -294,21 +301,28 @@ var Partie = function(fmpConstants, datas, plateau, tools, FMPCaseService) {
 		// TODO A Remettre d'équerre j'ai un pb sur le client à cette ligne en mode remote !!!
 		// pieceTransporter.addContenu(pieceACharger.id);
 		pieceTransporter.contenu.push(pieceAChargerId);
-
 		_setPieceToCase(pieceACharger, {x: -1, y: -1});
 	}
 	this.dechargePiece = function(pieceTransporterId, pieceADechargerId, targetCase) {
 		var pieceTransporter = _getPieceById(pieceTransporterId);
 		var pieceADecharger = _getPieceById(pieceADechargerId);
 		var index = pieceTransporter.contenu.indexOf(pieceADechargerId);
-		if (index == -1) {
-			throw 'Impossible de décharger un ' + pieceADecharger.pieceType.name + ' car le ' + pieceTransporter.pieceType.name + " n'en contient pas";
-		} else {
-			// this.getPieces().push(pieceADecharger);
-			pieceTransporter.contenu.splice(index, 1);
-			_setPieceToCase(pieceADecharger, targetCase);
-		}
+		pieceTransporter.contenu.splice(index, 1);
+		_setPieceToCase(pieceADecharger, targetCase);
 	}
+	this.transfertPiece = function(pieceATransfererId, pieceTransporterToUnloadId, pieceTransporterToLoadId) {
+		var pieceTransporterToUnload = _getPieceById(pieceTransporterToUnloadId);
+		var pieceTransporterToLoad = _getPieceById(pieceTransporterToLoadId);
+		console.log('pieceTransporterToUnload: ' + JSON.stringify(pieceTransporterToUnload) );
+		console.log('pieceTransporterToLoad: ' + JSON.stringify(pieceTransporterToLoad) );		
+
+		var index = pieceTransporterToUnload.contenu.indexOf(pieceATransfererId);
+		pieceTransporterToUnload.contenu.splice(index, 1);
+		pieceTransporterToLoad.contenu.push(pieceATransfererId);
+		console.log('pieceTransporterToUnload: ' + JSON.stringify(pieceTransporterToUnload) );
+		console.log('pieceTransporterToLoad: ' + JSON.stringify(pieceTransporterToLoad) );		
+	}
+
 	this.removeAmmo = function(pieceId) {
 		var piece = _getPieceById(pieceId);
 		piece.nbAmmos--;

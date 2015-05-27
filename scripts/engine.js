@@ -9,25 +9,27 @@ var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 			case fmpConstants.PLAYER_ACTION_TYPE.MOVE.value:
 				var targetCase = playerAction.targetCase;
 				var targetPieceId = playerAction.targetPieceId;
-				console.log('Déplacement');
 				_movePieceToCase(targetPieceId, targetCase);
 				break;
 			case fmpConstants.PLAYER_ACTION_TYPE.LOAD.value:
 				var pieceTransporterId = playerAction.pieceTransporterId;
 				var pieceAChargerId = playerAction.pieceAChargerId;
-				console.log('Chargement');
 				_chargePiece(pieceTransporterId, pieceAChargerId);
 				break;
 			case fmpConstants.PLAYER_ACTION_TYPE.UNLOAD.value:
 				var pieceTransporterId = playerAction.pieceTransporterId;
 				var pieceADechargerId = playerAction.pieceADechargerId;
 				var targetCase = playerAction.targetCase;
-				console.log('Déchargement');
 				_dechargePiece(pieceTransporterId, pieceADechargerId, targetCase);
+				break;
+			case fmpConstants.PLAYER_ACTION_TYPE.TRANSFERT.value:
+				var pieceATransfererId = playerAction.pieceATransfererId;
+				var pieceTransporterToUnloadId = playerAction.pieceTransporterToUnloadId;
+				var pieceTransporterToLoadId = playerAction.pieceTransporterToLoadId;
+				_transfertPiece(pieceATransfererId, pieceTransporterToUnloadId, pieceTransporterToLoadId);
 				break;
 			case fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value:
 				var targetPieceId = playerAction.targetPieceId;
-				console.log('Attaque');
 				_attack(targetPieceId);
 				break;
 			case fmpConstants.PLAYER_ACTION_TYPE.END_OF_TURN.value:
@@ -44,7 +46,6 @@ var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 					// et injection dans la partie
 					// si on est le client en mode remote
 					nextMaree = actionReport.nextMaree;
-					console.log('Engine.applyPlayerAction - partie.getNextMaree(): ' + partie.getNextMaree());
 				} else {
 					// Sinon si on est en local ou sur le serveur, 
 					// c'est la partie locale qui décide
@@ -108,6 +109,21 @@ var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 		partie.removeToursPoints(1);
 	}
 
+	var _transfertPiece = function(pieceATransfererId, pieceTransporterToUnloadId, pieceTransporterToLoadId) {
+		var pieceTransporterToUnload = partie.getPieceById(pieceTransporterToUnloadId);
+		var pieceTransporterToLoad = partie.getPieceById(pieceTransporterToLoadId);
+
+		if (pieceTransporterToUnload.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value
+			|| pieceTransporterToUnload.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET_DESTROYED.value) {
+			pieceTransporterToUnloadId = partie.getAeronefCore().id;
+		}
+		if (pieceTransporterToLoad.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value
+			|| pieceTransporterToLoad.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET_DESTROYED.value) {
+			pieceTransporterToLoadId = partie.getAeronefCore().id;
+		}
+		partie.transfertPiece(pieceATransfererId, pieceTransporterToUnloadId, pieceTransporterToLoadId);
+	}
+
 	var _attack = function(pieceId) {
 		var piece = partie.getPieceById(pieceId);
 		var targetCase = partie.getCasePieceId(pieceId);
@@ -118,8 +134,12 @@ var Engine = function(fmpConstants, refereeRuntimeMode, partie, tools) {
 		piecesIdAttacking.forEach(function(pieceIdAttacking) {
 			partie.removeAmmo(pieceIdAttacking);
 		});
-		console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + partie.getPlayer(piece.id).name + ' par ' + partie.getPlayer().name);
-		partie.removePiece(pieceId);
+		// console.log('Destruction de la piece ' + piece.pieceType.name + ' de ' + partie.getPlayer(piece.id).name + ' par ' + partie.getPlayer().name);
+		if (piece.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value) {
+			partie.setPieceType(piece.id, fmpConstants.PIECE_TYPE.AERONEF_TURRET_DESTROYED);
+		} else {
+			partie.removePiece(pieceId);
+		}
 		partie.removeToursPoints(2);
 	}
 

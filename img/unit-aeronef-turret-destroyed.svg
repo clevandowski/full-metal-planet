@@ -9,12 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
+   width="120"
+   height="104"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="unit-base-turret.svg">
+   sodipodi:docname="unit-aeronef-turret-destroyed.svg"
+   inkscape:export-filename="/home/cyrille/Documents/workspace-web/full-metal-planet/img/unit-aeronef-turret-destroyed.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <linearGradient
@@ -37,7 +40,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="6.1234948"
-     inkscape:cx="59.609949"
+     inkscape:cx="56.752104"
      inkscape:cy="49.688847"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -62,9 +65,10 @@
   <g
      inkscape:label="Calque 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-948.36218)">
     <path
-       style="fill:#999999;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+       style="fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 89.727723,948.52555 -59.282178,0 -29.95049553,51.36139 -0.0377324,1.05346 29.87804893,51.2693 59.29878,0 30.167834,-51.3326 0.12376,-1.11393 z"
        id="path2987"
        inkscape:connector-curvature="0"
@@ -76,41 +80,22 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />
     <path
-       sodipodi:type="arc"
-       style="fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.1121788;stroke-opacity:1"
-       id="path5713"
-       sodipodi:cx="59.198223"
-       sodipodi:cy="998.30811"
-       sodipodi:rx="33.722572"
-       sodipodi:ry="37.560249"
-       d="m 92.920795,998.30811 a 33.722572,37.560249 0 1 1 -67.445144,0 33.722572,37.560249 0 1 1 67.445144,0 z"
-       transform="matrix(0.94891931,0,0,0.85196453,3.5875899,149.58924)" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.20643127;stroke-opacity:1"
-       id="path5713-0"
-       sodipodi:cx="59.198223"
-       sodipodi:cy="998.30811"
-       sodipodi:rx="33.722572"
-       sodipodi:ry="37.560249"
-       d="m 92.920795,998.30811 a 33.722572,37.560249 0 1 1 -67.445144,0 33.722572,37.560249 0 1 1 67.445144,0 z"
-       transform="matrix(0.87478499,0,0,0.7854048,8.0969601,216.07889)" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#666666;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.06467295000000006;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path5735"
-       sodipodi:cx="129.17461"
-       sodipodi:cy="958.86981"
-       sodipodi:rx="12.084602"
-       sodipodi:ry="11.349728"
-       d="m 141.25921,958.86981 a 12.084602,11.349728 0 1 1 -24.16921,0 12.084602,11.349728 0 1 1 24.16921,0 z"
-       transform="matrix(0.91024923,0,0,0.96918625,-57.58945,86.889699)" />
-    <rect
-       style="fill:#666666;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect5768"
-       width="6.0423017"
-       height="29.394979"
-       x="56.830292"
-       y="977.40503" />
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097"
+       sodipodi:sides="5"
+       sodipodi:cx="28.088535"
+       sodipodi:cy="26.103306"
+       sodipodi:r1="43.654816"
+       sodipodi:r2="22.472788"
+       sodipodi:arg1="0.80126985"
+       sodipodi:arg2="1.699665"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 58.463347,57.45795 25.200506,48.389747 7.6548292,64.680587 6.0004197,30.243516 -14.915001,18.590732 17.325358,6.3756548 21.944594,-17.117001 43.524642,9.7707367 67.294907,6.9042612 48.391751,35.736874 z"
+       transform="translate(31.84456,976.12411)"
+       inkscape:transform-center-x="2.6104723"
+       inkscape:transform-center-y="-1.3416803" />
   </g>
 </svg>

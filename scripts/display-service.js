@@ -85,7 +85,8 @@ var DisplayService = function(fmpConstants, partie, tools) {
 			if (selectedPiece.pieceType.transporter) {
 				// Si une tourelle est sélectionnée, on affiche le contenu de
 				// de la pièce du centre de l'aéronef
-				if (selectedPiece.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value) {
+				if (selectedPiece.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET.value
+					|| selectedPiece.pieceType.value == fmpConstants.PIECE_TYPE.AERONEF_TURRET_DESTROYED.value) {
 					selectedPiece = partie.getAeronefCore();
 				}
 				return selectedPiece.contenu;
@@ -116,7 +117,7 @@ var DisplayService = function(fmpConstants, partie, tools) {
 		}
 		// console.log('pieceId: ' + JSON.stringify(pieceId));
 		// var piece = _getPieceById(pieceId);
-		return 'soute-container piece ' 
+		return 'case-soute piece ' 
 			+ piece.pieceType.cssName
 			+ this._cssSelectedPieceSoute(pieceId);
 	}
@@ -132,10 +133,10 @@ var DisplayService = function(fmpConstants, partie, tools) {
 			+ this._cssSelectedPiece(targetCase);
 	}
 	this.isPieceOnCase = function(targetCase) {
-		return partie.getPieceIfAvailable(targetCase) != null;
+		return partie.getPieceOnCoord(targetCase) != null;
 	}
 	this.getCssPiece = function(targetCase) {
-		var piece = partie.getPieceIfAvailable(targetCase);
+		var piece = partie.getPieceOnCoord(targetCase);
 
 		if (piece == null) {
 			return 'piece';
@@ -146,10 +147,11 @@ var DisplayService = function(fmpConstants, partie, tools) {
 		}
 	}
 	this.getCssPlayer = function(targetCase) {
-		var piece = partie.getPieceIfAvailable(targetCase);
+		var piece = partie.getPieceOnCoord(targetCase);
 		// On affiche pas le marqueur du player sur les tourelles de l'aeronef
 		if (piece != null
-			&& piece.pieceType.value != fmpConstants.PIECE_TYPE.AERONEF_TURRET.value) {
+			&& piece.pieceType.value != fmpConstants.PIECE_TYPE.AERONEF_TURRET.value
+			&& piece.pieceType.value != fmpConstants.PIECE_TYPE.AERONEF_TURRET_DESTROYED.value) {
 			var playerColor = partie.getPlayerById(piece.playerId).color;
 			return 'player-' + playerColor;
 		} else {
@@ -197,21 +199,9 @@ var DisplayService = function(fmpConstants, partie, tools) {
 	 		&& targetCase.x == selectedPiece.x
 	 		&& targetCase.y == selectedPiece.y) {
  			return ' selectedPiece';
- 		} else {
- 			return '';
- 		}
-	 		// TODO Corriger la css pour que le résultat sur la barge ne soit pas
-	 		// trop horrible
-	 		// else if (this.getSelectedPiece().pieceType == PIECE_TYPE.BARGE) {
-	 		// 	var caseBarge = this.getCasePiece(this.getSelectedPiece());
-	 		// 	var caseAvantBargeCoords = 
-	 		// 		this.getCaseCoordsInOrientation(caseBarge, this.getSelectedPiece().orientation);
-				// if ((targetCase.x == caseAvantBargeCoords.x)
-			 // 		&& (targetCase.y == caseAvantBargeCoords.y)) {
-				//  	return 'selectedPiece';
-				// }
-	 		// }	
-	}
+		}
+ 		return '';
+ 	}
 	/*
 	 * @CssService
 	 * @dependsOn(@PartieService, getSelectedPiece)

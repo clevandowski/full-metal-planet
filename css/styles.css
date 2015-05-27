@@ -8,7 +8,8 @@
     height: 104px;
     text-align: center;
     background-image: url('../img/hexagon-case.png');
-    z-index: 10;
+    z-index: 0;
+    /*user-select: none;*/
 }
 
 .hexagon-case:hover {
@@ -23,7 +24,6 @@
 
 .selectedPiece {
     -webkit-filter: brightness(1.5);
-    z-index: 10;
 }
 
 .hexagon-row {
@@ -71,6 +71,15 @@
     transition: 1s ease-in-out;
 }
 
+.soute-container {
+    width: 480px;
+    height: 129px;
+    overflow-y: auto;
+    overflow-x:auto;
+    position: relative;
+    float: left;
+}
+
 .soute {
     position: relative;
     float: left;
@@ -79,13 +88,12 @@
     border-style: solid;
     border-width: 5px;
     box-shadow: 8px, 8px, 0px, #aaa;
-    width: 480px;
+    width: 4800px;
     height: 104px;
     background-color: brown;
 }
 
-.soute-container {
-    /*clear: left;*/
+.case-soute {
     float: left;
     -webkit-transform: rotate(270deg);
     -moz-transform: rotate(270deg);
@@ -94,11 +102,12 @@
     transform: rotate(270deg);
 }
 
-.soute-container.piece {
+.case-soute.piece {
+    position: relative;
     width: 104px;
-    height: 120px;
+    height: 104px;
 }
-.soute-container.piece.barge {
+.case-soute.piece.barge {
     width: 208px;
 }
 
@@ -245,7 +254,6 @@
     width: 120px;
     height: 104px;
     text-align: center;
-    position: relative;
 }
 
 .player-red {
@@ -303,7 +311,10 @@
     background-image: url('../img/unit-aeronef-turret.png');
     z-index: 2;
 }
-
+.piece.aeronef-turret-destroyed {
+    background-image: url('../img/unit-aeronef-turret-destroyed.png');
+    z-index: 2;
+}
 .piece.barge {
     background-image: url('../img/unit-barge.png');
     width: 120;

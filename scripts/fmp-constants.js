@@ -36,7 +36,8 @@ var FMPConstants = function() {
 		TANK: { value: 'TANK', name: 'tank', cssName: 'tank', mobile: true, modeDeplacement: 'terrestre', encombrement: 1, transporter: false, transportCapacite: -1, destroyer: true, attackRange: 2 },
 		BARGE: { value: 'BARGE', name: 'barge', cssName: 'barge', mobile: true, modeDeplacement: 'maritime', encombrement: 4, transporter: true, transportCapacite: 4, destroyer: false, attackRange: -1 },
 		AERONEF_CORE: { value: 'AERONEF_CORE', name: 'base centrale', cssName: 'aeronef-core', mobile: false, modeDeplacement: 'none', encombrement: 10, transporter: true, transportCapacite: 99, destroyer: false, attackRange: -1 },
-		AERONEF_TURRET: { value: 'AERONEF_TURRET', name: 'tourelle', cssName: 'aeronef-turret', mobile: false, modeDeplacement: 'none', encombrement: 10, transporter: true, transportCapacite: 4, destroyer: true, attackRange: 2 }
+		AERONEF_TURRET: { value: 'AERONEF_TURRET', name: 'tourelle', cssName: 'aeronef-turret', mobile: false, modeDeplacement: 'none', encombrement: 10, transporter: true, transportCapacite: 4, destroyer: true, attackRange: 2 },
+		AERONEF_TURRET_DESTROYED: { value: 'AERONEF_TURRET_DESTROYED', name: 'tourelle détruite', cssName: 'aeronef-turret-destroyed', mobile: false, modeDeplacement: 'none', encombrement: 10, transporter: true, transportCapacite: 4, destroyer: false, attackRange: -1 }
 	}
 
 	this.ORIENTATION = {
@@ -54,6 +55,7 @@ var FMPConstants = function() {
 		MOVE: { value: 'MOVE', name: 'déplacement'},
 		LOAD: { value: 'LOAD', name: 'chargement'},
 		UNLOAD: { value: 'UNLOAD', name: 'déchargement'},
+		TRANSFERT: { value: 'TRANSFERT', name: 'transfert'},
 		ATTACK: { value: 'ATTACK', name: 'attaque'},
 		END_OF_TURN: { value: 'END_OF_TURN', name: 'fin du tour' }
 	}

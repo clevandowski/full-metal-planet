@@ -8,6 +8,8 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 		if (playerActionDetected == null) {
 			console.log('No action No cry...');
 			return;
+		} else {
+			console.log('Action detected: ' + JSON.stringify(playerActionDetected));
 		}
 		
 		// Actions locales, pas besoin de partager
@@ -41,16 +43,19 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 			// Sur retour partie remote, on vérifie que les 2 parties sont synchro
 			// En mode local ou server, pas besoin de vérifier.
 			if (refereeRuntimeMode == fmpConstants.REFEREE_RUNTIME_MODE.REMOTE) {
-				console.log('local party hashcode: ' + partieHashcode)
-				if (actionReport.hashcode == partieHashcode) {
-					console.log('Server synchro !');
-				} else {
+				if (actionReport.hashcode != partieHashcode) {
+					var errorMessages = [
+						'Partie désynchronisée avec le serveur !',
+						'local hashcode: ' + partieHashcode,
+						'remote hashcode: ' + actionReport.hashcode
+					]
 					displayService.setError({
 						actionType: playerActionDetected.actionType,
-						errorMessages: [ 'Partie désynchronisée avec le serveur !' ],
+						errorMessages: errorMessages,
 						showErrorPopup: true
 					});
-					console.log('Partie désynchronisée avec le serveur !');
+					console.log(errorMessages[0] + ", " + errorMessages[1] + ", " + errorMessages[2]);
+					return;
 				}
 			}
 			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.MOVE.value) {
@@ -66,6 +71,9 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 			}
 			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.ATTACK.value) {
 				displayService.exploseOnCase(actionReport.attackCoords);
+			}
+			if (playerActionDetected.actionType.value == fmpConstants.PLAYER_ACTION_TYPE.TRANSFERT.value) {
+				displayService.setSelectedPieceIdSoute(-1);				
 			}
 			// TODO sur PLAYER_ACTION_TYPE.ATTACK, déselectionner la piece qui vient 
 			// d'être détruite.
@@ -121,9 +129,13 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 	}
 
 	var _detectPlayerAction = function(targetCase) {
-		var targetPiece = partie.getPieceIfAvailable(targetCase);
+		var targetPiece = partie.getPieceOnCoord(targetCase);
 		var selectedPiece = partie.getPieceById(displayService.getSelectedPieceId());
 		var selectedPieceSoute = partie.getPieceById(displayService.getSelectedPieceIdSoute());
+
+		console.log('targetPiece: ' + JSON.stringify(targetPiece));
+		console.log('selectedPiece: ' + JSON.stringify(selectedPiece));
+		console.log('selectedPieceSoute: ' + JSON.stringify(selectedPieceSoute));
 
 		// Si on cible une case vide
 		// Attention l'avant de la barge peut etre considéré case vide
@@ -158,15 +170,31 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 					}
 				}
 			}
-		} else {
+		} else { // targetPiece != null
 			if (targetPiece.playerId != partie.getPlayer().id
 				&& ! partie.isFreeFromEnemyFire(targetPiece)
+				// Les tourelles déjà détruites ne peuvent plus être attaquées
+				// && targetPiece.pieceType.value != fmpConstants.PIECE_TYPE.AERONEF_TURRET_DESTROYED.value
 				&& window.confirm('Attaquer l\'unité ?')) {
 				// Attaque
 				return {
 					actionType: fmpConstants.PLAYER_ACTION_TYPE.ATTACK,
 					targetPieceId: targetPiece.id
 				}
+			} else if (selectedPieceSoute != null
+				&& selectedPiece.pieceType.transporter
+				&& targetPiece.pieceType.transporter
+				&& selectedPiece.id != targetPiece.id
+				// && selectedPiece.pieceType.mobile
+				&& tools.areAdjacent(targetPiece, selectedPiece)) {
+				// Transfert
+				return {
+					actionType: fmpConstants.PLAYER_ACTION_TYPE.TRANSFERT,
+					pieceATransfererId: selectedPieceSoute.id,
+					pieceTransporterToUnloadId: selectedPiece.id,
+					pieceTransporterToLoadId: targetPiece.id
+				}
+
 			} else if (targetPiece.pieceType.transporter
 				&& selectedPiece != null
 				&& selectedPiece.id != targetPiece.id
@@ -196,7 +224,6 @@ var EventListener = function(fmpConstants, refereeRuntimeMode, partie, referee, 
 		var validationStatus = true;
 
 		if (! partie.isPieceOwnedByCurrentPlayer(targetPieceId)) {
-		// if (targetPiece.playerId != partie.getPlayer().id) {
 			validationStatus = false;
 			errorMessages.push(
 				'Cette pièce ne vous appartient pas');
